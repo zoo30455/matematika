@@ -9,7 +9,6 @@
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="description" content="Интерактивное повторение математики по летнему заданию 4 יח״ל: 15 тем, 72 шага с проверкой, генератор задач, иврит.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -570,6 +569,48 @@ table.cmp td.who.zero{color:var(--ink-faint);}
 
 
 
+
+/* ---- аккаунт и синхронизация ---- */
+.sync-line{font-family:var(--mono); font-size:9.5px; color:var(--ok); text-align:center; letter-spacing:.02em; min-height:12px;}
+.sync-line.bad{color:var(--ochre);}
+.prof .cloud{
+  font-family:var(--mono); font-size:8.5px; color:var(--ok); border:1px solid var(--ok-line);
+  background:var(--ok-soft); border-radius:5px; padding:1px 4px; margin-left:6px; vertical-align:1px;
+}
+.authbox{display:grid; gap:9px; margin-top:10px;}
+.authbox input{
+  padding:11px 14px; border-radius:10px; border:1px solid var(--line);
+  background:var(--card-2); font-family:var(--sans); font-size:15px; color:var(--ink); width:100%;
+}
+.authbox input:focus{border-color:var(--accent); outline:none;}
+.autherr{
+  background:var(--no-soft); border:1px solid var(--no-line); color:var(--no);
+  border-radius:9px; padding:10px 13px; font-size:13.5px; display:none;
+}
+.autherr.on{display:block;}
+.authtabs{display:flex; gap:7px; margin-bottom:4px;}
+.authtabs button{
+  flex:1; padding:9px; border-radius:9px; border:1px solid var(--line); background:var(--card-2);
+  font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); cursor:pointer; transition:all .13s;
+}
+.authtabs button.on{background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600;}
+.mycode{
+  background:var(--accent-soft); border:1px solid var(--accent-line); border-radius:12px;
+  padding:15px 18px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+}
+.mycode .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--accent);}
+.mycode .val{
+  font-family:var(--mono); font-size:27px; font-weight:600; letter-spacing:.12em; color:var(--ink);
+  background:var(--card); border:1px solid var(--accent-line); border-radius:9px; padding:6px 14px;
+}
+.mycode p{margin:0; font-size:13.4px; color:var(--ink-soft); flex:1; min-width:180px;}
+.codein{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+.codein input{
+  flex:1; min-width:150px; padding:11px 14px; border-radius:10px; border:1px solid var(--line);
+  background:var(--card-2); font-family:var(--mono); font-size:17px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink);
+}
+
 /* ---- жетоны, магазин, казино ---- */
 .coinbox{
   display:flex; align-items:center; gap:9px; background:var(--ochre-soft);
@@ -787,10 +828,12 @@ table.cmp td.who.zero{color:var(--ink-faint);}
     <nav class="nav" id="nav"></nav>
 
     <div class="save-line" id="saveLine"></div>
+    <div class="sync-line" id="syncLine"></div>
     <div class="rail-foot">
       <button class="mini" id="btnDiag">Диагностика</button>
       <button class="mini" id="btnTogether">Вместе</button>
       <button class="mini" id="btnHeb">Иврит</button>
+      <button class="mini" id="btnAcc">Аккаунт</button>
       <button class="mini" id="btnCasino">Казино</button>
       <button class="mini" id="btnCheat">Шпаргалка</button>
       <button class="mini" id="btnProg">Прогресс</button>
@@ -901,6 +944,16 @@ table.cmp td.who.zero{color:var(--ink-faint);}
         <span>Добавит его в список профилей на этом устройстве — можно войти и продолжить занятия с того же места. Так делают, когда получили файл со своим аккаунтом.</span>
       </button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="am">
+  <div class="back" data-close="1"></div>
+  <div class="box">
+    <button class="x" data-close="1" aria-label="Закрыть">×</button>
+    <h3>Аккаунт</h3>
+    <p id="accIntro"></p>
+    <div id="accBody"></div>
   </div>
 </div>
 
@@ -4087,6 +4140,271 @@ function doBuy(id){
 }
 
 /* =====================================================================
+   6г. ОБЛАКО: аккаунты и синхронизация
+   Работает поверх локального хранилища, а не вместо него. Без входа
+   и без интернета всё продолжает работать как раньше — просто локально.
+   Вошёл — тот же самый профиль начинает зеркалиться на сервер.
+   ===================================================================== */
+const SB_URL = "https://wozpwgckfrvtbuddyjcj.supabase.co";
+const SB_KEY = "sb_publishable_zqbyP3xoF3efFg9X1oKxLA_1XhQjL2t";
+const AKEY = "summer-math-auth";
+
+/* Сессия живёт на устройстве, а не в профиле: на одном компьютере
+   может быть несколько локальных профилей, но вход один. */
+let AUTH = null;
+try{ AUTH = JSON.parse(localStorage.getItem(AKEY) || "null"); }catch(e){}
+function authSave(){ try{ localStorage.setItem(AKEY, JSON.stringify(AUTH)); }catch(e){} }
+function authClear(){ AUTH = null; try{ localStorage.removeItem(AKEY); }catch(e){} }
+const online = ()=> !!AUTH && !!AUTH.access_token;
+
+/* имя -> адрес: почта не нужна, но GoTrue требует её формат */
+const TRANSLIT = {"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"e","ж":"zh","з":"z",
+ "и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t",
+ "у":"u","ф":"f","х":"h","ц":"c","ч":"ch","ш":"sh","щ":"sch","ъ":"","ы":"y","ь":"","э":"e",
+ "ю":"yu","я":"ya"};
+function nameToEmail(raw){
+  let s = String(raw||"").trim().toLowerCase();
+  if(s.indexOf("@") > 0) return s;
+  s = s.split("").map(c => TRANSLIT[c] !== undefined ? TRANSLIT[c] : c).join("");
+  s = s.replace(/[^a-z0-9._-]/g, "");
+  if(!s) s = "user";
+  return s + "@tetrad.local";
+}
+
+/* ---- сетевой слой ---- */
+async function sbRaw(path, opts){
+  opts = opts || {};
+  const h = Object.assign({"apikey": SB_KEY, "Content-Type": "application/json"}, opts.headers || {});
+  if(opts.auth !== false && AUTH && AUTH.access_token) h["Authorization"] = "Bearer " + AUTH.access_token;
+  let r;
+  try{
+    r = await fetch(SB_URL + path, {method: opts.method || "GET", headers: h, body: opts.body});
+  }catch(e){
+    /* нет сети, сервер спит, блокировка — наверх уходит status 0 */
+    return {ok:false, status:0, data:null};
+  }
+  const text = await r.text();
+  let data = null;
+  try{ data = text ? JSON.parse(text) : null; }catch(e){ data = text; }
+  return {ok: r.ok, status: r.status, data: data};
+}
+
+/* Токен живёт час. Обновляем заранее, чтобы запрос не падал на середине. */
+async function refreshIfNeeded(){
+  if(!AUTH || !AUTH.refresh_token) return false;
+  if(AUTH.expires_at && Date.now() < AUTH.expires_at - 60000) return true;
+  const r = await sbRaw("/auth/v1/token?grant_type=refresh_token", {
+    method: "POST", auth: false,
+    body: JSON.stringify({refresh_token: AUTH.refresh_token})
+  });
+  if(r.ok && r.data && r.data.access_token){ storeSession(r.data); return true; }
+  return false;
+}
+async function sb(path, opts){
+  if(!(await refreshIfNeeded())) return {ok:false, status:401, data:null};
+  let r = await sbRaw(path, opts);
+  if(r.status === 401){
+    /* токен мог протухнуть между проверкой и запросом */
+    if(await refreshIfNeeded()) r = await sbRaw(path, opts);
+  }
+  return r;
+}
+
+function storeSession(d){
+  AUTH = Object.assign(AUTH || {}, {
+    access_token: d.access_token,
+    refresh_token: d.refresh_token,
+    expires_at: Date.now() + (d.expires_in ? d.expires_in*1000 : 3600000),
+    uid: (d.user && d.user.id) || (AUTH && AUTH.uid),
+    email: (d.user && d.user.email) || (AUTH && AUTH.email)
+  });
+  authSave();
+}
+
+/* ---- вход и регистрация ---- */
+async function cloudSignUp(name, password, email){
+  const addr = email && email.indexOf("@") > 0 ? email.trim().toLowerCase() : nameToEmail(name);
+  const r = await sbRaw("/auth/v1/signup", {
+    method: "POST", auth: false,
+    body: JSON.stringify({email: addr, password: password, data: {name: String(name).trim().slice(0,24)}})
+  });
+  if(!r.ok || !r.data || !r.data.access_token){
+    if(r.status === 0) throw new Error("Нет связи с сервером. Проверь интернет — или, если проект спал, разбуди его в панели Supabase.");
+    const m = (r.data && (r.data.msg || r.data.message || r.data.error_description)) || "";
+    if(/already|registered|exists/i.test(m)) throw new Error("Это имя уже занято — попробуй войти или возьми другое");
+    if(/password/i.test(m)) throw new Error("Пароль слишком короткий: нужно хотя бы 6 символов");
+    if(/disabled/i.test(m)) throw new Error("Регистрация выключена в настройках проекта");
+    throw new Error(m || "Не получилось зарегистрироваться");
+  }
+  storeSession(r.data);
+  return true;
+}
+async function cloudSignIn(name, password){
+  const addr = nameToEmail(name);
+  const r = await sbRaw("/auth/v1/token?grant_type=password", {
+    method: "POST", auth: false,
+    body: JSON.stringify({email: addr, password: password})
+  });
+  if(!r.ok || !r.data || !r.data.access_token){
+    if(r.status === 0) throw new Error("Нет связи с сервером. Проверь интернет — или, если проект спал, разбуди его в панели Supabase.");
+    const m = (r.data && (r.data.msg || r.data.error_description || r.data.message)) || "";
+    if(/invalid|credentials/i.test(m)) throw new Error("Не подходит имя или пароль");
+    throw new Error(m || "Не получилось войти");
+  }
+  storeSession(r.data);
+  return true;
+}
+function cloudSignOut(){
+  sbRaw("/auth/v1/logout", {method:"POST"}).catch(()=>{});
+  authClear();
+}
+
+/* ---- профиль в облаке ---- */
+async function cloudProfile(){
+  const r = await sb("/rest/v1/profiles?select=id,name,code,color,share");
+  if(r.ok && Array.isArray(r.data) && r.data.length){
+    AUTH.name = r.data[0].name;
+    AUTH.code = r.data[0].code;
+    AUTH.uid  = r.data[0].id;
+    authSave();
+    return r.data[0];
+  }
+  return null;
+}
+async function cloudRename(name){
+  const r = await sb("/rest/v1/profiles?id=eq." + AUTH.uid, {
+    method: "PATCH",
+    headers: {"Prefer": "return=minimal"},
+    body: JSON.stringify({name: String(name).trim().slice(0,24), updated_at: new Date().toISOString()})
+  });
+  if(r.ok){ AUTH.name = String(name).trim().slice(0,24); authSave(); }
+  return r.ok;
+}
+
+/* ---- прогресс ---- */
+async function cloudPull(){
+  const r = await sb("/rest/v1/progress?select=data,updated_at");
+  if(r.ok && Array.isArray(r.data) && r.data.length) return r.data[0];
+  return null;
+}
+async function cloudPush(data){
+  const r = await sb("/rest/v1/progress?user_id=eq." + AUTH.uid, {
+    method: "PATCH",
+    headers: {"Prefer": "return=minimal"},
+    body: JSON.stringify({data: data, updated_at: new Date().toISOString()})
+  });
+  return r.ok;
+}
+
+/* Отправляем не на каждый чих, а пачкой: иначе один шаг курса
+   породил бы десяток запросов подряд. */
+let PUSH_T = null, PUSH_PENDING = false;
+function cloudQueue(){
+  if(!online()) return;
+  PUSH_PENDING = true;
+  clearTimeout(PUSH_T);
+  PUSH_T = setTimeout(async ()=>{
+    if(!online()) return;
+    setSync("идёт");
+    const ok = await cloudPush(cloudPayload());
+    PUSH_PENDING = !ok;
+    setSync(ok ? "ok" : "нет связи");
+  }, 1500);
+}
+/* В облако едет только состояние занятий. Сессия и список локальных
+   профилей остаются на устройстве. */
+function cloudPayload(){
+  return {
+    ans: ST.ans, cur: ST.cur, done: ST.done, diag: ST.diag, dpart: ST.dpart,
+    gen: ST.gen, heb: ST.heb, lang: ST.lang, coins: ST.coins, inv: ST.inv,
+    cas: ST.cas, paid: ST.paid, sound: ST.sound, ts: ST.ts
+  };
+}
+
+/* ---- друзья ---- */
+async function cloudAddFriend(code){
+  const r = await sb("/rest/v1/rpc/add_friend", {
+    method: "POST", body: JSON.stringify({p_code: String(code).trim().toUpperCase()})
+  });
+  if(!r.ok){
+    const m = (r.data && r.data.message) || "";
+    throw new Error(m || "Не получилось добавить");
+  }
+  return Array.isArray(r.data) ? r.data[0] : r.data;
+}
+async function cloudFriends(){
+  const r = await sb("/rest/v1/rpc/friends_progress", {method:"POST", body:"{}"});
+  return (r.ok && Array.isArray(r.data)) ? r.data : [];
+}
+async function cloudDropFriend(id){
+  const r = await sb("/rest/v1/friends?friend_id=eq." + id, {method:"DELETE"});
+  return r.ok;
+}
+
+/* ---- индикатор состояния ---- */
+function setSync(state){
+  const el = document.getElementById("syncLine");
+  if(!el) return;
+  if(!online()){ el.textContent = ""; el.className = "sync-line"; return; }
+  const map = {"ok":"синхронизировано", "идёт":"сохраняю…", "нет связи":"нет связи — сохраню позже"};
+  el.textContent = map[state] || "";
+  el.className = "sync-line" + (state==="нет связи" ? " bad" : "");
+}
+
+/* ---- вход: связываем аккаунт с локальным профилем ---- */
+/* Сколько в состоянии реальной работы — по этому решаем, что важнее
+   при первом входе: то, что уже накоплено на устройстве, или облако. */
+function stWeight(st){
+  if(!st) return 0;
+  return Object.keys(st.ans || {}).length
+       + Object.keys(st.dpart || {}).length
+       + (st.diag ? 5 : 0);
+}
+
+async function cloudAfterLogin(){
+  const prof = await cloudProfile();
+  const nm = (prof && prof.name) || (AUTH && AUTH.name) || "Ученик";
+  const pid = "cloud:" + AUTH.uid;
+
+  /* то, чем человек занимался до входа — не потерять */
+  const prev = ST;
+
+  if(!DB.profiles[pid]){
+    DB.profiles[pid] = {id:pid, name:nm, color:(prof && prof.color) || 0,
+                        made:Date.now(), st:BLANK(), cloud:true};
+  } else {
+    DB.profiles[pid].name = nm;
+    DB.profiles[pid].cloud = true;
+  }
+  DB.active = pid;
+  ST = DB.profiles[pid].st;
+
+  const remote = await cloudPull();
+  const remoteData = remote && remote.data && Object.keys(remote.data).length ? remote.data : null;
+  const remoteTs = remoteData && remoteData.ts ? remoteData.ts : 0;
+
+  if(remoteData && stWeight(remoteData) >= stWeight(ST) && remoteTs >= (ST.ts || 0)){
+    /* в облаке свежее — забираем оттуда */
+    Object.assign(ST, remoteData);
+  } else {
+    /* в облаке пусто или старее. Если до входа занимались в другом
+       локальном профиле — переносим оттуда, иначе останется пусто. */
+    if(prev && prev !== ST && stWeight(prev) > stWeight(ST)){
+      Object.assign(ST, JSON.parse(JSON.stringify(prev)));
+    }
+    if(stWeight(ST) || (ST.coins !== undefined && ST.coins !== COIN_START)){
+      await cloudPush(cloudPayload());
+    }
+  }
+
+  try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){}
+  setSync("ok");
+}
+
+/* Связь вернулась — досылаем то, что не ушло */
+window.addEventListener("online", ()=>{ if(PUSH_PENDING) cloudQueue(); });
+
+/* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
    ===================================================================== */
 const KEY = "summer-math-v2";
@@ -4131,6 +4449,7 @@ function save(){
   if(DB.profiles[DB.active]) DB.profiles[DB.active].st = ST;
   try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){ STORAGE_OK = false; }
   drawSaveLine();
+  if(typeof cloudQueue === "function") cloudQueue();
 }
 function drawSaveLine(){
   const el = document.getElementById("saveLine");
@@ -4533,7 +4852,9 @@ function drawProfChip(){
   av.textContent = initials(p.name);
   document.getElementById("profName").textContent = p.name;
   const n = Object.keys(DB.profiles).length;
-  document.getElementById("profSub").textContent = n>1 ? n+" профиля на устройстве" : "профиль · сменить";
+  const sub = document.getElementById("profSub");
+  if(online() && p.cloud) sub.innerHTML = 'аккаунт <span class="cloud">облако</span>';
+  else sub.textContent = n>1 ? n+" профиля на устройстве" : "профиль · сменить";
 }
 
 function switchProfile(id){
@@ -4684,6 +5005,91 @@ function drawProfList(){
       +   '<button class="tiny danger" data-act="pdel" data-p="'+p.id+'">Удалить</button>'
       + '</div></div>';
   }).join("");
+}
+
+/* =====================================================================
+   8а-2. ОКНО АККАУНТА
+   ===================================================================== */
+let ATAB = "in";   /* in | up */
+
+function drawAcc(){
+  const intro = document.getElementById("accIntro"), box = document.getElementById("accBody");
+  if(!box) return;
+
+  if(online()){
+    intro.textContent = "Прогресс сохраняется в аккаунт и подтягивается на любом устройстве, где ты войдёшь.";
+    box.innerHTML =
+      '<div class="cs-sec"><h4>Ты вошёл</h4>'
+      + '<div class="prow on">' + profBadge({name:AUTH.name||"Ученик", color:0})
+      + '<div><span class="nm">'+(AUTH.name||"Ученик")+'</span>'
+      + '<span class="st">прогресс синхронизируется автоматически</span></div>'
+      + '<div class="acts2"><button class="tiny" data-act="accrename">Имя</button>'
+      + '<button class="tiny danger" data-act="accout">Выйти</button></div></div></div>'
+      + '<div class="cs-sec"><h4>Твой код для друзей</h4>'
+      + '<div class="mycode"><div><span class="lbl">код</span><div class="val">'+(AUTH.code||"…")+'</div></div>'
+      + '<p>Скажи его другу — он добавит тебя у себя в разделе «Вместе», и ваш прогресс станет виден друг другу. Никаких файлов.</p></div>'
+      + '<div class="mrow"><button class="btn btn-g" data-act="acccopy">Скопировать код</button></div></div>'
+      + '<div class="cs-sec"><h4>Выход</h4><p class="mnote">После выхода прогресс останется в аккаунте на сервере, а на этом устройстве — в локальной копии. Войдёшь снова — всё вернётся.</p></div>';
+    return;
+  }
+
+  intro.textContent = "Заведи аккаунт — и прогресс будет сам подтягиваться на телефоне и на компьютере, а друзей можно будет добавлять по коду вместо файлов.";
+  const up = ATAB === "up";
+  box.innerHTML =
+    '<div class="cs-sec">'
+    + '<div class="authtabs">'
+    +   '<button data-act="atab" data-t="in"'+(up?"":' class="on"')+'>Войти</button>'
+    +   '<button data-act="atab" data-t="up"'+(up?' class="on"':"")+'>Создать аккаунт</button>'
+    + '</div>'
+    + '<div class="autherr" id="accErr"></div>'
+    + '<div class="authbox">'
+    +   '<input type="text" id="accName" placeholder="Имя" maxlength="24" autocomplete="username">'
+    +   '<input type="password" id="accPass" placeholder="Пароль (от 6 символов)" autocomplete="'+(up?"new-password":"current-password")+'">'
+    +   (up ? '<input type="email" id="accMail" placeholder="Почта — необязательно, для восстановления" autocomplete="email">' : "")
+    +   '<button class="btn btn-p" data-act="'+(up?"acsignup":"acsignin")+'" id="accGo">'+(up?"Создать аккаунт":"Войти")+'</button>'
+    + '</div>'
+    + '<p class="mnote" style="margin-top:11px">'+(up
+        ? "Почта не обязательна: вход по имени и паролю. Если её не указать, восстановить забытый пароль будет нельзя — но его всегда можно сбросить вручную из панели проекта."
+        : "Вводи то же имя, с которым регистрировался.")+'</p>'
+    + '</div>'
+    + (Object.keys(ST.ans||{}).length
+        ? '<div class="pintro">На этом устройстве уже есть прогресс. При первом входе он уедет в аккаунт и не потеряется.</div>'
+        : "");
+}
+
+function accErr(msg){
+  const e = document.getElementById("accErr");
+  if(!e) return;
+  e.textContent = msg; e.classList.add("on");
+}
+
+function openAcc(){
+  drawAcc();
+  document.querySelectorAll(".modal").forEach(m=>m.classList.remove("on"));
+  document.getElementById("am").classList.add("on");
+  closeRail();
+}
+
+async function accDo(kind){
+  const btn = document.getElementById("accGo");
+  const name = (document.getElementById("accName")||{}).value || "";
+  const pass = (document.getElementById("accPass")||{}).value || "";
+  const mail = (document.getElementById("accMail")||{}).value || "";
+  if(!name.trim()){ accErr("Впиши имя"); return; }
+  if(pass.length < 6){ accErr("Пароль должен быть хотя бы из 6 символов"); return; }
+  btn.disabled = true; btn.textContent = "минутку…";
+  try{
+    if(kind==="up") await cloudSignUp(name, pass, mail);
+    else await cloudSignIn(name, pass);
+    AUTH.name = name.trim().slice(0,24); authSave();
+    await cloudAfterLogin();
+    rebuildAll(); showHome();
+    document.getElementById("am").classList.remove("on");
+    toast("Готово, " + AUTH.name + " — прогресс теперь в аккаунте", true);
+  }catch(e){
+    accErr(e.message || "Не получилось");
+    btn.disabled = false; btn.textContent = kind==="up" ? "Создать аккаунт" : "Войти";
+  }
 }
 
 /* =====================================================================
@@ -4950,13 +5356,36 @@ function dstr(ts){
   return p(d.getDate())+"."+p(d.getMonth()+1);
 }
 
+let CFR = [];   /* друзья, пришедшие с сервера */
+
 function drawTogether(){
   const me = DB.profiles[DB.active];
-  const fr = Object.values(DB.friends || {});
   const box = document.getElementById("togetherBody");
   const tot = totalSteps();
 
+  /* Вошёл в аккаунт — друзья приходят по коду с сервера, файлы не нужны */
+  const fr = online()
+    ? CFR.map(f => ({id:f.friend_id, name:f.friend_name, color:f.friend_color||0,
+                     when: Date.parse(f.updated_at) || Date.now(),
+                     st: Object.assign(BLANK(), f.data||{}), cloud:true}))
+    : Object.values(DB.friends || {});
+
+  const codeBar = online()
+    ? '<div class="mycode"><div><span class="lbl">твой код</span><div class="val">'+(AUTH.code||"…")+'</div></div>'
+      + '<p>Скажи его другу — и он увидит твой прогресс. А чтобы увидеть чужой, впиши его код ниже.</p></div>'
+      + '<div class="codein"><input type="text" id="frCode" placeholder="КОД ДРУГА" maxlength="6">'
+      + '<button class="btn btn-p" data-act="fradd">Добавить</button>'
+      + '<button class="btn btn-g" data-act="frsync">Обновить</button></div>'
+    : "";
+
   if(!fr.length){
+    if(online()){
+      box.innerHTML = codeBar
+        + '<div class="plan" style="margin-top:18px"><span class="lab">Пока никого</span>'
+        + '<h3>Добавь друга по коду</h3>'
+        + '<p>Он открывает у себя «Аккаунт», диктует шесть символов — ты вписываешь их выше. Дальше его прогресс виден здесь и обновляется сам, без файлов.</p></div>';
+      return;
+    }
     box.innerHTML = '<div class="plan"><span class="lab">Совместный режим выключен</span>'
       + '<h3>Отдельной кнопки нет — он включается файлом</h3>'
       + '<p>Приложение работает без интернета и ничего никуда не отправляет. Поэтому режим включается сам, как только здесь появится файл хотя бы одного друга.</p>'
@@ -4972,15 +5401,16 @@ function drawTogether(){
     return;
   }
 
-  let h = '<div class="fcards">'
+  let h = codeBar + '<div class="fcards">'
     + '<div class="fcard"><div class="top">'+profBadge(me)+'<div><b>'+me.name+'</b><span>это ты</span></div></div>'
     + '<div class="barline">'+allPassed(me.st)+' из '+tot+' шагов · закрыто '+doneWord(me.st)+'</div>'
     + '<div class="bar"><i style="width:'+(allPassed(me.st)/tot*100).toFixed(1)+'%"></i></div></div>'
     + fr.map(f=>
-        '<div class="fcard"><div class="top">'+profBadge(f)+'<div><b>'+f.name+'</b><span>файл от '+dstr(f.when)+'</span></div></div>'
+        '<div class="fcard"><div class="top">'+profBadge(f)+'<div><b>'+f.name+'</b><span>'+(f.cloud ? "обновлено "+dstr(f.when) : "файл от "+dstr(f.when))+'</span></div></div>'
       + '<div class="barline">'+allPassed(f.st)+' из '+tot+' шагов · закрыто '+doneWord(f.st)+'</div>'
       + '<div class="bar"><i style="width:'+(allPassed(f.st)/tot*100).toFixed(1)+'%"></i></div>'
-      + '<div class="acts2"><button class="tiny" data-act="profiles">Обновить файлом</button>'
+      + '<div class="acts2">'
+      + (f.cloud ? "" : '<button class="tiny" data-act="profiles">Обновить файлом</button>')
       + '<button class="tiny danger" data-act="fdel" data-p="'+f.id+'">Убрать</button></div></div>'
       ).join("")
     + '</div>';
@@ -5012,6 +5442,11 @@ function drawTogether(){
   box.innerHTML = h;
 }
 
+async function syncFriends(){
+  if(!online()){ CFR = []; return; }
+  try{ CFR = await cloudFriends(); }catch(e){}
+}
+
 function showTogether(){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("active"));
@@ -5019,6 +5454,7 @@ function showTogether(){
   document.getElementById("tbTitle").textContent = "Вместе";
   CUR = null;
   drawTogether();
+  if(online()) syncFriends().then(drawTogether);
   document.querySelectorAll(".modal").forEach(m=>m.classList.remove("on"));
   closeRail();
   window.scrollTo({top:0, behavior:"smooth"});
@@ -5222,6 +5658,50 @@ document.addEventListener("click", e=>{
     if(act==="diag"){ showDiag(); return; }
     if(act==="together"){ showTogether(); return; }
     if(act==="casino"){ showCasino(); return; }
+    if(act==="account"){ openAcc(); return; }
+    if(act==="atab"){ ATAB = el.dataset.t; drawAcc(); return; }
+    if(act==="acsignin"){ accDo("in"); return; }
+    if(act==="acsignup"){ accDo("up"); return; }
+    if(act==="accout"){
+      if(!confirm("Выйти из аккаунта? Прогресс останется и на сервере, и в локальной копии на этом устройстве.")) return;
+      cloudSignOut(); CFR = []; setSync("");
+      DB.active = Object.keys(DB.profiles).find(k => !DB.profiles[k].cloud) || Object.keys(DB.profiles)[0];
+      ST = DB.profiles[DB.active].st;
+      rebuildAll(); showHome();
+      document.getElementById("am").classList.remove("on");
+      return;
+    }
+    if(act==="accrename"){
+      const nn = prompt("Новое имя:", AUTH.name || "");
+      if(nn === null || !nn.trim()) return;
+      cloudRename(nn).then(ok => {
+        if(ok){ DB.profiles[DB.active].name = AUTH.name; save(); drawProfChip(); drawAcc(); }
+      });
+      return;
+    }
+    if(act==="acccopy"){
+      const cd = AUTH.code || "";
+      (navigator.clipboard ? navigator.clipboard.writeText(cd) : Promise.reject())
+        .then(()=> toast("Код скопирован: "+cd, true))
+        .catch(()=> toast("Твой код: "+cd, true));
+      return;
+    }
+    if(act==="fradd"){
+      const inp = document.getElementById("frCode");
+      const code = (inp.value || "").trim().toUpperCase();
+      if(code.length < 4){ toast("Код из шести символов", false); return; }
+      el.disabled = true; el.textContent = "ищу…";
+      cloudAddFriend(code)
+        .then(f => { inp.value = ""; toast("Добавлен: "+f.friend_name, true); return syncFriends(); })
+        .catch(e => { toast(e.message || "Код не найден", false); })
+        .then(()=> { el.disabled = false; el.textContent = "Добавить"; drawTogether(); });
+      return;
+    }
+    if(act==="frsync"){
+      el.disabled = true; el.textContent = "…";
+      syncFriends().then(()=> { el.disabled = false; el.textContent = "Обновить"; drawTogether(); });
+      return;
+    }
     if(act==="ctab"){ CT = el.dataset.c; drawCasino(); return; }
     if(act==="cbet"){ CB = +el.dataset.b; drawCasino(); return; }
     if(act==="cspin"){ doSpin(); return; }
@@ -5284,9 +5764,17 @@ document.addEventListener("click", e=>{
     if(act==="prename"){ renameProfile(el.dataset.p); return; }
     if(act==="pdel"){ delProfile(el.dataset.p); return; }
     if(act==="fdel"){
-      const f = DB.friends[el.dataset.p];
+      const fid = el.dataset.p;
+      if(online() && CFR.some(x => x.friend_id === fid)){
+        const cf = CFR.find(x => x.friend_id === fid);
+        if(confirm("Убрать «"+cf.friend_name+"»? Его собственный прогресс не пострадает.")){
+          cloudDropFriend(fid).then(()=>{ CFR = CFR.filter(x => x.friend_id !== fid); drawTogether(); });
+        }
+        return;
+      }
+      const f = DB.friends[fid];
       if(f && confirm("Убрать «"+f.name+"» из совместного обучения? Его собственный прогресс у него на устройстве не пострадает.")){
-        delete DB.friends[el.dataset.p]; save(); drawTogether();
+        delete DB.friends[fid]; save(); drawTogether();
       }
       return;
     }
@@ -5425,6 +5913,7 @@ document.getElementById("btnDiag").addEventListener("click", showDiag);
 document.getElementById("btnTogether").addEventListener("click", showTogether);
 document.getElementById("btnHeb").addEventListener("click", showHeb);
 document.getElementById("btnCasino").addEventListener("click", showCasino);
+document.getElementById("btnAcc").addEventListener("click", openAcc);
 
 /* ---- окно профилей ---- */
 function openProfiles(){
@@ -5563,14 +6052,18 @@ drawNav(); drawHome(); drawProgress(); drawSaveLine(); drawProfChip(); drawProfL
 TOPICS.forEach(t=>{ drawRail(t); t.steps.forEach((s,i)=>drawGate(t,i)); });
 /* первый запуск — сразу зовём на диагностику */
 if(!ST.diag) document.getElementById("btnDiag").classList.add("hot");
+
+/* сессия сохранилась с прошлого раза — подтягиваем прогресс из облака */
+if(online()){
+  setSync("идёт");
+  cloudAfterLogin()
+    .then(()=> { rebuildAll(); setSync("ok"); })
+    .catch(()=> setSync("нет связи"));
+}
 </script>
 
 <script>
-if("serviceWorker" in navigator){
-  window.addEventListener("load", ()=>{
-    navigator.serviceWorker.register("sw.js").catch(()=>{});
-  });
-}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});}
 </script>
 </body>
 </html>
