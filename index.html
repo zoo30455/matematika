@@ -466,35 +466,95 @@ table.cmp td.who.zero{color:var(--ink-3);}
 .toast.on{transform:translate(-50%,0);}
 .toast.good{background:var(--ok); color:var(--on-ink);}
 .toast.bad{background:var(--hot); color:var(--on-ink);}
-.reels{display:flex; gap:12px; justify-content:center; margin:8px 0 6px;}
-.reel{width:78px; height:92px; background:var(--card-2); border:2px solid var(--ink); display:grid; place-items:center; font-family:var(--math); font-size:38px; color:var(--ink); overflow:hidden; will-change:transform;}
+
+/* ---- автомат: корпус с рычагом ---- */
+.cab{background:var(--ink); border:3px solid var(--ink); box-shadow:6px 6px 0 var(--hot); margin-bottom:18px;}
+.cab-top{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 14px; color:var(--on-ink); font-family:var(--mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; flex-wrap:wrap;}
+.cab-top b{color:var(--hot); font-family:var(--mono); font-size:10px;}
+.cab-body{display:flex; align-items:center; gap:16px; background:var(--card); padding:20px 18px; border-top:3px solid var(--ink); border-bottom:3px solid var(--ink);}
+.cab .spinres{margin:0; padding:9px 14px; color:var(--on-ink); text-align:center;}
+.cab.jack{animation:jackflash .85s steps(2) 3;}
+@keyframes jackflash{0%,100%{box-shadow:6px 6px 0 var(--hot);}50%{box-shadow:0 0 0 6px var(--hot);}}
+.reels{display:flex; gap:11px; justify-content:center; flex:1;}
+.reel{width:76px; height:94px; background:var(--card-2); border:2px solid var(--ink); display:grid; place-items:center; font-family:var(--math); font-size:38px; color:var(--ink); overflow:hidden; will-change:transform; box-shadow:inset 0 6px 12px rgba(0,0,0,.10), inset 0 -6px 12px rgba(0,0,0,.10);}
 .reel.dim{opacity:.3;}
 .reel.spin{animation:reelroll .11s linear infinite; color:var(--ink-3);}
 @keyframes reelroll{0%{transform:translateY(-34%); opacity:.5;}50%{transform:translateY(0); opacity:1;}100%{transform:translateY(34%); opacity:.5;}}
 .reel.stop{animation:reelpop .3s cubic-bezier(.2,1.5,.4,1);}
 @keyframes reelpop{0%{transform:scale(.8);}60%{transform:scale(1.07);}100%{transform:scale(1);}}
 .reel.gold{background:var(--hot); color:var(--on-ink);}
-.hcard.jack{animation:jackflash .9s steps(2) 3;}
-@keyframes jackflash{0%,100%{background:var(--card);}50%{background:var(--hot);}}
-.spinres{margin-top:14px; font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase;}
+.lever{width:16px; height:96px; position:relative; flex-shrink:0;}
+.lever i{position:absolute; left:5px; top:14px; width:6px; height:74px; background:var(--ink-3); display:block;}
+.lever b{position:absolute; left:-6px; top:0; width:28px; height:28px; border-radius:50%; background:var(--hot); border:2px solid var(--ink); display:block; transition:transform .18s cubic-bezier(.3,1.4,.5,1);}
+.lever.pull b{transform:translateY(62px);}
+.lever.pull i{background:var(--hot);}
+@media (max-width:560px){ .lever{display:none;} .reel{width:60px; height:76px; font-size:30px;} }
+
+.spinres{margin-top:14px; font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; text-align:center;}
 .spinres.win{color:var(--ok);}
 .spinres.lose{color:var(--ink-3);}
-.ball{width:98px;height:98px;border-radius:50%; margin:6px auto 0; display:grid; place-items:center; font-family:var(--display); font-size:32px; font-weight:700; color:#FFFDF7; background:var(--line); border:3px solid var(--ink); transition:background .12s linear;}
-.ball.idle{background:var(--card-2); color:var(--ink-3);}
-.ball.red{background:#D0281B;} .ball.black{background:#151B45;} .ball.zero{background:#0B7A4B;}
+.cab .spinres.win{color:#7BE8B4;}
+.cab .spinres.lose{color:var(--ink-3);}
+
+/* ---- рулетка: колесо ---- */
+.wheel-wrap{position:relative; width:246px; height:246px; margin:6px auto 4px;}
+.wheel{position:absolute; inset:0; border-radius:50%; border:4px solid var(--ink); box-shadow:0 0 0 7px var(--card), 0 0 0 9px var(--ink);}
+.pointer{position:absolute; left:50%; top:-14px; width:0; height:0; margin-left:-11px; z-index:3;
+  border-left:11px solid transparent; border-right:11px solid transparent; border-top:22px solid var(--hot);
+  filter:drop-shadow(0 2px 0 var(--ink));}
+.wheel-mid{position:absolute; left:50%; top:50%; width:88px; height:88px; margin:-44px 0 0 -44px; border-radius:50%;
+  background:var(--card); border:4px solid var(--ink); display:grid; place-items:center; z-index:2;
+  font-family:var(--display); font-size:32px; font-weight:900; color:var(--ink);}
+.wheel-mid.idle{color:var(--ink-3);}
+.wheel-mid.red{background:#D0281B; color:#FFFDF7;}
+.wheel-mid.black{background:#151B45; color:#FFFDF7;}
+.wheel-mid.zero{background:#0B7A4B; color:#FFFDF7;}
+@media (max-width:420px){ .wheel-wrap{width:196px; height:196px;} .wheel-mid{width:72px;height:72px;margin:-36px 0 0 -36px;font-size:26px;} }
+
+/* ---- стол: поля и фишка ---- */
+.table{display:grid; grid-template-columns:1fr .72fr 1fr; gap:9px; margin:16px 0;}
+.field{position:relative; border:3px solid var(--ink); cursor:pointer; padding:20px 10px 30px; text-align:center;
+  color:#FFFDF7; font-family:var(--display); transition:transform .12s, box-shadow .12s; box-shadow:3px 3px 0 var(--ink);}
+.field:hover:not(.locked){transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--hot);}
+.field.locked{cursor:default;}
+.field.red{background:#D0281B;} .field.black{background:#151B45;} .field.zero{background:#0B7A4B;}
+.field .fname{display:block; font-size:13px; font-weight:700; letter-spacing:.04em;}
+.field .fpay{display:block; font-family:var(--mono); font-size:11px; opacity:.8; margin-top:3px;}
+.field.picked{box-shadow:0 0 0 4px var(--hot), 4px 4px 0 var(--ink);}
+.chip{position:absolute; left:50%; bottom:-16px; margin-left:-21px; width:42px; height:42px; border-radius:50%;
+  background:#F4F1E8; color:#151B45; border:3px dashed #151B45; display:grid; place-items:center;
+  font-family:var(--mono); font-size:12px; font-weight:600; z-index:4;
+  animation:chipdrop .34s cubic-bezier(.2,1.5,.4,1); box-shadow:0 3px 0 rgba(0,0,0,.25);}
+@keyframes chipdrop{from{transform:translateY(-70px) scale(1.5) rotate(-25deg); opacity:0;}to{transform:none; opacity:1;}}
+.chip.c1{background:#E23B16; color:#FFFDF7; border-color:#FFFDF7;}
+.chip.c2{background:#0B7A4B; color:#FFFDF7; border-color:#FFFDF7;}
+.chip.c3{background:#8B2E6B; color:#FFFDF7; border-color:#FFFDF7;}
+.chip.won{animation:chipwin .55s cubic-bezier(.2,1.5,.4,1) both;}
+@keyframes chipwin{0%{transform:none;}45%{transform:scale(1.45) rotate(12deg);}100%{transform:scale(1.15);}}
+.chip.lost{animation:chiplost .6s ease-in forwards;}
+@keyframes chiplost{to{transform:translateY(90px) rotate(40deg); opacity:0;}}
+@media (max-width:480px){
+  .table{grid-template-columns:1fr .8fr 1fr; gap:6px;}
+  .field{padding:15px 5px 26px;} .field .fname{font-size:10.5px;} .field .fpay{font-size:9.5px;}
+  .chip{width:34px;height:34px;margin-left:-17px;font-size:10px;bottom:-13px;}
+}
 .rbrow{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;}
 .rbbtn{padding:17px; border:2px solid var(--ink); cursor:pointer; font-family:var(--display); font-size:15.5px; font-weight:700; color:#FFFDF7; transition:transform .11s; box-shadow:3px 3px 0 var(--ink);}
 .rbbtn:active{transform:translate(3px,3px); box-shadow:none;}
 .rbbtn.red{background:#D0281B;} .rbbtn.black{background:#151B45;}
+
 .paytable{background:var(--card); border:2px solid var(--ink); margin-bottom:18px;}
-.paytable div{display:flex; justify-content:space-between; align-items:center; padding:11px 15px; border-bottom:1px solid var(--line); font-size:13.8px;}
+.paytable div{display:flex; justify-content:space-between; align-items:center; padding:11px 15px; border-bottom:1px solid var(--line); font-size:13.8px; gap:10px;}
 .paytable div:last-child{border-bottom:none;}
-.paytable b{font-family:var(--mono); font-size:12.5px;}
+.paytable b{font-family:var(--mono); font-size:12.5px; white-space:nowrap;}
 .paytable .rtp{background:var(--ink); color:var(--on-ink);}
 .paytable .jackrow{background:var(--hot); color:var(--on-ink); font-weight:600;}
+
 .shop{display:grid; gap:11px; margin-bottom:18px;}
 .shopit{display:grid; grid-template-columns:48px 1fr auto; gap:14px; align-items:center; background:var(--card); border:2px solid var(--ink); padding:14px 16px; box-shadow:var(--shadow);}
+.shopit.bought{border-color:var(--ok); box-shadow:3px 3px 0 var(--ok-line);}
 .si-ico{width:48px;height:48px;background:var(--blue);color:var(--on-ink); display:grid;place-items:center;font-size:19px;font-family:var(--display);font-weight:700;}
+.shopit.bought .si-ico{background:var(--ok);}
 .si-b b{display:block; font-size:15px; font-weight:600;}
 .si-b span{display:block; font-size:12.8px; color:var(--ink-2); line-height:1.45; margin-top:3px;}
 .si-b i{display:block; font-style:normal; font-family:var(--mono); font-size:9.5px; color:var(--ok); margin-top:5px;}
@@ -509,7 +569,6 @@ table.cmp td.who.zero{color:var(--ink-3);}
   .shopit{grid-template-columns:38px 1fr;}
   .shopit .btn{grid-column:2; justify-self:start;}
   .si-ico{width:38px;height:38px;font-size:16px;}
-  .reel{width:60px;height:72px;font-size:29px;}
 }
 
 /* ============ ОКНА ============ */
@@ -3518,36 +3577,57 @@ const HEB_VERBS = [
 /* =====================================================================
    6в. ЖЕТОНЫ, МАГАЗИН И КАЗИНО
    Жетоны зарабатываются только учёбой. Игры их исключительно тратят.
-   Азарт добавлен через РАЗБРОС (джекпот, удвоение), а не через выплаты:
-   ожидание осталось честным, и на вкладке «Почему ты в минусе» показано,
-   почему разброс ничего не меняет в среднем.
+   Азарт добавлен через РАЗБРОС (джекпот, зеро ×36, удвоение), а не через
+   выплаты: возврат честный и посчитан на вкладке «Почему ты в минусе».
    ===================================================================== */
 const COIN_START = 50;
-const JACK = "∞";
-const SLOT_SYM = ["Σ","π","√","Δ","x²",JACK];
-const RED = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-const BETS = [10,20,50];
 
-/* 1 исход из 216 — джекпот ×60, 5 — тройка ×8, 90 — пара ×1,2.
-   (60 + 5·8 + 90·1,2) / 216 = 208/216 = 96,3 % возврата. */
+/* Наборы символов для барабанов. Джекпот — всегда последний символ. */
+const SLOT_SETS = {
+  base:  ["Σ","π","√","Δ","x²","∞"],
+  greek: ["α","β","γ","θ","λ","Ω"],
+  geo:   ["△","□","○","∠","⊥","≡"]
+};
+const SET_NAMES = {base:"Математика", greek:"Греческий", geo:"Геометрия"};
+function slotSyms(){ return SLOT_SETS[ST.slotSet] || SLOT_SETS.base; }
+function jackSym(){ const a = slotSyms(); return a[a.length-1]; }
+
+/* Настоящий порядок секторов европейского колеса */
+const WHEEL = [0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,
+               10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+const RED = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+const SECTOR = 360 / 37;
+function colorOf(n){ return n === 0 ? "zero" : (RED.includes(n) ? "red" : "black"); }
+
+const BETS_BASE = [10,20,50], BETS_HIGH = [10,20,50,100,250];
+function bets(){ return have("high") ? BETS_HIGH : BETS_BASE; }
+
+/* Слот: 1 исход из 216 — джекпот ×60, 5 — тройка ×8, 90 — пара ×1,2.
+   (60 + 5·8 + 90·1,2) / 216 = 208/216 = 96,3 % возврата.
+   Рулетка: и цвет ×2 при 18/37, и зеро ×36 при 1/37 дают 36/37 = 97,3 %. */
 const PAY_JACK = 60, PAY_TRIO = 8, PAY_DUO = 1.2;
+const PAY_COLOR = 2, PAY_ZERO = 36;
 const MAX_GAMBLE = 3;
 
 const SHOP = [
- {id:"fifty",  icon:"½",  name:"50 на 50",        price:25,
+ {id:"fifty",  icon:"½",  name:"50 на 50",         price:25,  qty:1,
   desc:"Убирает один неверный вариант в проверке шага. Ответ не подсказывает — только сужает выбор."},
- {id:"shield", icon:"⛊",  name:"Щит серии",       price:40,
-  desc:"Одна ошибка в тренажёре не обнулит серию. Срабатывает сам, когда нужен."},
- {id:"double", icon:"×2", name:"Двойная награда", price:50,
-  desc:"Следующие 10 верных ответов приносят вдвое больше жетонов."},
- {id:"color",  icon:"◕",  name:"Цвет профиля",    price:60, once:true,
-  desc:"Открывает выбор цвета аватарки в разделе «Профили»."}
+ {id:"respin", icon:"↻",  name:"Перекрутка",       price:35,  qty:1,
+  desc:"Крутит барабаны заново, не списывая ставку. Расходуется на проигранном спине."},
+ {id:"insure", icon:"⛨",  name:"Страховка от зеро", price:50, qty:3,
+  desc:"Выпал зеро при ставке на цвет — половина ставки возвращается. Настоящее правило европейской рулетки."},
+ {id:"chip",   icon:"◉",  name:"Свой цвет",        price:60,  once:true,
+  desc:"Открывает выбор цвета фишки и аватарки в разделе «Профили»."},
+ {id:"skins",  icon:"⁂",  name:"Набор символов",   price:100, once:true,
+  desc:"Барабаны на греческих буквах или геометрических знаках вместо математических."},
+ {id:"high",   icon:"↑",  name:"Высокие ставки",   price:150, once:true,
+  desc:"Открывает ставки 100 и 250. Разброс вырастает круто, возврат остаётся тем же."}
 ];
 
 /* ---- счёт ---- */
 function coins(){ if(typeof ST.coins !== "number") ST.coins = COIN_START; return ST.coins; }
 function inv(){ if(!ST.inv) ST.inv = {}; return ST.inv; }
-function cas(){ if(!ST.cas) ST.cas = {bet:0, won:0, slot:0, rb:0, jack:0, best:0}; return ST.cas; }
+function cas(){ if(!ST.cas) ST.cas = {bet:0, won:0, slot:0, rb:0, jack:0, zero:0}; return ST.cas; }
 function have(id){ return inv()[id] || 0; }
 const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -3557,12 +3637,12 @@ function drawCoins(anim){
   const to = coins(), from = parseInt(el.textContent, 10);
   const b = document.getElementById("coinBox");
   if(b) b.classList.toggle("empty", to <= 0);
-  if(!anim || REDUCED || isNaN(from) || from===to){ el.textContent = to; return; }
+  if(!anim || REDUCED || isNaN(from) || from === to){ el.textContent = to; return; }
   const t0 = performance.now(), d = 500;
   const step = now =>{
-    const k = Math.min(1, (now-t0)/d);
-    el.textContent = Math.round(from + (to-from)*(1-Math.pow(1-k,3)));
-    if(k<1) requestAnimationFrame(step);
+    const k = Math.min(1, (now - t0) / d);
+    el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+    if(k < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
 }
@@ -3571,7 +3651,7 @@ function toast(text, good){
   const t = document.getElementById("toast");
   if(!t) return;
   t.textContent = text;
-  t.className = "toast on " + (good===false ? "bad" : "good");
+  t.className = "toast on " + (good === false ? "bad" : "good");
   clearTimeout(toast._t);
   toast._t = setTimeout(()=>{ t.className = "toast"; }, 2200);
 }
@@ -3592,17 +3672,16 @@ function beep(freq, dur, type, vol){
     o.start(); o.stop(AC.currentTime + (dur || 0.12));
   }catch(e){}
 }
-function fanfare(){
-  [523,659,784,1047].forEach((f,i)=> setTimeout(()=>beep(f, 0.22, "triangle", 0.07), i*110));
-}
+function fanfare(){ [523,659,784,1047].forEach((f,i)=> setTimeout(()=>beep(f,0.22,"triangle",0.07), i*110)); }
 function sadTone(){ beep(180, 0.22, "sine", 0.04); }
 
-/* ---- механика игр ---- */
+/* ---- механика ---- */
 function slotSpin(bet){
-  const r = [rpick(SLOT_SYM), rpick(SLOT_SYM), rpick(SLOT_SYM)];
+  const S = slotSyms(), J = jackSym();
+  const r = [rpick(S), rpick(S), rpick(S)];
   let pay = 0, note = "мимо", kind = "lose";
   if(r[0]===r[1] && r[1]===r[2]){
-    if(r[0]===JACK){ pay = Math.round(bet*PAY_JACK); note = "ДЖЕКПОТ"; kind = "jack"; }
+    if(r[0]===J){ pay = Math.round(bet*PAY_JACK); note = "ДЖЕКПОТ"; kind = "jack"; }
     else { pay = Math.round(bet*PAY_TRIO); note = "три одинаковых"; kind = "win"; }
   } else if(r[0]===r[1] || r[1]===r[2] || r[0]===r[2]){
     pay = Math.round(bet*PAY_DUO); note = "две одинаковых"; kind = "win";
@@ -3610,10 +3689,21 @@ function slotSpin(bet){
   return {reels:r, pay:pay, note:note, kind:kind};
 }
 function rbSpin(bet, pick){
-  const n = ri(0,36);
-  const color = n===0 ? "zero" : (RED.includes(n) ? "red" : "black");
-  const win = color === pick;
-  return {n:n, color:color, win:win, pay: win ? bet*2 : 0};
+  const n = WHEEL[ri(0, 36)];
+  const col = colorOf(n);
+  let pay = 0, note = "", insured = false;
+  if(pick === "zero"){
+    if(col === "zero"){ pay = bet * PAY_ZERO; note = "ЗЕРО! ×" + PAY_ZERO; }
+    else note = "не зеро";
+  } else {
+    if(col === pick){ pay = bet * PAY_COLOR; note = "твой цвет"; }
+    else if(col === "zero" && have("insure") > 0){
+      pay = Math.floor(bet / 2); note = "зеро — страховка вернула половину"; insured = true;
+    }
+    else if(col === "zero") note = "зеро — забирает заведение";
+    else note = "не твой цвет";
+  }
+  return {n:n, color:col, pay:pay, note:note, insured:insured, win:pay > 0};
 }
 
 /* ---- состояние страницы ---- */
@@ -3621,17 +3711,18 @@ let CT = "slot";
 let CB = 10;
 let CLAST = null;
 let SPINNING = false;
-let GAMBLE = null;   /* {amount, step} — выигрыш, который ещё не забрали */
+let GAMBLE = null;
+let RBPICK = null;   /* поле, на котором стоит фишка */
 
 function casTabs(){
-  const tabs = [["slot","Однорукий бандит"],["rb","Красное / чёрное"],["shop","Магазин"],["math","Почему ты в минусе"]];
+  const tabs = [["slot","Автомат"],["rb","Рулетка"],["shop","Магазин"],["math","Почему ты в минусе"]];
   return '<div class="gtypes">' + tabs.map(t=>
     '<button class="gtype'+(CT===t[0]?" on":"")+'" data-act="ctab" data-c="'+t[0]+'">'+t[1]+'</button>').join("")
-    + '<button class="gtype snd'+(ST.sound?" on":"")+'" data-act="csound" title="Звук">'+(ST.sound?"♪ звук":"звук выкл")+'</button></div>';
+    + '<button class="gtype snd'+(ST.sound?" on":"")+'" data-act="csound">'+(ST.sound?"♪ звук":"звук выкл")+'</button></div>';
 }
 function betRow(){
   return '<div class="gtop"><span class="srail-note">ставка</span><div class="langsw">'
-    + BETS.map(b=>'<button data-act="cbet" data-b="'+b+'"'+(CB===b?' class="on"':"")+'>'+b+'</button>').join("")
+    + bets().map(b=>'<button data-act="cbet" data-b="'+b+'"'+(CB===b?' class="on"':"")+'>'+b+'</button>').join("")
     + '</div></div>';
 }
 function casBank(){
@@ -3640,25 +3731,35 @@ function casBank(){
     + '<span><b>'+coins()+'</b> в банке</span>'
     + '<span><b>'+c.bet+'</b> поставлено</span>'
     + '<span><b>'+c.won+'</b> вернулось</span>'
-    + '<span style="color:'+(diff<0?"var(--no)":"var(--ok)")+'"><b style="color:inherit">'
-    +   (diff>0?"+":"")+diff+'</b> итог</span>'
+    + '<span style="color:'+(diff<0?"var(--hot)":"var(--ok)")+'"><b style="color:inherit">'+(diff>0?"+":"")+diff+'</b> итог</span>'
     + (c.jack ? '<span><b>'+c.jack+'</b> джекпотов</span>' : "")
+    + (c.zero ? '<span><b>'+c.zero+'</b> зеро</span>' : "")
     + '</div>';
 }
-
 function gamblePanel(){
   if(!GAMBLE) return "";
   const left = MAX_GAMBLE - GAMBLE.step;
   return '<div class="gamble">'
     + '<div class="gm-top">На кону <b>'+GAMBLE.amount+'</b> ж'
-    +   (GAMBLE.step ? ' <i>· удвоено '+GAMBLE.step+' раз'+(GAMBLE.step>1?"а":"")+'</i>' : "")+'</div>'
+    + (GAMBLE.step ? ' <i>· удвоено '+GAMBLE.step+' раз'+(GAMBLE.step>1?"а":"")+'</i>' : "")+'</div>'
     + '<p>Честные 50 на 50: угадаешь цвет — удвоение, не угадаешь — сгорает всё. Осталось попыток: '+left+'.</p>'
     + '<div class="gm-row">'
     +   '<button class="rbbtn red" data-act="cgam" data-p="red">Красное ×2</button>'
     +   '<button class="rbbtn black" data-act="cgam" data-p="black">Чёрное ×2</button>'
     + '</div>'
-    + '<button class="btn btn-p gm-take" data-act="ctake">Забрать '+GAMBLE.amount+' ж</button>'
-    + '</div>';
+    + '<button class="btn btn-p gm-take" data-act="ctake">Забрать '+GAMBLE.amount+' ж</button></div>';
+}
+
+/* колесо рисуем секторами прямо в CSS */
+function wheelGradient(){
+  let stops = [], a = 0;
+  for(const n of WHEEL){
+    const c = colorOf(n);
+    const col = c === "zero" ? "#0B7A4B" : (c === "red" ? "#D0281B" : "#151B45");
+    stops.push(col + " " + a.toFixed(3) + "deg " + (a + SECTOR).toFixed(3) + "deg");
+    a += SECTOR;
+  }
+  return "conic-gradient(" + stops.join(",") + ")";
 }
 
 function drawCasino(){
@@ -3666,100 +3767,125 @@ function drawCasino(){
   if(!box) return;
   let h = casTabs();
 
-  if(CT==="slot"){
-    const r = CLAST && CLAST.game==="slot" ? CLAST : null;
+  /* ---------- автомат ---------- */
+  if(CT === "slot"){
+    const r = CLAST && CLAST.game === "slot" ? CLAST : null;
+    const S = slotSyms(), J = jackSym();
     h += betRow()
-      + '<div class="hcard'+(r&&r.kind==="jack"?" jack":"")+'" id="slotCard">'
-      + '<div class="ask">три барабана · '+JACK+JACK+JACK+' — джекпот ×'+PAY_JACK+'</div>'
-      + '<div class="reels" id="reels">'
-      +   (r ? r.reels.map(s=>'<span class="reel'+(s===JACK?" gold":"")+'">'+s+'</span>').join("")
-             : SLOT_SYM.slice(0,3).map(s=>'<span class="reel dim">'+s+'</span>').join(""))
+      + '<div class="cab'+(r && r.kind === "jack" ? " jack" : "")+'" id="slotCard">'
+      +   '<div class="cab-top"><span>три барабана</span><b>'+J+J+J+' — джекпот ×'+PAY_JACK+'</b></div>'
+      +   '<div class="cab-body">'
+      +     '<div class="reels" id="reels">'
+      +       (r ? r.reels.map(s=>'<span class="reel'+(s===J?" gold":"")+'">'+s+'</span>').join("")
+                 : S.slice(0,3).map(s=>'<span class="reel dim">'+s+'</span>').join(""))
+      +     '</div>'
+      +     '<div class="lever" id="lever"><i></i><b></b></div>'
+      +   '</div>'
+      +   '<div class="spinres '+(r ? (r.pay>0?"win":"lose") : "")+'" id="spinres">'
+      +     (r ? r.note + (r.pay>0 ? " · +"+r.pay+" ж" : " · −"+r.bet+" ж") : "&nbsp;")
+      +   '</div>'
       + '</div>'
-      + '<div class="spinres '+(r ? (r.pay>0?"win":"lose") : "")+'" id="spinres">'
-      +   (r ? r.note + (r.pay>0 ? " · +"+r.pay+" ж" : " · −"+r.bet+" ж") : "&nbsp;")
-      + '</div></div>'
       + gamblePanel()
       + (GAMBLE ? "" :
           '<div class="paytable">'
-          + '<div class="jackrow"><span>'+JACK+' '+JACK+' '+JACK+' — джекпот</span><b>×'+PAY_JACK+'</b></div>'
+          + '<div class="jackrow"><span>'+J+' '+J+' '+J+' — джекпот</span><b>×'+PAY_JACK+'</b></div>'
           + '<div><span>три одинаковых</span><b>×'+PAY_TRIO+'</b></div>'
           + '<div><span>две одинаковых</span><b>×'+PAY_DUO+'</b></div>'
           + '<div><span>всё разное</span><b>0</b></div>'
           + '<div class="rtp"><span>возврат игроку</span><b>96,3 %</b></div>'
           + '</div>'
-          + '<div class="stepnav"><button class="btn btn-g" data-act="ctab" data-c="math">Почему 96,3 %</button>'
-          +   '<span class="gate"></span>'
-          +   '<button class="btn btn-p big" data-act="cspin" id="spinBtn">Крутить за '+CB+' ж</button></div>')
+          + (have("skins") ? '<div class="gtypes">' + Object.keys(SLOT_SETS).map(k=>
+              '<button class="gtype'+((ST.slotSet||"base")===k?" on":"")+'" data-act="cset" data-s="'+k+'">'
+              + SET_NAMES[k]+' '+SLOT_SETS[k].slice(0,3).join("")+'</button>').join("") + '</div>' : "")
+          + '<div class="stepnav">'
+          +   '<button class="btn btn-g" data-act="ctab" data-c="math">Почему 96,3 %</button>'
+          +   '<span class="gate">'+(have("respin") ? "перекруток: "+have("respin") : "")+'</span>'
+          +   '<button class="btn btn-p big" data-act="cspin" id="spinBtn">Крутить за '+CB+' ж</button>'
+          + '</div>')
       + casBank();
   }
 
-  if(CT==="rb"){
-    const r = CLAST && CLAST.game==="rb" ? CLAST : null;
+  /* ---------- рулетка ---------- */
+  if(CT === "rb"){
+    const r = CLAST && CLAST.game === "rb" ? CLAST : null;
+    const fields = [["red","КРАСНОЕ","×"+PAY_COLOR],["zero","ЗЕРО","×"+PAY_ZERO],["black","ЧЁРНОЕ","×"+PAY_COLOR]];
     h += betRow()
-      + '<div class="hcard" id="rbCard"><div class="ask">37 ячеек: 18 красных, 18 чёрных и один зелёный ноль</div>'
-      + '<div class="ball '+(r?r.color:"idle")+'" id="ball">'+(r ? r.n : "?")+'</div>'
+      + '<div class="wheel-wrap">'
+      +   '<div class="pointer"></div>'
+      +   '<div class="wheel" id="wheel" style="background:'+wheelGradient()+'"></div>'
+      +   '<div class="wheel-mid '+(r ? r.color : "idle")+'" id="wheelNum">'+(r ? r.n : "?")+'</div>'
+      + '</div>'
       + '<div class="spinres '+(r ? (r.win?"win":"lose") : "")+'" id="rbres">'
-      +   (r ? (r.color==="zero" ? "ноль — забирает заведение" : (r.win?"твой цвет":"не твой цвет"))
-             + (r.win ? " · +"+r.pay+" ж" : " · −"+r.bet+" ж") : "&nbsp;")
-      + '</div></div>'
-      + '<div class="rbrow">'
-      +   '<button class="rbbtn red" data-act="crb" data-p="red">Красное</button>'
-      +   '<button class="rbbtn black" data-act="crb" data-p="black">Чёрное</button>'
+      +   (r ? r.note + (r.pay>0 ? " · +"+r.pay+" ж" : " · −"+r.bet+" ж") : "&nbsp;")
+      + '</div>'
+      + '<div class="table">' + fields.map(f=>
+          '<button class="field '+f[0]+(RBPICK===f[0]?" picked":"")+'" data-act="cpick" data-p="'+f[0]+'">'
+          + '<span class="fname">'+f[1]+'</span><span class="fpay">'+f[2]+'</span>'
+          + (RBPICK===f[0] ? '<span class="chip'+(ST.chipColor?" c"+ST.chipColor:"")+'">'+CB+'</span>' : '')
+          + '</button>').join("") + '</div>'
+      + '<div class="stepnav">'
+      +   '<span class="gate">'+(have("insure") ? "страховок от зеро: "+have("insure") : "шанс на цвет 18 из 37")+'</span>'
+      +   '<button class="btn btn-p big" data-act="cspinrb" id="rbBtn"'+(RBPICK?"":" disabled")+'>'
+      +     (RBPICK ? "Крутить · "+CB+" ж" : "Поставь фишку")+'</button>'
       + '</div>'
       + '<div class="paytable">'
-      +   '<div><span>угадал цвет</span><b>×2</b></div>'
-      +   '<div><span>шанс выиграть</span><b>18 из 37</b></div>'
-      +   '<div class="rtp"><span>возврат игроку</span><b>97,3 %</b></div>'
+      +   '<div><span>красное или чёрное</span><b>×'+PAY_COLOR+' · 18 из 37</b></div>'
+      +   '<div class="jackrow"><span>зеро</span><b>×'+PAY_ZERO+' · 1 из 37</b></div>'
+      +   '<div class="rtp"><span>возврат у обеих ставок</span><b>97,3 %</b></div>'
       + '</div>'
       + casBank();
   }
 
-  if(CT==="shop"){
-    h += '<div class="pintro">Жетоны зарабатываются только задачами. Здесь их можно потратить на то, что и правда помогает.</div>'
+  /* ---------- магазин ---------- */
+  if(CT === "shop"){
+    h += '<div class="pintro">Жетоны зарабатываются только задачами. Здесь они превращаются в то, что меняет игру и приложение.</div>'
       + '<div class="shop">' + SHOP.map(it=>{
         const owned = have(it.id), blocked = it.once && owned;
-        return '<div class="shopit"><div class="si-ico">'+it.icon+'</div>'
+        return '<div class="shopit'+(blocked?" bought":"")+'">'
+          + '<div class="si-ico">'+it.icon+'</div>'
           + '<div class="si-b"><b>'+it.name+'</b><span>'+it.desc+'</span>'
-          +   (owned ? '<i>'+(it.once ? "уже куплено" : "в запасе: "+owned)+'</i>' : "")+'</div>'
-          + '<button class="btn '+(blocked?"btn-g":"btn-p")+'" data-act="cbuy" data-i="'+it.id+'"'
-          +   (blocked?" disabled":"")+'>'+(blocked ? "есть" : it.price+" ж")+'</button></div>';
+          + (owned ? '<i>'+(it.once ? "куплено" : "в запасе: "+owned)+'</i>' : "")+'</div>'
+          + '<button class="btn '+(blocked?"btn-g":"btn-p")+'" data-act="cbuy" data-i="'+it.id+'"'+(blocked?" disabled":"")+'>'
+          + (blocked ? "есть" : it.price+" ж")+'</button></div>';
       }).join("") + '</div>' + casBank();
   }
 
-  if(CT==="math"){
+  /* ---------- математика ---------- */
+  if(CT === "math"){
     const c = cas(), spins = c.slot + c.rb;
-    const realRtp = c.bet ? (c.won/c.bet*100).toFixed(1).replace(".",",") : null;
+    const real = c.bet ? (c.won/c.bet*100).toFixed(1).replace(".",",") : null;
     h += '<div class="rule"><span class="lab">Главное</span>Обе игры устроены так, что в среднем ты теряешь. Это не подкрутка — это арифметика, и её можно посчитать самому.</div>'
       + '<h3 class="step-title">Ожидаемая выплата</h3>'
       + '<p class="step-goal">Сколько жетонов возвращается на каждый поставленный — в среднем, на длинной дистанции.</p>'
-      + '<div class="sheet"><div class="ex-lab">Однорукий бандит</div>'
+      + '<div class="sheet"><div class="ex-lab">Автомат</div>'
       +   '<div class="ex-q">6 символов, 3 барабана — всего $6^3=216$ исходов</div>'
-      +   '<div class="wline"><span class="n">1</span><span>Джекпот $'+JACK+JACK+JACK+'$ — ровно 1 исход из 216, выплата ×'+PAY_JACK+'.</span></div>'
-      +   '<div class="wline"><span class="n">2</span><span>Другие три одинаковых — 5 исходов, выплата ×'+PAY_TRIO+'.</span></div>'
+      +   '<div class="wline"><span class="n">1</span><span>Джекпот — ровно 1 исход из 216, выплата ×'+PAY_JACK+'.</span></div>'
+      +   '<div class="wline"><span class="n">2</span><span>Другие три одинаковых — 5 исходов, ×'+PAY_TRIO+'.</span></div>'
       +   '<div class="wline"><span class="n">3</span><span>Все разные: $6\\cdot5\\cdot4=120$ исходов, выплата 0.</span></div>'
-      +   '<div class="wline"><span class="n">4</span><span>Значит ровно две одинаковых: $216-6-120=90$ исходов, выплата ×'+PAY_DUO+'.</span></div>'
+      +   '<div class="wline"><span class="n">4</span><span>Значит ровно две одинаковых: $216-6-120=90$ исходов, ×'+PAY_DUO+'.</span></div>'
       +   '<div class="wline"><span class="n">5</span><span>$\\frac{1\\cdot60+5\\cdot8+90\\cdot1{,}2}{216}=\\frac{208}{216}=0{,}963$</span></div>'
-      +   '<div class="ex-ans">На каждые 100 жетонов возвращается 96,3 — заведение забирает 3,7</div></div>'
-      + '<div class="sheet"><div class="ex-lab">Красное / чёрное</div>'
+      +   '<div class="ex-ans">Возвращается 96,3 из каждых 100 — заведение забирает 3,7</div></div>'
+      + '<div class="sheet"><div class="ex-lab">Рулетка: две ставки, один перевес</div>'
       +   '<div class="ex-q">37 ячеек: 18 красных, 18 чёрных, один зелёный ноль</div>'
-      +   '<div class="wline"><span class="n">1</span><span>Кажется, что шанс 50 на 50. Но красных не 18 из 36, а 18 из 37.</span></div>'
-      +   '<div class="wline"><span class="n">2</span><span>$\\frac{18}{37}\\cdot2=0{,}973$</span></div>'
-      +   '<div class="ex-ans">Весь бизнес держится на одной зелёной ячейке: она забирает 2,7 %</div></div>'
+      +   '<div class="wline"><span class="n">1</span><span>Цвет: $\\frac{18}{37}\\cdot2=\\frac{36}{37}=0{,}973$</span></div>'
+      +   '<div class="wline"><span class="n">2</span><span>Зеро: $\\frac{1}{37}\\cdot36=\\frac{36}{37}=0{,}973$</span></div>'
+      +   '<div class="wline"><span class="n">3</span><span>Числа совпали не случайно: выплата всегда на единицу меньше, чем «справедливая». Именно эта единица и есть весь доход заведения.</span></div>'
+      +   '<div class="ex-ans">Ставь на цвет или на зеро — перевес заведения одинаковый, 2,7 %</div></div>'
       + '<h3 class="step-title">Разброс — это не выигрыш</h3>'
-      + '<p class="step-goal">Самое важное во всей этой математике: азарт можно накрутить как угодно, не изменив среднего ни на копейку.</p>'
-      + '<div class="sheet"><div class="ex-lab">Джекпот и удвоение</div>'
+      + '<p class="step-goal">Азарт можно накрутить как угодно, не изменив среднего ни на копейку.</p>'
+      + '<div class="sheet"><div class="ex-lab">Зеро, джекпот и удвоение</div>'
       +   '<div class="ex-q">Почему от них не становится выгоднее</div>'
-      +   '<div class="wline"><span class="n">1</span><span>Джекпот ×'+PAY_JACK+' выпадает 1 раз из 216. Он даёт сильные эмоции, но в формуле выше это всего одно слагаемое из трёх — возврат остался 96,3 %.</span></div>'
-      +   '<div class="wline"><span class="n">2</span><span>Кнопка «рискнуть» вообще честная: $0{,}5\\cdot2=1$. Ожидание она не меняет **ни на сколько**.</span></div>'
-      +   '<div class="wline"><span class="n">3</span><span>Удвоиться три раза подряд: шанс $\\left(\\frac12\\right)^3=\\frac18$, а выигрыш ×8. Среднее снова 1.</span></div>'
-      +   '<div class="wline"><span class="n">4</span><span>Меняется только **разброс**: реже, но крупнее. Именно он создаёт ощущение «вот-вот повезёт».</span></div>'
-      +   '<div class="ex-ans">Разброс делает игру острее, а не выгоднее</div></div>'
+      +   '<div class="wline"><span class="n">1</span><span>Зеро платит ×36, но выпадает раз из 37. Возврат тот же, что у скучного «красного».</span></div>'
+      +   '<div class="wline"><span class="n">2</span><span>Кнопка «рискнуть» честная: $0{,}5\\cdot2=1$. Ожидание не меняет **ни на сколько**.</span></div>'
+      +   '<div class="wline"><span class="n">3</span><span>Удвоиться трижды: шанс $\\left(\\frac12\\right)^3=\\frac18$, выигрыш ×8. Среднее снова 1.</span></div>'
+      +   '<div class="wline"><span class="n">4</span><span>Высокие ставки тоже ничего не меняют: множитель тот же, просто качает сильнее.</span></div>'
+      +   '<div class="ex-ans">Меняется только разброс — он и создаёт ощущение «вот-вот повезёт»</div></div>'
       + '<div class="warn"><span class="lab">Про «системы»</span>Удваивать ставку после проигрыша бесполезно: спины независимы, прошлые исходы на следующий не влияют. Матожидание одной ставки отрицательное, а сумма отрицательных величин отрицательна при любом порядке.</div>'
       + '<h3 class="step-title">Твои цифры</h3>'
       + (spins
-          ? '<p class="step-goal">Спинов: '+spins+' ('+c.slot+' в автомате, '+c.rb+' на цвете). Поставлено '+c.bet+', вернулось '+c.won+' — фактический возврат <b>'+realRtp+' %</b>.</p>'
+          ? '<p class="step-goal">Спинов: '+spins+' ('+c.slot+' в автомате, '+c.rb+' на рулетке). Поставлено '+c.bet+', вернулось '+c.won+' — фактический возврат <b>'+real+' %</b>.</p>'
             + '<div class="pintro">Чем больше спинов, тем ближе это число к расчётному — закон больших чисел. На десятке можно быть в плюсе, на тысяче почти наверняка в минусе.</div>'
-          : '<p class="step-goal">Ты ещё не играл. Сыграй десяток раз и вернись — увидишь, как твой фактический возврат ползёт к расчётному.</p>')
+          : '<p class="step-goal">Ты ещё не играл. Сыграй десяток раз и вернись — увидишь, как фактический возврат ползёт к расчётному.</p>')
       + casBank();
   }
 
@@ -3779,33 +3905,33 @@ function showCasino(){
   window.scrollTo({top:0, behavior:"smooth"});
 }
 
-/* ---- барабаны с анимацией ---- */
-function doSpin(){
+/* ---- автомат ---- */
+function doSpin(free){
   if(SPINNING || GAMBLE) return;
-  if(coins() < CB){ toast("Не хватает жетонов. Заработать можно только задачами.", false); return; }
+  if(!free && coins() < CB){ toast("Не хватает жетонов. Заработать можно только задачами.", false); return; }
   SPINNING = true;
-  ST.coins -= CB; save(); drawCoins(true);
+  if(!free){ ST.coins -= CB; cas().bet += CB; save(); drawCoins(true); }
   const r = slotSpin(CB);
-  const c = cas();
-  c.bet += CB; c.slot++;
+  cas().slot++;
 
   const btn = document.getElementById("spinBtn");
   if(btn){ btn.disabled = true; btn.textContent = "крутится…"; }
+  const lever = document.getElementById("lever");
+  if(lever){ lever.classList.add("pull"); setTimeout(()=>lever.classList.remove("pull"), 420); }
   const res = document.getElementById("spinres");
   if(res){ res.textContent = "\u00a0"; res.className = "spinres"; }
 
+  const S = slotSyms(), J = jackSym();
   const cells = [...document.querySelectorAll("#reels .reel")];
   const stopAt = REDUCED ? [60,120,180] : [800, 1150, 1500];
   cells.forEach(el=>{ el.classList.remove("dim","gold","stop"); el.classList.add("spin"); });
-
   cells.forEach((el, i)=>{
-    const iv = setInterval(()=>{ el.textContent = rpick(SLOT_SYM); }, 55);
+    const iv = setInterval(()=>{ el.textContent = rpick(S); }, 55);
     setTimeout(()=>{
       clearInterval(iv);
       el.textContent = r.reels[i];
-      el.classList.remove("spin");
-      el.classList.add("stop");
-      if(r.reels[i]===JACK) el.classList.add("gold");
+      el.classList.remove("spin"); el.classList.add("stop");
+      if(r.reels[i] === J) el.classList.add("gold");
       beep(340 + i*90, 0.07, "square", 0.05);
       if(i === cells.length-1) endSpin(r);
     }, stopAt[i]);
@@ -3815,113 +3941,142 @@ function doSpin(){
 function endSpin(r){
   SPINNING = false;
   CLAST = {game:"slot", reels:r.reels, pay:r.pay, note:r.note, kind:r.kind, bet:CB};
-  /* пишем итог сразу, не дожидаясь перерисовки — иначе при джекпоте
-     секунду горит вспышка, а что выпало, ещё не написано */
   const res = document.getElementById("spinres");
   if(res){
     res.className = "spinres " + (r.pay>0 ? "win" : "lose");
     res.textContent = r.note + (r.pay>0 ? " · +"+r.pay+" ж" : " · −"+CB+" ж");
   }
   if(r.kind === "jack"){
-    cas().jack++;
-    fanfare();
+    cas().jack++; fanfare();
     const card = document.getElementById("slotCard");
     if(card) card.classList.add("jack");
   } else if(r.pay > 0){
-    beep(660, 0.16, "triangle", 0.06);
-    setTimeout(()=>beep(880, 0.18, "triangle", 0.05), 120);
+    beep(660,0.16,"triangle",0.06); setTimeout(()=>beep(880,0.18,"triangle",0.05), 120);
   } else {
     sadTone();
-  }
-  if(r.pay > 0){
-    GAMBLE = {amount:r.pay, step:0};   /* выигрыш пока не зачислен — можно рискнуть */
-  } else {
-    cas().won += 0;
-  }
-  save();
-  setTimeout(()=>drawCasino(), r.kind==="jack" ? 900 : 350);
-}
-
-/* ---- удвоение: честные 50 на 50 ---- */
-function doGamble(pick){
-  if(!GAMBLE) return;
-  const win = Math.random() < 0.5;
-  if(win){
-    GAMBLE.amount *= 2;
-    GAMBLE.step++;
-    beep(700 + GAMBLE.step*120, 0.18, "triangle", 0.06);
-    if(GAMBLE.step >= MAX_GAMBLE){
-      toast("Максимум удвоений — забираем " + GAMBLE.amount + " ж", true);
-      doTake();
+    /* проигрыш — предлагаем перекрутку, если куплена */
+    if(have("respin") > 0){
+      setTimeout(()=>{
+        if(confirm("Мимо. Потратить перекрутку и крутить заново бесплатно?\n\nОсталось: " + have("respin"))){
+          inv().respin--; if(inv().respin <= 0) delete inv().respin;
+          save(); doSpin(true);
+        } else drawCasino();
+      }, 400);
+      if(r.pay > 0) GAMBLE = {amount:r.pay, step:0};
+      save();
       return;
     }
-    toast("Угадал! На кону " + GAMBLE.amount + " ж", true);
+  }
+  if(r.pay > 0) GAMBLE = {amount:r.pay, step:0};
+  save();
+  setTimeout(()=>drawCasino(), r.kind === "jack" ? 900 : 350);
+}
+
+/* ---- удвоение ---- */
+function doGamble(pick){
+  if(!GAMBLE) return;
+  if(Math.random() < 0.5){
+    GAMBLE.amount *= 2; GAMBLE.step++;
+    beep(700 + GAMBLE.step*120, 0.18, "triangle", 0.06);
+    if(GAMBLE.step >= MAX_GAMBLE){ toast("Максимум удвоений — забираем "+GAMBLE.amount+" ж", true); doTake(); return; }
+    toast("Угадал! На кону "+GAMBLE.amount+" ж", true);
   } else {
-    sadTone();
-    toast("Сгорело: " + GAMBLE.amount + " ж", false);
-    GAMBLE = null;
-    save();
+    sadTone(); toast("Сгорело: "+GAMBLE.amount+" ж", false);
+    GAMBLE = null; save();
   }
   drawCasino();
 }
 function doTake(){
   if(!GAMBLE) return;
   const amt = GAMBLE.amount;
-  ST.coins += amt;
-  cas().won += amt;
-  GAMBLE = null;
+  ST.coins += amt; cas().won += amt; GAMBLE = null;
   save(); drawCoins(true); drawCasino();
   beep(880, 0.2, "sine", 0.05);
 }
 
-/* ---- рулетка с раскруткой ---- */
-function doRb(pick){
+/* ---- рулетка: фишка и колесо ---- */
+function doPick(p){
   if(SPINNING) return;
+  RBPICK = p;
+  beep(520, 0.06, "square", 0.04);
+  drawCasino();
+}
+
+function doSpinRB(){
+  if(SPINNING || !RBPICK) return;
   if(coins() < CB){ toast("Не хватает жетонов. Заработать можно только задачами.", false); return; }
   SPINNING = true;
-  ST.coins -= CB; save(); drawCoins(true);
-  const r = rbSpin(CB, pick);
-  const c = cas();
-  c.bet += CB; c.rb++; c.won += r.pay;
+  ST.coins -= CB; cas().bet += CB; cas().rb++;
+  save(); drawCoins(true);
 
-  const ball = document.getElementById("ball");
+  const r = rbSpin(CB, RBPICK);
+  if(r.insured){ inv().insure--; if(inv().insure <= 0) delete inv().insure; }
+  if(r.color === "zero") cas().zero++;
+
+  const btn = document.getElementById("rbBtn");
+  if(btn){ btn.disabled = true; btn.textContent = "колесо крутится…"; }
   const res = document.getElementById("rbres");
   if(res){ res.textContent = "\u00a0"; res.className = "spinres"; }
-  document.querySelectorAll('[data-act="crb"]').forEach(b=> b.disabled = true);
+  const mid = document.getElementById("wheelNum");
+  if(mid){ mid.textContent = "?"; mid.className = "wheel-mid idle"; }
+  document.querySelectorAll(".field").forEach(f=> f.classList.add("locked"));
 
-  let t = 0;
-  const tick = ()=>{
-    const n = ri(0,36);
-    if(ball){
-      ball.textContent = n;
-      ball.className = "ball " + (n===0 ? "zero" : (RED.includes(n) ? "red" : "black"));
-    }
-    beep(500 + t*14, 0.03, "square", 0.03);
-    t++;
-    const delay = 45 + t*t*1.1;
-    if(delay < 300 && !REDUCED) setTimeout(tick, delay);
-    else endRb(r);
-  };
-  tick();
+  const wheel = document.getElementById("wheel");
+  const idx = WHEEL.indexOf(r.n);
+  /* докручиваем шесть оборотов и ставим нужный сектор под стрелку */
+  const jitter = (Math.random() - 0.5) * SECTOR * 0.55;
+  const target = 360*6 - idx*SECTOR - SECTOR/2 + jitter;
+  const dur = REDUCED ? 200 : 4200;
+
+  if(wheel){
+    wheel.style.transition = "none";
+    wheel.style.transform = "rotate(0deg)";
+    void wheel.offsetHeight;
+    wheel.style.transition = "transform " + dur + "ms cubic-bezier(.12,.72,.16,1)";
+    wheel.style.transform = "rotate(" + target + "deg)";
+  }
+  /* тиканье замедляется вместе с колесом */
+  if(!REDUCED){
+    let t = 0;
+    const tick = ()=>{
+      beep(620 + ri(-40,40), 0.025, "square", 0.028);
+      t++;
+      const d = 60 + t*t*1.9;
+      if(d < 420) setTimeout(tick, d);
+    };
+    tick();
+  }
+  setTimeout(()=> endRB(r), dur + 120);
 }
-function endRb(r){
+
+function endRB(r){
   SPINNING = false;
-  CLAST = {game:"rb", n:r.n, color:r.color, win:r.win, pay:r.pay, bet:CB};
+  CLAST = {game:"rb", n:r.n, color:r.color, win:r.win, pay:r.pay, bet:CB, note:r.note};
   ST.coins += r.pay;
-  if(r.win){ beep(660,0.16,"triangle",0.06); setTimeout(()=>beep(880,0.18,"triangle",0.05), 120); }
+  cas().won += r.pay;
+
+  const mid = document.getElementById("wheelNum");
+  if(mid){ mid.textContent = r.n; mid.className = "wheel-mid " + r.color; }
+  const res = document.getElementById("rbres");
+  if(res){
+    res.className = "spinres " + (r.win ? "win" : "lose");
+    res.textContent = r.note + (r.pay > 0 ? " · +"+r.pay+" ж" : " · −"+CB+" ж");
+  }
+  const chip = document.querySelector(".field.picked .chip");
+  if(chip) chip.classList.add(r.win ? "won" : "lost");
+
+  if(r.color === "zero" && r.pay === 0) beep(240, 0.3, "sawtooth", 0.05);
+  else if(r.pay >= CB * 10) fanfare();
+  else if(r.win){ beep(660,0.16,"triangle",0.06); setTimeout(()=>beep(880,0.18,"triangle",0.05), 120); }
   else sadTone();
+
   save(); drawCoins(true);
-  setTimeout(()=>drawCasino(), 320);
+  setTimeout(()=>{ RBPICK = null; drawCasino(); }, r.pay >= CB*10 ? 1600 : 1100);
 }
 
 /* ---- начисления и покупки ---- */
 function earn(n, why){
   coins();
-  if(have("double") > 0){
-    n *= 2;
-    inv().double--;
-    if(inv().double <= 0) delete inv().double;
-  }
   ST.coins += n;
   save(); drawCoins(true);
   if(why) toast("+" + n + " ж — " + why, true);
@@ -3931,10 +4086,11 @@ function spend(n){
   ST.coins -= n; save(); drawCoins(true); return true;
 }
 function doBuy(id){
-  const it = SHOP.find(x=>x.id===id);
+  const it = SHOP.find(x=>x.id === id);
   if(!it || (it.once && have(id))) return;
   if(!spend(it.price)) return;
-  inv()[id] = (inv()[id] || 0) + (it.id==="double" ? 10 : 1);
+  inv()[id] = (inv()[id] || 0) + (it.qty || 1);
+  if(id === "high" && CB > 50){ CB = 50; }
   save(); drawCasino();
   beep(760, 0.14, "triangle", 0.05);
   toast("Куплено: " + it.name, true);
@@ -5553,7 +5709,9 @@ document.addEventListener("click", e=>{
     if(act==="cgam"){ doGamble(el.dataset.p); return; }
     if(act==="ctake"){ doTake(); return; }
     if(act==="csound"){ ST.sound = !ST.sound; save(); drawCasino(); if(ST.sound) beep(760,0.12,"triangle",0.05); return; }
-    if(act==="crb"){ doRb(el.dataset.p); return; }
+    if(act==="cpick"){ doPick(el.dataset.p); return; }
+    if(act==="cspinrb"){ doSpinRB(); return; }
+    if(act==="cset"){ ST.slotSet = el.dataset.s; save(); drawCasino(); return; }
     if(act==="cbuy"){ doBuy(el.dataset.i); return; }
     if(act==="pcolor"){
       const p2 = DB.profiles[el.dataset.p];
