@@ -571,6 +571,26 @@ table.cmp td.who.zero{color:var(--ink-faint);}
 
 
 /* ---- аккаунт и синхронизация ---- */
+.accbox{
+  background:var(--card); border:1px solid var(--accent-line); border-radius:var(--r);
+  padding:19px 21px; margin-top:22px; box-shadow:var(--shadow);
+  border-left:4px solid var(--accent);
+}
+.accbox.on{border-color:var(--ok-line); border-left-color:var(--ok);}
+.accbox .lab{
+  font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--accent); display:flex; align-items:center; gap:8px;
+}
+.accbox.on .lab{color:var(--ok);}
+.accbox h3{font-size:20px; margin:7px 0 8px;}
+.accbox p{margin:0 0 14px; color:var(--ink-soft); font-size:14.6px; max-width:62ch;}
+.accbox .acts{display:flex; gap:9px; flex-wrap:wrap; align-items:center;}
+.accbox .codechip{
+  font-family:var(--mono); font-size:18px; font-weight:600; letter-spacing:.12em;
+  background:var(--ok-soft); border:1px solid var(--ok-line); color:var(--ok);
+  border-radius:9px; padding:7px 14px;
+}
+
 .sync-line{font-family:var(--mono); font-size:9.5px; color:var(--ok); text-align:center; letter-spacing:.02em; min-height:12px;}
 .sync-line.bad{color:var(--ochre);}
 .prof .cloud{
@@ -849,6 +869,7 @@ table.cmp td.who.zero{color:var(--ink-faint);}
           <span class="eyebrow">повторение с нуля</span>
           <h2>Вся летняя тетрадь — <em>по маленьким шагам</em></h2>
           <p>Каждая тема разбита на короткие шаги. Шаг — это одна идея: объяснение, разбор примера и сразу проверка. Пока не ответишь — следующий шаг закрыт. В конце каждой темы ждёт блок тренировки с задачами из настоящей летней тетради и полными решениями.</p>
+          <div id="accBox"></div>
           <div id="planBox"></div>
           <div class="hero-stats">
             <div class="stat"><b id="stTopics">0</b><span>тем</span></div>
@@ -4854,7 +4875,8 @@ function drawProfChip(){
   const n = Object.keys(DB.profiles).length;
   const sub = document.getElementById("profSub");
   if(online() && p.cloud) sub.innerHTML = 'аккаунт <span class="cloud">облако</span>';
-  else sub.textContent = n>1 ? n+" профиля на устройстве" : "профиль · сменить";
+  else if(n > 1) sub.textContent = n+" профиля · без аккаунта";
+  else sub.textContent = "без аккаунта · только тут";
 }
 
 function switchProfile(id){
@@ -5496,6 +5518,30 @@ function drawPlanBox(){
     + (STORAGE_OK ? "" : '<div class="warnbar">Браузер не разрешает сохранять прогресс на этой странице — после закрытия вкладки он пропадёт. Скопируй код в разделе «Прогресс».</div>');
 }
 
+function drawAccBox(){
+  const box = document.getElementById("accBox");
+  if(!box) return;
+
+  if(online()){
+    box.className = "accbox on";
+    box.innerHTML = '<span class="lab">Аккаунт · '+(AUTH.name||"")+'</span>'
+      + '<h3>Прогресс синхронизируется</h3>'
+      + '<p>Всё, что ты решаешь, сохраняется на сервере. Зайди с телефона под тем же именем — увидишь ровно то же самое.</p>'
+      + '<div class="acts"><span class="codechip">'+(AUTH.code||"…")+'</span>'
+      + '<button class="btn btn-g" data-act="acccopy">Скопировать код</button>'
+      + '<button class="btn btn-g" data-act="together">Друзья по коду</button>'
+      + '<button class="btn btn-g" data-act="account">Аккаунт</button></div>';
+    return;
+  }
+
+  box.className = "accbox";
+  box.innerHTML = '<span class="lab">Без аккаунта</span>'
+    + '<h3>Прогресс сейчас только в этом браузере</h3>'
+    + '<p>Откроешь сайт на телефоне — там будет пусто, это отдельное хранилище. Заведи аккаунт: прогресс станет подтягиваться на любом устройстве, а друзей можно будет добавлять по коду из шести символов вместо пересылки файлов.</p>'
+    + '<div class="acts"><button class="btn btn-p" data-act="acopen" data-t="up">Создать аккаунт</button>'
+    + '<button class="btn btn-g" data-act="acopen" data-t="in">У меня уже есть</button></div>';
+}
+
 function drawNav(){
   const nav = document.getElementById("nav");
   nav.innerHTML = SECTIONS.map(sec=>{
@@ -5531,6 +5577,7 @@ function drawProgress(){
 }
 
 function drawHome(){
+  drawAccBox();
   drawPlanBox();
   const box = document.getElementById("homeSections");
   box.innerHTML = SECTIONS.map(sec=>{
@@ -5659,9 +5706,11 @@ document.addEventListener("click", e=>{
     if(act==="together"){ showTogether(); return; }
     if(act==="casino"){ showCasino(); return; }
     if(act==="account"){ openAcc(); return; }
+    if(act==="acopen"){ ATAB = el.dataset.t || "in"; openAcc(); return; }
     if(act==="atab"){ ATAB = el.dataset.t; drawAcc(); return; }
     if(act==="acsignin"){ accDo("in"); return; }
     if(act==="acsignup"){ accDo("up"); return; }
+    if(act==="accbox"){ drawAccBox(); return; }
     if(act==="accout"){
       if(!confirm("Выйти из аккаунта? Прогресс останется и на сервере, и в локальной копии на этом устройстве.")) return;
       cloudSignOut(); CFR = []; setSync("");
