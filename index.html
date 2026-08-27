@@ -571,6 +571,31 @@ table.cmp td.who.zero{color:var(--ink-3);}
   .si-ico{width:38px;height:38px;font-size:16px;}
 }
 
+/* ---- большие задачи ---- */
+.bigtask{background:var(--card); border:2px solid var(--ink); box-shadow:var(--shadow); margin-bottom:22px;}
+.bt-head{display:flex; align-items:center; gap:12px; background:var(--ink); color:var(--on-ink); padding:11px 16px; flex-wrap:wrap;}
+.bt-n{font-family:var(--mono); font-size:9px; letter-spacing:.16em; text-transform:uppercase; background:var(--hot); padding:3px 8px;}
+.bt-head h4{font-size:16px; flex:1; min-width:120px;}
+.bt-prog{font-family:var(--mono); font-size:11px; opacity:.8;}
+.bt-given{padding:15px 18px; font-size:15.4px; border-bottom:2px solid var(--ink); background:var(--card-2);}
+.bigtask .graphbox{border:none; border-bottom:2px solid var(--ink); box-shadow:none; margin:0;}
+.bt-parts{list-style:none; margin:0; padding:0;}
+.bt-part{display:grid; grid-template-columns:36px 1fr; gap:10px; padding:16px 18px; border-bottom:1px dashed var(--line);}
+.bt-part:last-child{border-bottom:none;}
+.bt-part.done{background:var(--ok-soft);}
+.bt-let{font-family:var(--display); font-weight:700; font-size:18px; color:var(--hot); line-height:1.2;}
+.bt-part.done .bt-let{color:var(--ok);}
+.bt-q{font-size:15px; font-weight:500; margin-bottom:11px; line-height:1.45;}
+.bt-body{min-width:0;}
+@media (max-width:520px){ .bt-part{grid-template-columns:26px 1fr; gap:8px; padding:14px 13px;} .bt-let{font-size:16px;} }
+.schip.big{width:auto; padding:0 11px; background:var(--card); color:var(--blue); border-color:var(--blue);}
+.schip.big.cur{background:var(--blue); color:var(--on-ink);}
+
+/* ---- админка ---- */
+.modal.adm .box{border-color:var(--hot); box-shadow:8px 8px 0 var(--ink);}
+.modal.adm h3{color:var(--hot);}
+#admTopic{min-width:200px; flex:1;}
+
 /* ============ ОКНА ============ */
 .modal{position:fixed; inset:0; z-index:80; display:none; align-items:flex-start; justify-content:center; padding:5vh 16px;}
 .modal.on{display:flex;}
@@ -845,6 +870,16 @@ table.cmp td.who.zero{color:var(--ink-3);}
       <textarea class="code-area" id="profCodeIn" placeholder="Вставь сюда код профиля и нажми «Загрузить»" style="display:none"></textarea>
       <div class="mrow" id="profCodeRow" style="display:none"><button class="btn btn-p" id="btnLoadCode">Загрузить</button></div>
     </div>
+  </div>
+</div>
+
+<div class="modal adm" id="adm">
+  <div class="back" data-close="1"></div>
+  <div class="box">
+    <button class="x" data-close="1" aria-label="Закрыть">×</button>
+    <h3>Админ-панель</h3>
+    <p>Открывается кодом Konami: ↑ ↑ ↓ ↓ ← → ← → B A. Всё меняет текущий профиль.</p>
+    <div id="admBody"></div>
   </div>
 </div>
 
@@ -4362,6 +4397,454 @@ async function cloudAfterLogin(){
 window.addEventListener("online", ()=>{ if(PUSH_PENDING) cloudQueue(); });
 
 /* =====================================================================
+   6д. БОЛЬШИЕ ЗАДАЧИ
+   Не вопрос с вариантами, а задача как в тетради: одно условие и
+   несколько пунктов подряд. Каждый пункт проверяется отдельно, к
+   каждому есть решение, расписанное по строчкам — как пишут на бумаге.
+   ===================================================================== */
+const PART_LETTERS = ["а","б","в","г","д","е","ж","з","и"];
+
+const BIG = {
+
+fractions: [{
+  t:"Дробь от начала до конца",
+  given:"Дана дробь $\\dfrac{x^2-5x}{15-3x}$",
+  parts:[
+    {q:"Разложите числитель на множители.", in:["x(x-5)","(x-5)x"], a:"$x(x-5)$",
+     sol:["В обоих слагаемых есть $x$.","Выносим: $x^2-5x=x(x-5)$."]},
+    {q:"Разложите знаменатель так, чтобы получилась та же скобка $(x-5)$.", in:["-3(x-5)"], a:"$-3(x-5)$",
+     sol:["Общий множитель чисел 15 и 3 равен 3, но скобка выйдет $(5-x)$.",
+          "Вынесем $-3$, чтобы скобка совпала с числителем: $-3\\cdot x=-3x$ ✓, $-3\\cdot(-5)=15$ ✓.",
+          "Значит $15-3x=-3(x-5)$."]},
+    {q:"Найдите область определения. Запишите в виде x!=число.", in:["x!=5","x≠5"], a:"$x\\neq5$",
+     sol:["Смотрим на **исходный** знаменатель: $15-3x$.","$15-3x=0$ при $x=5$ — это значение запрещено."]},
+    {q:"Сократите дробь.", in:["-x/3","-(x/3)","-1/3x"], a:"$-\\dfrac{x}{3}$",
+     sol:["$\\dfrac{x(x-5)}{-3(x-5)}$ — скобка $(x-5)$ есть и сверху, и снизу.",
+          "Сокращаем её: остаётся $\\dfrac{x}{-3}$.","Минус выносим вперёд: $-\\dfrac{x}{3}$."]},
+    {q:"Чему равно значение дроби при $x=6$?", in:["-2"], a:"$-2$",
+     sol:["Подставляем в сокращённую дробь: $-\\dfrac{6}{3}$.",
+          "Проверка по исходной: $\\dfrac{36-30}{15-18}=\\dfrac{6}{-3}=-2$ ✓"]}
+  ]
+}],
+
+quadeq: [{
+  t:"Уравнение со скобками",
+  given:"Решите уравнение $(1-4x)^2+3-(3x+2)^2=x$",
+  parts:[
+    {q:"Раскройте $(1-4x)^2$.", in:["16x^2-8x+1","1-8x+16x^2"], a:"$16x^2-8x+1$",
+     sol:["$(a-b)^2=a^2-2ab+b^2$, где $a=1$, $b=4x$.",
+          "$1-2\\cdot1\\cdot4x+(4x)^2=1-8x+16x^2$."]},
+    {q:"Раскройте $(3x+2)^2$.", in:["9x^2+12x+4"], a:"$9x^2+12x+4$",
+     sol:["$(a+b)^2=a^2+2ab+b^2$, где $a=3x$, $b=2$.",
+          "$9x^2+2\\cdot3x\\cdot2+4=9x^2+12x+4$."]},
+    {q:"Приведите уравнение к виду $ax^2+bx=0$. Запишите левую часть.", in:["7x^2-21x"], a:"$7x^2-21x=0$",
+     sol:["Слева: $16x^2-8x+1+3-(9x^2+12x+4)$.",
+          "Минус перед скобкой меняет все знаки внутри: $-9x^2-12x-4$.",
+          "$16x^2-9x^2=7x^2$;  $-8x-12x=-20x$;  $1+3-4=0$.",
+          "Получилось $7x^2-20x=x$, переносим $x$ влево: $7x^2-21x=0$."]},
+    {q:"Решите уравнение. Корни через точку с запятой.", in:["0;3","3;0"], a:"$x=0$ или $x=3$",
+     sol:["Свободного члена нет — выносим $x$: $7x(x-3)=0$.",
+          "Произведение равно нулю ⇒ $x=0$ или $x-3=0$.",
+          "На $x$ делить нельзя: потеряли бы корень $x=0$."]}
+  ]
+}],
+
+inequal: [{
+  t:"Две функции и знаки",
+  given:"Даны $f(x)=5x^2+2$ и $g(x)=x^2+3x+2$",
+  parts:[
+    {q:"Найдите корни $g(x)$. Через точку с запятой.", in:["-1;-2","-2;-1"], a:"$x=-1$ и $x=-2$",
+     sol:["$x^2+3x+2=0$, $D=9-8=1$, $\\sqrt{D}=1$.",
+          "$x=\\dfrac{-3\\pm1}{2}$: получаем $-1$ и $-2$."]},
+    {q:"При каких $x$ верно $g(x)<0$?", o:["$-2<x<-1$","$x<-2$ или $x>-1$","ни при каких"], c:0,
+     a:"$-2<x<-1$",
+     sol:["Корни $-2$ и $-1$, коэффициент при $x^2$ равен 1 — ветви вверх.",
+          "У параболы с ветвями вверх отрицательная часть лежит между корнями."]},
+    {q:"Приведите неравенство $f(x)>g(x)$ к виду $ax^2+bx>0$. Запишите левую часть.",
+     in:["4x^2-3x"], a:"$4x^2-3x>0$",
+     sol:["$5x^2+2>x^2+3x+2$.","Переносим всё влево: $5x^2+2-x^2-3x-2>0$.",
+          "$4x^2-3x>0$ — двойки сократились."]},
+    {q:"Решите $f(x)>g(x)$.", o:["$x<0$ или $x>0{,}75$","$0<x<0{,}75$","при любых $x$"], c:0,
+     a:"$x<0$ или $x>0{,}75$",
+     sol:["$x(4x-3)>0$, корни $0$ и $0{,}75$, ветви вверх.",
+          "Положительная часть — снаружи корней."]}
+  ]
+}],
+
+systems: [{
+  t:"Прямая и парабола",
+  given:"Даны $y=-x^2+x+6$ и $y=2x$",
+  graph:{xmin:-5,xmax:4,ymin:-8,ymax:8,w:420,h:290,
+         fns:[{q:[-1,1,6],lab:"парабола",lx:-3.4},{l:[2,0],c:"var(--hot)",lab:"y=2x",lx:2.2}],
+         pts:[[2,4,"A(2;4)"],[-3,-6,"B(−3;−6)"]],cap:"Две точки пересечения"},
+  parts:[
+    {q:"Приравняйте правые части и приведите к виду $ax^2+bx+c=0$. Запишите левую часть.",
+     in:["x^2+x-6"], a:"$x^2+x-6=0$",
+     sol:["$-x^2+x+6=2x$.","Переносим всё вправо, чтобы при $x^2$ был плюс: $0=x^2+x-6$."]},
+    {q:"Найдите абсциссы точек пересечения. Через точку с запятой.", in:["2;-3","-3;2"], a:"$x=2$ и $x=-3$",
+     sol:["$D=1+24=25$, $\\sqrt{D}=5$.","$x=\\dfrac{-1\\pm5}{2}$: получаем $2$ и $-3$."]},
+    {q:"Найдите координаты точки A с положительной абсциссой.", in:["(2;4)","(2,4)"], a:"$A(2;4)$",
+     sol:["Подставляем $x=2$ в $y=2x$: $y=4$.",
+          "Проверка по параболе: $-4+2+6=4$ ✓ — обе дают одно и то же."]},
+    {q:"При каких $x$ парабола проходит выше прямой?", o:["$-3<x<2$","$x<-3$ или $x>2$","везде"], c:0,
+     a:"$-3<x<2$",
+     sol:["Нужно $-x^2+x+6>2x$, то есть $-x^2-x+6>0$.",
+          "Умножим на $-1$ и перевернём знак: $x^2+x-6<0$.",
+          "Корни $2$ и $-3$, ветви вверх ⇒ минус между корнями."]}
+  ]
+}],
+
+linear: [{
+  t:"Две прямые и треугольник",
+  given:"Даны $f(x)=\\tfrac12 x+4$ и $g(x)=-2x+4$. Точка $A$ — их пересечение, $B$ и $C$ — пересечения $f$ и $g$ с осью $x$.",
+  graph:{xmin:-9,xmax:4,ymin:-2,ymax:6,w:420,h:270,
+         fns:[{l:[0.5,4]},{l:[-2,4],c:"var(--hot)"}],
+         path:[{pts:[[-8,0],[2,0],[0,4]],close:true,fill:"var(--blue)",op:.14,c:"var(--blue)"}],
+         pts:[[0,4,"A"],[-8,0,"B"],[2,0,"C"]],cap:"Основание BC на оси x, высота — координата y точки A"},
+  parts:[
+    {q:"Найдите координаты точки A.", in:["(0;4)","(0,4)"], a:"$A(0;4)$",
+     sol:["Приравниваем: $\\tfrac12x+4=-2x+4$.","$\\tfrac12x+2x=0$, то есть $2{,}5x=0$ ⇒ $x=0$.",
+          "Подставляем: $y=4$."]},
+    {q:"Найдите координаты точки B.", in:["(-8;0)","(-8,0)"], a:"$B(-8;0)$",
+     sol:["На оси $x$ выполняется $y=0$.","$\\tfrac12x+4=0$ ⇒ $\\tfrac12x=-4$ ⇒ $x=-8$."]},
+    {q:"Найдите координаты точки C.", in:["(2;0)","(2,0)"], a:"$C(2;0)$",
+     sol:["$-2x+4=0$ ⇒ $2x=4$ ⇒ $x=2$."]},
+    {q:"Найдите длину BC.", in:["10"], a:"$BC=10$",
+     sol:["Обе точки на оси $x$ — отрезок горизонтальный.","$BC=2-(-8)=10$."]},
+    {q:"Найдите площадь треугольника ABC.", in:["20","s=20"], a:"$S=20$ кв. ед.",
+     sol:["Основание $BC=10$ лежит на оси $x$.",
+          "Высота — расстояние от $A$ до оси $x$, то есть её координата $y$: $4$.",
+          "$S=\\dfrac{1}{2}\\cdot10\\cdot4=20$."]}
+  ]
+}],
+
+lingeo: [{
+  t:"Трапеция между двумя прямыми",
+  given:"Даны прямые $y=-x+6$ и $y=2x-6$. Точки $G$ и $H$ лежат на них при $x=-4$.",
+  parts:[
+    {q:"Где прямая $y=-x+6$ пересекает оси? Две точки через точку с запятой.",
+     in:["(0;6);(6;0)","(6;0);(0;6)"], a:"$(0;6)$ и $(6;0)$",
+     sol:["С осью $y$: подставляем $x=0$ ⇒ $y=6$.","С осью $x$: $-x+6=0$ ⇒ $x=6$."]},
+    {q:"Где прямая $y=2x-6$ пересекает оси?", in:["(0;-6);(3;0)","(3;0);(0;-6)"], a:"$(0;-6)$ и $(3;0)$",
+     sol:["$x=0$ ⇒ $y=-6$.","$2x-6=0$ ⇒ $x=3$."]},
+    {q:"Найдите точку пересечения прямых.", in:["(4;2)","(4,2)"], a:"$(4;2)$",
+     sol:["$2x-6=-x+6$ ⇒ $3x=12$ ⇒ $x=4$.","$y=2\\cdot4-6=2$."]},
+    {q:"Найдите точки G и H при $x=-4$. Через точку с запятой.",
+     in:["(-4;10);(-4;-14)","(-4;-14);(-4;10)"], a:"$G(-4;10)$, $H(-4;-14)$",
+     sol:["В первую: $y=-(-4)+6=10$.","Во вторую: $y=2\\cdot(-4)-6=-14$."]},
+    {q:"Найдите длину GH.", in:["24"], a:"$GH=24$",
+     sol:["Обе точки имеют $x=-4$ — отрезок вертикальный.","$GH=10-(-14)=24$."]},
+    {q:"Найдите площадь ACHG, где $A(0;6)$ и $C(0;-6)$.", in:["72","s=72"], a:"$S=72$ кв. ед.",
+     sol:["$AC=6-(-6)=12$ — вертикальный отрезок на оси $y$.",
+          "$GH=24$ — тоже вертикальный, значит $AC\\parallel GH$ и фигура — трапеция.",
+          "Высота — расстояние между прямыми $x=0$ и $x=-4$, то есть 4.",
+          "$S=\\dfrac{12+24}{2}\\cdot4=18\\cdot4=72$."]}
+  ]
+}],
+
+parab1: [{
+  t:"Исследование параболы",
+  given:"Дана функция $y=x^2-9$",
+  graph:{xmin:-5,xmax:5,ymin:-11,ymax:8,w:420,h:290,fns:[{q:[1,0,-9]}],
+         pts:[[0,-9,"вершина"],[-3,0,"−3"],[3,0,"3"]],cap:"Вершина внизу, ветви вверх"},
+  parts:[
+    {q:"Найдите координаты вершины.", in:["(0;-9)","(0,-9)"], a:"$(0;-9)$",
+     sol:["Это $y=x^2$, опущенная на 9 вниз.","Вершина была $(0;0)$, стала $(0;-9)$."]},
+    {q:"Найдите точки пересечения с осью x. Абсциссы через точку с запятой.",
+     in:["3;-3","-3;3","±3"], a:"$x=\\pm3$",
+     sol:["На оси $x$ верно $y=0$: $x^2-9=0$.","$x^2=9$ ⇒ $x=\\pm3$."]},
+    {q:"При каких $x$ функция отрицательна?", o:["$-3<x<3$","$x<-3$ или $x>3$","ни при каких"], c:0,
+     a:"$-3<x<3$",
+     sol:["Ветви вверх, корни $\\pm3$.","Ниже оси парабола с ветвями вверх лежит между корнями."]},
+    {q:"Пересекает ли ось x график $y=x^2+9$?", o:["Нет, вершина выше оси","Да, в точках ±3","Да, в одной точке"], c:0,
+     a:"Нет",
+     sol:["Вершина $(0;9)$ — выше оси, ветви вверх.",
+          "$x^2+9=0$ дало бы $x^2=-9$, чего не бывает."]}
+  ]
+}],
+
+parab2: [{
+  t:"Полное исследование",
+  given:"Дана функция $y=2(x-1)(x+4)$",
+  graph:{xmin:-6,xmax:4,ymin:-15,ymax:12,w:430,h:300,fns:[{q:[2,6,-8]}],
+         pts:[[-1.5,-12.5,"вершина"],[-4,0,"−4"],[1,0,"1"],[0,-8,"(0;−8)"]],
+         cap:"Корни, вершина и пересечение с осью y"},
+  parts:[
+    {q:"Найдите корни. Через точку с запятой.", in:["1;-4","-4;1"], a:"$x=1$ и $x=-4$",
+     sol:["Форма с корнями: каждая скобка обнуляется в своём корне.",
+          "$x-1=0$ ⇒ $x=1$;  $x+4=0$ ⇒ $x=-4$."]},
+    {q:"Найдите ось симметрии. Запишите как x=число.", in:["x=-1.5","-1.5","x=-1,5"], a:"$x=-1{,}5$",
+     sol:["Ось проходит ровно посередине между корнями.","$\\dfrac{1+(-4)}{2}=\\dfrac{-3}{2}=-1{,}5$."]},
+    {q:"Найдите координаты вершины.", in:["(-1.5;-12.5)","(-1.5,-12.5)"], a:"$(-1{,}5;\\,-12{,}5)$",
+     sol:["$x$ вершины уже известен: $-1{,}5$.",
+          "$y=2(-1{,}5-1)(-1{,}5+4)=2\\cdot(-2{,}5)\\cdot2{,}5$.",
+          "$=2\\cdot(-6{,}25)=-12{,}5$."]},
+    {q:"Где график пересекает ось y?", in:["(0;-8)","(0,-8)","-8"], a:"$(0;-8)$",
+     sol:["Подставляем $x=0$: $2\\cdot(0-1)(0+4)$.","$=2\\cdot(-1)\\cdot4=-8$."]},
+    {q:"При каких $x$ функция убывает?", o:["$x<-1{,}5$","$x>-1{,}5$","везде"], c:0, a:"$x<-1{,}5$",
+     sol:["$a=2>0$ — ветви вверх.","Такая парабола убывает до вершины и возрастает после."]},
+    {q:"При каких $x$ выполняется $y<0$?", o:["$-4<x<1$","$x<-4$ или $x>1$","ни при каких"], c:0,
+     a:"$-4<x<1$",
+     sol:["Ветви вверх ⇒ ниже оси парабола лежит между корнями."]}
+  ]
+}],
+
+coordgeo: [{
+  t:"Четырёхугольник по координатам",
+  given:"Даны точки $A(5;-2)$, $B(5;6)$, $C(-1;6)$, $D(-7;-2)$",
+  graph:{xmin:-9,xmax:7,ymin:-4,ymax:8,w:430,h:290,
+         path:[{pts:[[5,-2],[5,6],[-1,6],[-7,-2]],close:true,fill:"var(--blue)",op:.13,c:"var(--blue)"}],
+         pts:[[5,-2,"A"],[5,6,"B"],[-1,6,"C"],[-7,-2,"D"]],cap:"AD и BC горизонтальны, но разной длины"},
+  parts:[
+    {q:"Найдите длину AB.", in:["8"], a:"$AB=8$",
+     sol:["У обеих точек $x=5$ — отрезок вертикальный.","$AB=6-(-2)=8$."]},
+    {q:"Найдите длину BC.", in:["6"], a:"$BC=6$",
+     sol:["У обеих точек $y=6$ — отрезок горизонтальный.","$BC=5-(-1)=6$."]},
+    {q:"Найдите длину AD.", in:["12"], a:"$AD=12$",
+     sol:["У обеих точек $y=-2$ — отрезок горизонтальный.","$AD=5-(-7)=12$."]},
+    {q:"Какие стороны параллельны?", o:["AD и BC — обе горизонтальные","AB и CD","никакие"], c:0,
+     a:"$AD\\parallel BC$",
+     sol:["$AD$ лежит на прямой $y=-2$, $BC$ — на прямой $y=6$.",
+          "Все горизонтальные прямые параллельны между собой.",
+          "$AB$ вертикальна, а $CD$ идёт из $(-1;6)$ в $(-7;-2)$ — не вертикальна, значит эта пара не параллельна."]},
+    {q:"Что это за фигура?", o:["Трапеция","Параллелограмм","Ромб"], c:0, a:"Трапеция",
+     sol:["Ровно одна пара параллельных сторон — это определение трапеции.",
+          "Две пары дали бы параллелограмм."]},
+    {q:"Найдите площадь.", in:["72","s=72"], a:"$S=72$ кв. ед.",
+     sol:["Основания: $AD=12$ и $BC=6$.",
+          "Высота — расстояние между прямыми $y=-2$ и $y=6$, то есть 8.",
+          "$S=\\dfrac{12+6}{2}\\cdot8=9\\cdot8=72$."]}
+  ]
+}],
+
+quads: [{
+  t:"Доказательство: равенство сторон",
+  given:"$ABCD$ — параллелограмм, диагонали пересекаются в точке $O$. Требуется доказать, что $AB=CD$.",
+  graph:{bare:true,xmin:-1,xmax:8,ymin:-1,ymax:5,w:420,h:240,
+         path:[{pts:[[0,0],[5,0],[7,3.5],[2,3.5]],close:true,fill:"var(--blue)",op:.1,c:"var(--blue)"},
+               {pts:[[0,0],[7,3.5]],c:"var(--hot)",dash:"5 4"},{pts:[[5,0],[2,3.5]],c:"var(--hot)",dash:"5 4"}],
+         pts:[[0,0,"A"],[5,0,"B"],[7,3.5,"C"],[2,3.5,"D"],[3.5,1.75,"O"]],cap:"Диагонали делятся точкой O пополам"},
+  parts:[
+    {q:"Что известно про отрезки AO и OC?", o:["Равны — диагонали делятся пополам","Относятся как 1:2","Ничего не известно"], c:0,
+     a:"$AO=OC$",
+     sol:["Это свойство параллелограмма: диагонали точкой пересечения делятся пополам.",
+          "Доказывать его не нужно — на него ссылаются сразу."]},
+    {q:"Какие углы при точке O равны и почему?", o:["$\\angle AOB=\\angle COD$ — вертикальные","Смежные, дают 180°","Равны как накрест лежащие"], c:0,
+     a:"$\\angle AOB=\\angle COD$ как вертикальные",
+     sol:["Диагонали — две пересекающиеся прямые.","Углы напротив друг друга при пересечении называются вертикальными и равны."]},
+    {q:"По какому признаку равны треугольники AOB и COD?", o:["СУС","УСУ","ССС"], c:0, a:"По СУС",
+     sol:["$AO=OC$ — свойство диагоналей.","$BO=OD$ — то же свойство.",
+          "$\\angle AOB=\\angle COD$ — вертикальные, и лежит он **между** этими сторонами.",
+          "Две стороны и угол между ними — это признак СУС (צ.ז.צ)."]},
+    {q:"Что следует из равенства треугольников?", o:["$AB=CD$ как соответственные стороны","Только равенство углов","Ничего"], c:0,
+     a:"$AB=CD$, что и требовалось доказать",
+     sol:["В равных треугольниках соответственные элементы равны.",
+          "$AB$ и $CD$ лежат против равных углов $\\angle AOB$ и $\\angle COD$.",
+          "Значит $AB=CD$. Что и требовалось доказать."]}
+  ]
+}]
+
+};
+
+/* =====================================================================
+   6е. ЭКРАН БОЛЬШИХ ЗАДАЧ
+   ===================================================================== */
+const bk = (t,i,j)=> "big:" + t + ":" + i + ":" + j;
+
+function bigPartHTML(t, i, j, p){
+  const key = bk(t.id, i, j), st = ST.ans[key];
+  let body;
+  if(p.o){
+    body = '<div class="opts">' + order(p.o.length, key).map(oi=>
+      '<button class="opt'+(st && oi===p.c ? " right" : "")+'" data-act="bopt" data-t="'+t.id
+      + '" data-i="'+i+'" data-j="'+j+'" data-o="'+oi+'"'+(st?" disabled":"")+'>'+md(p.o[oi])+'</button>').join("")
+      + '</div>';
+  } else {
+    body = '<div class="inrow">'
+      + '<input class="inp'+(st?" right":"")+'" type="text" data-bin="'+t.id+"|"+i+"|"+j+'" placeholder="твой ответ"'
+      + (st ? ' value="'+String(p.in[0]).replace(/"/g,"&quot;")+'" disabled' : "") + '>'
+      + (st ? "" : '<button class="btn btn-p" data-act="bchk" data-t="'+t.id+'" data-i="'+i+'" data-j="'+j+'">Проверить</button>')
+      + '</div>';
+  }
+  return '<li class="bt-part'+(st?" done":"")+'" id="bp-'+t.id+"-"+i+"-"+j+'">'
+    + '<div class="bt-let">'+PART_LETTERS[j]+')</div>'
+    + '<div class="bt-body">'
+    +   '<div class="bt-q">'+md(p.q)+'</div>'
+    +   body
+    +   '<div class="fb'+(st?" on good":"")+'" id="bfb-'+t.id+"-"+i+"-"+j+'">'+(st?"<b>Верно!</b>":"")+'</div>'
+    +   '<div class="qtools"><button class="btn btn-s" data-act="bsol" data-t="'+t.id+'" data-i="'+i+'" data-j="'+j+'">Решение</button></div>'
+    +   '<div class="reveal" id="brv-'+t.id+"-"+i+"-"+j+'">'
+    +     '<div class="rl">как это пишут на бумаге</div>'
+    +     (p.sol||[]).map((x,k)=>'<div class="wline"><span class="n">'+(k+1)+'</span><span>'+md(x)+'</span></div>').join("")
+    +     '<div class="ex-ans">'+md(p.a)+'</div>'
+    +   '</div>'
+    + '</div></li>';
+}
+
+function bigHTML(t){
+  const list = BIG[t.id] || [];
+  if(!list.length) return "";
+  let h = '<h3 class="step-title">Задачи</h3>'
+    + '<p class="step-goal">Так задача выглядит в тетради: одно условие и несколько пунктов подряд. Решай на бумаге, вписывай ответ, а потом сверяй ход с разбором — он расписан построчно.</p>';
+  h += list.map((b,i)=>{
+    const done = b.parts.filter((p,j)=>ST.ans[bk(t.id,i,j)]).length;
+    return '<div class="bigtask">'
+      + '<div class="bt-head"><span class="bt-n">Задача '+(i+1)+'</span>'
+      +   '<h4>'+b.t+'</h4>'
+      +   '<span class="bt-prog">'+done+' / '+b.parts.length+'</span></div>'
+      + '<div class="bt-given">'+md(b.given)+'</div>'
+      + (b.graph ? plot(b.graph) : "")
+      + '<ol class="bt-parts">' + b.parts.map((p,j)=>bigPartHTML(t,i,j,p)).join("") + '</ol>'
+      + '</div>';
+  }).join("");
+  h += '<div class="stepnav">'
+    + '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="p">← К тренировке</button>'
+    + '<span class="gate"></span>'
+    + '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="g">К тренажёру →</button></div>';
+  return '<div class="panel" id="pnl-'+t.id+'-b">'+h+'</div>';
+}
+
+function bigDone(t, i, j, okShown){
+  const key = bk(t.id, i, j);
+  if(!ST.ans[key]) earn(okShown === "ok" ? 8 : 3, "пункт задачи");
+  ST.ans[key] = okShown;
+  save();
+  const li = document.getElementById("bp-"+t.id+"-"+i+"-"+j);
+  if(li) li.classList.add("done");
+  const b = BIG[t.id][i];
+  const done = b.parts.filter((p,k)=>ST.ans[bk(t.id,i,k)]).length;
+  const pr = li && li.closest(".bigtask").querySelector(".bt-prog");
+  if(pr) pr.textContent = done + " / " + b.parts.length;
+}
+
+/* =====================================================================
+   6ж. АДМИН-ПАНЕЛЬ
+   Открывается кодом Konami: ↑ ↑ ↓ ↓ ← → ← → B A
+   ===================================================================== */
+const KONAMI = ["arrowup","arrowup","arrowdown","arrowdown","arrowleft","arrowright","arrowleft","arrowright","b","a"];
+let KBUF = [];
+
+function adminStats(){
+  const steps = TOPICS.reduce((s,t)=>s+t.steps.length,0);
+  const checks = TOPICS.reduce((s,t)=>s+t.steps.reduce((a,x)=>a+x.checks.length,0),0);
+  const tasks = TOPICS.reduce((s,t)=>s+t.practice.length,0);
+  const gens = Object.values(GEN).reduce((s,a)=>s+a.length,0);
+  const bigs = Object.values(BIG).reduce((s,a)=>s+a.length,0);
+  const bparts = Object.values(BIG).reduce((s,a)=>s+a.reduce((x,b)=>x+b.parts.length,0),0);
+  const words = (function(){ const seen=new Set(); HGROUPS.forEach(g=>g.items.forEach(i=>seen.add(i[1]))); return seen.size; })();
+  return {steps, checks, tasks, gens, bigs, bparts, words};
+}
+
+function drawAdmin(){
+  const box = document.getElementById("admBody");
+  if(!box) return;
+  const s = adminStats();
+  box.innerHTML =
+    '<div class="cs-sec"><h4>Содержимое курса</h4><div class="cs-list">'
+    + '<div>Тем: <b>'+TOPICS.length+'</b>, шагов <b>'+s.steps+'</b>, проверок <b>'+s.checks+'</b></div>'
+    + '<div>Задач тренировки: <b>'+s.tasks+'</b></div>'
+    + '<div>Больших задач: <b>'+s.bigs+'</b>, пунктов в них <b>'+s.bparts+'</b></div>'
+    + '<div>Типов генератора: <b>'+s.gens+'</b> · слов на иврите: <b>'+s.words+'</b></div>'
+    + '</div></div>'
+
+    + '<div class="cs-sec"><h4>Жетоны и магазин</h4><div class="mrow">'
+    + '<button class="btn btn-p" data-act="adm" data-do="coins">+1000 жетонов</button>'
+    + '<button class="btn btn-g" data-act="adm" data-do="shop">Выдать всё из магазина</button>'
+    + '<button class="btn btn-g" data-act="adm" data-do="nocoins">Обнулить жетоны</button>'
+    + '</div></div>'
+
+    + '<div class="cs-sec"><h4>Прогресс</h4><div class="mrow">'
+    + '<button class="btn btn-g" data-act="adm" data-do="allsteps">Пройти все шаги</button>'
+    + '<button class="btn btn-g" data-act="adm" data-do="diag">Закрыть диагностику</button>'
+    + '<button class="btn btn-g" data-act="adm" data-do="wipe">Сбросить прогресс</button>'
+    + '</div>'
+    + '<div class="newrow" style="margin-top:10px">'
+    +   '<select class="inp" id="admTopic">'+TOPICS.map(t=>'<option value="'+t.id+'">'+t.title+'</option>').join("")+'</select>'
+    +   '<button class="btn btn-g" data-act="adm" data-do="rtopic">Сбросить тему</button>'
+    +   '<button class="btn btn-g" data-act="adm" data-do="ctopic">Пройти тему</button>'
+    + '</div></div>'
+
+    + '<div class="cs-sec"><h4>Проверка данных</h4>'
+    + '<div class="mrow"><button class="btn btn-g" data-act="adm" data-do="selftest">Прогнать самопроверку</button></div>'
+    + '<div id="admTest"></div></div>'
+
+    + '<div class="cs-sec"><h4>Состояние профиля</h4>'
+    + '<textarea class="code-area" readonly>'+JSON.stringify(ST).slice(0,4000)+'</textarea></div>';
+}
+
+function openAdmin(){
+  drawAdmin();
+  document.querySelectorAll(".modal").forEach(m=>m.classList.remove("on"));
+  document.getElementById("adm").classList.add("on");
+  beep(880,0.08,"square",0.05);
+  setTimeout(()=>beep(1170,0.14,"square",0.05), 90);
+}
+
+function admSelfTest(){
+  const bad = [];
+  TOPICS.forEach(t=>{
+    if(!t.steps.length) bad.push(t.id+": нет шагов");
+    t.steps.forEach((st,i)=> st.checks.forEach((c,j)=>{
+      if(c.o && (typeof c.c !== "number" || c.c<0 || c.c>=c.o.length)) bad.push(t.id+" шаг "+(i+1)+" проверка "+(j+1)+": плохой индекс ответа");
+      if(!c.o && (!c.in || !c.in.length)) bad.push(t.id+" шаг "+(i+1)+": нет ответов для ввода");
+      if(!c.e) bad.push(t.id+" шаг "+(i+1)+": нет пояснения");
+    }));
+    t.practice.forEach((p,i)=>{ if(!p.q || !p.a) bad.push(t.id+" задача "+(i+1)+": пусто"); });
+  });
+  Object.keys(BIG).forEach(id=>{
+    if(!TOPICS.find(t=>t.id===id)) bad.push("BIG: нет темы "+id);
+    BIG[id].forEach((b,i)=> b.parts.forEach((p,j)=>{
+      if(!p.a) bad.push(id+" задача "+(i+1)+" пункт "+PART_LETTERS[j]+": нет ответа");
+      if(!p.o && (!p.in || !p.in.length)) bad.push(id+" задача "+(i+1)+" пункт "+PART_LETTERS[j]+": нет ответов");
+      if(p.o && typeof p.c !== "number") bad.push(id+" задача "+(i+1)+" пункт "+PART_LETTERS[j]+": нет индекса");
+    }));
+  });
+  let genBad = 0;
+  Object.keys(GEN).forEach(id=> GEN[id].forEach(g=>{
+    for(let k=0;k<40;k++){
+      try{
+        const x = g.f();
+        if(!x.q || !x.qh || !x.a) genBad++;
+        if(/undefined|NaN/.test(JSON.stringify(x))) genBad++;
+      }catch(e){ genBad++; }
+    }
+  }));
+  if(genBad) bad.push("генератор: сбоев " + genBad);
+  const el = document.getElementById("admTest");
+  el.innerHTML = '<div class="fb on '+(bad.length?"bad":"good")+'" style="margin-top:10px">'
+    + (bad.length ? "<b>Найдено "+bad.length+":</b><br>" + bad.slice(0,12).join("<br>")
+                  : "<b>Всё чисто.</b> Проверено "+TOPICS.length+" тем, генератор прогнан 40 раз на каждый тип.")
+    + '</div>';
+}
+
+function admDo(what){
+  const t = TOPICS.find(x=>x.id === (document.getElementById("admTopic")||{}).value);
+  if(what === "coins"){ ST.coins = coins() + 1000; save(); drawCoins(true); toast("+1000 жетонов", true); }
+  if(what === "nocoins"){ ST.coins = 0; save(); drawCoins(true); }
+  if(what === "shop"){ SHOP.forEach(it=> inv()[it.id] = (it.qty||1) * 5); save(); toast("Магазин выдан", true); }
+  if(what === "diag"){
+    ST.diag = {need:TOPICS.map(x=>x.id), score:0, total:DIAG.length, skipped:1, when:Date.now()};
+    save();
+  }
+  if(what === "allsteps"){
+    TOPICS.forEach(x=> x.steps.forEach((s,i)=> s.checks.forEach((c,j)=>{ ST.ans[qk(x.id,i,j)] = "ok"; })));
+    save();
+  }
+  if(what === "wipe"){ ST.ans = {}; ST.cur = {}; ST.done = {}; ST.diag = null; ST.dpart = {}; save(); }
+  if(what === "rtopic" && t){
+    Object.keys(ST.ans).forEach(k=>{ if(k.indexOf(t.id+":") === 0 || k.indexOf("big:"+t.id+":") === 0) delete ST.ans[k]; });
+    delete ST.cur[t.id]; save(); toast("Тема «"+t.title+"» сброшена", true);
+  }
+  if(what === "ctopic" && t){
+    t.steps.forEach((s,i)=> s.checks.forEach((c,j)=>{ ST.ans[qk(t.id,i,j)] = "ok"; }));
+    save(); toast("Тема «"+t.title+"» пройдена", true);
+  }
+  if(what === "selftest"){ admSelfTest(); return; }
+  rebuildAll();
+  drawAdmin();
+}
+
+/* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
    ===================================================================== */
 const KEY = "summer-math-v2";
@@ -4704,7 +5187,7 @@ function buildTopic(t){
     + '<div class="thead"><span class="tag">'+t.tag+'</span><h2>'+t.title+'</h2><p class="sub">'+md(t.sub)+'</p></div>'
     + terms + rail
     + t.steps.map((s,i)=>stepHTML(t,i)).join("")
-    + practiceHTML(t) + genHTML(t);
+    + practiceHTML(t) + genHTML(t) + bigHTML(t);
   document.getElementById("pages").appendChild(el);
 }
 
@@ -4728,8 +5211,11 @@ function drawRail(t){
     return '<button class="'+cls+'" data-act="go" data-t="'+t.id+'" data-s="'+i+'"'+(dis?" disabled":"")+' title="Шаг '+(i+1)+'">'+(stepPassed(t,i)?"✓":(i+1))+'</button>';
   }).join("");
   h += '<button class="schip prac'+(cur==="p"?" cur":"")+'" data-act="go" data-t="'+t.id+'" data-s="p">Тренировка</button>';
+  if((BIG[t.id]||[]).length) h += '<button class="schip big'+(cur==="b"?" cur":"")+'" data-act="go" data-t="'+t.id+'" data-s="b">Задачи</button>';
   if((GEN[t.id]||[]).length) h += '<button class="schip gen'+(cur==="g"?" cur":"")+'" data-act="go" data-t="'+t.id+'" data-s="g">Тренажёр ∞</button>';
-  const note = cur==="g" ? "задачи генерируются" : (cur==="p" ? t.practice.length+" задач" : "шаг "+((cur|0)+1)+" из "+t.steps.length);
+  const note = cur==="g" ? "задачи генерируются"
+        : cur==="b" ? ((BIG[t.id]||[]).reduce((s,b)=>s+b.parts.length,0))+" пунктов"
+        : (cur==="p" ? t.practice.length+" задач" : "шаг "+((cur|0)+1)+" из "+t.steps.length);
   h += '<span class="srail-note">'+note+'</span>';
   box.innerHTML = h;
 }
@@ -4757,9 +5243,11 @@ function showStep(id, si){
   if(pp) pp.classList.toggle("active", si==="p");
   const gp = document.getElementById("pnl-"+id+"-g");
   if(gp) gp.classList.toggle("active", si==="g");
+  const bp = document.getElementById("pnl-"+id+"-b");
+  if(bp) bp.classList.toggle("active", si==="b");
   drawRail(t);
   if(si==="g"){ const s2 = genState(t); if(!s2.task) newTask(t); else drawGen(t); }
-  if(si!=="p" && si!=="g") drawGate(t, si);
+  if(si!=="p" && si!=="g" && si!=="b") drawGate(t, si);
   window.scrollTo({top:0, behavior:"smooth"});
 }
 
@@ -5657,6 +6145,44 @@ document.addEventListener("click", e=>{
     if(act==="diag"){ showDiag(); return; }
     if(act==="together"){ showTogether(); return; }
     if(act==="casino"){ showCasino(); return; }
+    if(act==="bsol"){
+      const r = document.getElementById("brv-"+tid+"-"+el.dataset.i+"-"+el.dataset.j);
+      r.classList.toggle("on");
+      el.textContent = r.classList.contains("on") ? "Скрыть решение" : "Решение";
+      return;
+    }
+    if(act==="bopt"){
+      const i = +el.dataset.i, j = +el.dataset.j;
+      if(ST.ans[bk(tid,i,j)]) return;
+      const p = BIG[tid][i].parts[j], oi = +el.dataset.o;
+      const fb = document.getElementById("bfb-"+tid+"-"+i+"-"+j);
+      if(oi === p.c){
+        el.parentElement.querySelectorAll(".opt").forEach(b2=>{ b2.disabled = true; if(+b2.dataset.o===p.c) b2.classList.add("right"); });
+        fb.className = "fb on good"; fb.innerHTML = "<b>Верно!</b> Открой решение и сверь ход.";
+        bigDone(t, i, j, "ok");
+      } else {
+        el.classList.add("wrongpick");
+        fb.className = "fb on bad"; fb.innerHTML = "<b>Не то.</b> Попробуй ещё раз или загляни в решение.";
+      }
+      return;
+    }
+    if(act==="bchk"){
+      const i = +el.dataset.i, j = +el.dataset.j;
+      if(ST.ans[bk(tid,i,j)]) return;
+      const p = BIG[tid][i].parts[j];
+      const inp = document.querySelector('[data-bin="'+tid+"|"+i+"|"+j+'"]');
+      const fb = document.getElementById("bfb-"+tid+"-"+i+"-"+j);
+      if(inputOK(inp.value, p.in)){
+        inp.classList.add("right"); inp.disabled = true; el.remove();
+        fb.className = "fb on good"; fb.innerHTML = "<b>Верно!</b> Открой решение и сверь ход.";
+        bigDone(t, i, j, "ok");
+      } else {
+        inp.classList.add("wrongpick");
+        fb.className = "fb on bad"; fb.innerHTML = "<b>Пока не сходится.</b> Проверь запись или загляни в решение.";
+      }
+      return;
+    }
+    if(act==="adm"){ admDo(el.dataset.do); return; }
     if(act==="account"){ openAcc(); return; }
     if(act==="acopen"){ ATAB = el.dataset.t || "in"; openAcc(); return; }
     if(act==="atab"){ ATAB = el.dataset.t; drawAcc(); return; }
@@ -5792,7 +6318,7 @@ document.addEventListener("click", e=>{
     if(act==="chk"){ onCheckInput(t, +el.dataset.s, +el.dataset.q); return; }
     if(act==="show"){ onShow(t, +el.dataset.s, +el.dataset.q); return; }
     if(act==="pchk"){ onPracticeCheck(t, +el.dataset.q); return; }
-    if(act==="go"){ const s = el.dataset.s; showStep(tid, (s==="p"||s==="g") ? s : +s); return; }
+    if(act==="go"){ const s = el.dataset.s; showStep(tid, (s==="p"||s==="g"||s==="b") ? s : +s); return; }
     if(act==="gtype"){ genState(t).type = +el.dataset.i; newTask(t); return; }
     if(act==="glang"){ ST.lang = el.dataset.l; save(); drawGen(t); return; }
     if(act==="gpeek"){ document.getElementById("gpeek-"+tid).classList.toggle("on"); return; }
@@ -5865,6 +6391,13 @@ document.addEventListener("keydown", e=>{
   if(e.key!=="Enter") return;
   const inp = e.target.closest(".inp");
   if(!inp) return;
+  if(inp.dataset.bin){
+    e.preventDefault();
+    const q = inp.dataset.bin.split("|");
+    const btn = document.querySelector('[data-act="bchk"][data-t="'+q[0]+'"][data-i="'+q[1]+'"][data-j="'+q[2]+'"]');
+    if(btn) btn.click();
+    return;
+  }
   if(inp.dataset.gin){
     e.preventDefault();
     const btn = document.querySelector('[data-act="gchk"][data-t="'+inp.dataset.gin+'"]');
@@ -5934,6 +6467,18 @@ document.addEventListener("click", e=>{
 });
 document.getElementById("menu").addEventListener("click", ()=> setTimeout(closeMenu, 0));
 document.getElementById("btnAcc").addEventListener("click", openAcc);
+
+/* ↑ ↑ ↓ ↓ ← → ← → B A — открывает админ-панель */
+document.addEventListener("keydown", e=>{
+  const tag = (e.target.tagName || "").toLowerCase();
+  if(tag === "input" || tag === "textarea" || tag === "select") return;
+  KBUF.push(String(e.key).toLowerCase());
+  if(KBUF.length > KONAMI.length) KBUF.shift();
+  if(KBUF.length === KONAMI.length && KBUF.every((k,i)=>k === KONAMI[i])){
+    KBUF = [];
+    openAdmin();
+  }
+});
 
 /* ---- окно профилей ---- */
 function openProfiles(){
