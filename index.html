@@ -30,6 +30,8 @@
   --hot:#E23B16;    --hot-2:#FF5730;    --hot-soft:#FBE2DA;   --hot-line:#F0B2A0;
   --ok:#0B7A4B;     --ok-soft:#DDEFE3;  --ok-line:#9BCEAD;
   --on-ink:#FFFDF7;
+  --s-alg:#E23B16;  --s-eq:#1E2F86;   --s-fun:#7A2FB0;  --s-geo:#0B7A4B;
+  --gold:#E8A317;
   --grain:.18;      --grain-blend:multiply;
   --shadow:3px 3px 0 var(--blue-line);
   --shadow-lg:6px 6px 0 var(--blue-line);
@@ -47,6 +49,8 @@
     --hot:#FF6A45;    --hot-2:#FF8664;    --hot-soft:#39190F;   --hot-line:#6E3220;
     --ok:#43D08E;     --ok-soft:#0E3123;  --ok-line:#22694A;
     --on-ink:#0B0F2C;
+    --s-alg:#FF6A45;  --s-eq:#8EA2FF;   --s-fun:#C48CFF;  --s-geo:#43D08E;
+    --gold:#FFC94D;
     --grain:.24;      --grain-blend:screen;
   }
 }
@@ -58,6 +62,8 @@
   --hot:#FF6A45;    --hot-2:#FF8664;    --hot-soft:#39190F;   --hot-line:#6E3220;
   --ok:#43D08E;     --ok-soft:#0E3123;  --ok-line:#22694A;
   --on-ink:#0B0F2C;
+  --s-alg:#FF6A45;  --s-eq:#8EA2FF;   --s-fun:#C48CFF;  --s-geo:#43D08E;
+  --gold:#FFC94D;
   --grain:.24;      --grain-blend:screen;
 }
 /* старые имена токенов — чтобы ничего в разметке не отвалилось */
@@ -95,8 +101,10 @@ button{font-family:inherit; color:inherit;}
 .mark{
   width:36px;height:36px;flex:0 0 36px;background:var(--blue);color:var(--on-ink);
   display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:17px;
-  box-shadow:2px 2px 0 var(--hot);
+  box-shadow:2px 2px 0 var(--hot); cursor:pointer;
+  transition:transform .18s cubic-bezier(.2,1.6,.4,1), background .15s;
 }
+.mark:hover{transform:rotate(-8deg) scale(1.08); background:var(--hot);}
 .tb-brand h1{font-size:14px; font-weight:700; line-height:1.1;}
 .tb-brand p{margin:2px 0 0; font-family:var(--mono); font-size:8.5px; color:var(--ink-3); letter-spacing:.06em;}
 .tb-t{display:none;}
@@ -162,7 +170,10 @@ button{font-family:inherit; color:inherit;}
 .overall-top{display:flex; justify-content:space-between; align-items:baseline; font-family:var(--mono); font-size:9.5px; color:var(--ink-2);}
 .overall-top b{font-size:20px; color:var(--ink); font-family:var(--display); font-weight:700; font-variant-numeric:tabular-nums;}
 .bar{height:9px; background:var(--line-2); overflow:hidden; margin-top:7px; border:1px solid var(--ink);}
-.bar>i{display:block; height:100%; width:0%; background:var(--hot); transition:width .5s cubic-bezier(.4,0,.2,1);}
+.bar>i{display:block; height:100%; width:0%; transition:width .6s cubic-bezier(.2,.9,.3,1);
+  background:repeating-linear-gradient(115deg, var(--hot) 0 9px, var(--hot-2) 9px 18px);
+  background-size:200% 100%; animation:flow 1.6s linear infinite;}
+@keyframes flow{to{background-position:-36px 0;}}
 
 .nav{display:flex; flex-direction:column; gap:13px; flex:1;}
 .sec-label{font-family:var(--mono); font-size:8.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--on-ink); background:var(--blue); padding:3px 7px; margin:0 0 6px; display:inline-block;}
@@ -222,8 +233,10 @@ button{font-family:inherit; color:inherit;}
 .howto ol b{color:var(--ink); font-weight:600;}
 
 .sec-head{display:flex; align-items:center; gap:12px; margin:38px 0 15px;}
-.sec-head h3{font-family:var(--mono); font-size:9.5px; font-weight:400; letter-spacing:.18em; text-transform:uppercase; color:var(--on-ink); background:var(--ink); padding:4px 10px;}
-.sec-head::after{content:""; flex:1; height:2px; background:var(--ink);}
+.sec-head h3{font-family:var(--mono); font-size:9.5px; font-weight:400; letter-spacing:.18em; text-transform:uppercase; color:var(--on-ink); background:var(--c, var(--ink)); padding:4px 10px;}
+.sec-head::after{content:""; flex:1; height:3px; background:var(--c, var(--ink));}
+.sec-head.sec-alg{--c:var(--s-alg);} .sec-head.sec-eq{--c:var(--s-eq);}
+.sec-head.sec-fun{--c:var(--s-fun);} .sec-head.sec-geo{--c:var(--s-geo);}
 
 .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px;}
 .card{background:var(--card); border:2px solid var(--ink); padding:16px 17px 14px; cursor:pointer; box-shadow:var(--shadow); text-align:left; font-family:var(--sans); display:flex; flex-direction:column; gap:6px; transition:transform .14s, box-shadow .14s; animation:up .42s backwards cubic-bezier(.2,.8,.3,1);}
@@ -231,7 +244,14 @@ button{font-family:inherit; color:inherit;}
 .cards .card:nth-child(3){animation-delay:.10s} .cards .card:nth-child(4){animation-delay:.14s}
 .cards .card:nth-child(5){animation-delay:.18s} .cards .card:nth-child(6){animation-delay:.22s}
 @keyframes up{from{opacity:0; transform:translateY(14px);}to{opacity:1; transform:none;}}
-.card:hover{transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--hot);}
+.card:hover{transform:translate(-3px,-3px) rotate(-.6deg); box-shadow:8px 8px 0 var(--c, var(--hot));}
+.card{--c:var(--hot);}
+.card.sec-alg{--c:var(--s-alg);} .card.sec-eq{--c:var(--s-eq);}
+.card.sec-fun{--c:var(--s-fun);} .card.sec-geo{--c:var(--s-geo);}
+.card{border-top:6px solid var(--c);}
+.card .pill{background:var(--c); color:var(--on-ink);}
+.card.is-done{border-color:var(--ink); border-top-color:var(--ok);}
+.card.is-done .pill{background:var(--ok);}
 .card h4{font-size:17px; line-height:1.16;}
 .card p{margin:0; font-size:12.8px; color:var(--ink-2); line-height:1.45; flex:1;}
 .card .foot{display:flex; align-items:center; justify-content:space-between; margin-top:9px; font-family:var(--mono); font-size:9px; color:var(--ink-3); gap:8px;}
@@ -284,7 +304,8 @@ button{font-family:inherit; color:inherit;}
 .steprail{display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin:24px 0 6px;}
 .schip{width:30px;height:30px; border:2px solid var(--ink); background:var(--card); font-family:var(--mono); font-size:10.5px; color:var(--ink-2); cursor:pointer; display:grid; place-items:center; transition:background-color .13s, border-color .13s; padding:0;}
 .schip:hover:not(:disabled){background:var(--hot); color:var(--on-ink);}
-.schip.cur{background:var(--blue); color:var(--on-ink); font-weight:600;}
+.schip.cur{background:var(--blue); color:var(--on-ink); font-weight:600; transform:scale(1.12);}
+.schip{transition:background-color .13s, border-color .13s, transform .18s cubic-bezier(.2,1.5,.4,1);}
 .schip.ok{background:var(--ok); color:var(--on-ink);}
 .schip.ok.cur{background:var(--blue);}
 .schip:disabled{opacity:.35; cursor:not-allowed;}
@@ -328,7 +349,10 @@ button{font-family:inherit; color:inherit;}
 .q .qt{font-size:15px; font-weight:500; margin:5px 0 13px; line-height:1.45;}
 .opts{display:flex; flex-direction:column; gap:8px;}
 .opt{text-align:left; padding:11px 14px; border:2px solid var(--line); background:var(--card-2); cursor:pointer; font-size:14.4px; transition:background-color .12s, border-color .12s; line-height:1.4; font-family:var(--sans); color:var(--ink);}
-.opt:hover:not(:disabled){border-color:var(--ink); background:var(--blue); color:var(--on-ink);}
+.opt:hover:not(:disabled){border-color:var(--ink); background:var(--blue); color:var(--on-ink); transform:translateX(4px);}
+.opt{transition:background-color .12s, border-color .12s, transform .12s;}
+.opt.right{animation:rightpop .42s cubic-bezier(.2,1.5,.4,1);}
+@keyframes rightpop{0%{transform:scale(1);}40%{transform:scale(1.035);}100%{transform:scale(1);}}
 .opt:disabled{cursor:default;}
 .opt.right{background:var(--ok); border-color:var(--ok); color:var(--on-ink); font-weight:500;}
 .opt.wrongpick{background:var(--hot); border-color:var(--hot); color:var(--on-ink); font-weight:500;}
@@ -351,7 +375,8 @@ button{font-family:inherit; color:inherit;}
 .fiftybtn{margin-left:auto;}
 
 .btn{font-family:var(--sans); font-weight:600; font-size:13.8px; padding:11px 20px; border:2px solid var(--ink); cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:transform .11s, box-shadow .11s, background .13s;}
-.btn:active:not(:disabled){transform:translate(2px,2px); box-shadow:none !important;}
+.btn:active:not(:disabled){transform:translate(3px,3px) scale(.97); box-shadow:none !important;}
+.btn-p:hover:not(:disabled){transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--ink);}
 .btn-p{background:var(--hot); color:var(--on-ink); box-shadow:3px 3px 0 var(--ink);}
 .btn-p:hover:not(:disabled){background:var(--hot-2);}
 .btn-p:disabled{background:var(--line-2); color:var(--ink-3); border-color:var(--line); box-shadow:none; cursor:not-allowed;}
@@ -570,6 +595,52 @@ table.cmp td.who.zero{color:var(--ink-3);}
   .shopit .btn{grid-column:2; justify-self:start;}
   .si-ico{width:38px;height:38px;font-size:16px;}
 }
+
+/* ---- искры и летящие жетоны ---- */
+.spark{
+  position:fixed; width:9px; height:9px; z-index:150; pointer-events:none; border-radius:2px;
+  animation:spark .62s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes spark{
+  from{transform:translate(-50%,-50%) scale(1) rotate(0deg); opacity:1;}
+  to{transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2) rotate(180deg); opacity:0;}
+}
+.flycoin{
+  position:fixed; z-index:150; pointer-events:none; width:26px; height:26px; border-radius:50%;
+  background:var(--gold); color:var(--ink); border:2px solid var(--ink);
+  display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:12px;
+  animation:flycoin .8s cubic-bezier(.4,0,.4,1) forwards;
+}
+@keyframes flycoin{
+  0%{transform:translate(-50%,-50%) scale(.4); opacity:0;}
+  18%{transform:translate(-50%,-50%) scale(1.15); opacity:1;}
+  100%{transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(.5); opacity:0;}
+}
+.coinbox.bump{animation:bump .38s cubic-bezier(.2,1.6,.4,1);}
+@keyframes bump{0%{transform:scale(1);}45%{transform:scale(1.07);}100%{transform:scale(1);}}
+
+/* цвет раздела на странице темы */
+.thead .tag{background:var(--c, var(--hot));}
+.page.sec-alg{--c:var(--s-alg);} .page.sec-eq{--c:var(--s-eq);}
+.page.sec-fun{--c:var(--s-fun);} .page.sec-geo{--c:var(--s-geo);}
+.page .step-goal{border-left-color:var(--c, var(--hot));}
+.page .sheet::before{background:var(--c, var(--hot));}
+
+/* ---- ва-банк и душа ---- */
+.allin{background:var(--gold); border:2px solid var(--ink); color:var(--ink); font-family:var(--display);
+  font-weight:700; font-size:11px; padding:7px 13px; cursor:pointer; box-shadow:2px 2px 0 var(--ink);}
+.allin:hover{background:var(--hot); color:var(--on-ink);}
+.soul{
+  background:var(--ink); color:var(--on-ink); border:3px solid var(--hot); padding:20px 22px;
+  margin-bottom:18px; box-shadow:6px 6px 0 var(--hot); text-align:center;
+  animation:soulpulse 2.2s ease-in-out infinite;
+}
+@keyframes soulpulse{0%,100%{box-shadow:6px 6px 0 var(--hot);}50%{box-shadow:0 0 0 5px var(--hot);}}
+.soul h4{font-size:22px; color:var(--hot); margin-bottom:8px;}
+.soul p{margin:0 0 15px; font-size:13.6px; opacity:.85;}
+.soulwarn{background:var(--hot-soft); border:2px solid var(--hot); padding:14px 16px; margin:14px 0; font-size:14px;}
+.soulwarn ul{margin:8px 0 0; padding-left:20px; display:grid; gap:4px;}
+.soulmark{font-family:var(--mono); font-size:9px; background:var(--gold); color:var(--ink); padding:2px 6px; margin-left:6px;}
 
 /* ---- большие задачи ---- */
 .bigtask{background:var(--card); border:2px solid var(--ink); box-shadow:var(--shadow); margin-bottom:22px;}
@@ -870,6 +941,16 @@ table.cmp td.who.zero{color:var(--ink-3);}
       <textarea class="code-area" id="profCodeIn" placeholder="Вставь сюда код профиля и нажми «Загрузить»" style="display:none"></textarea>
       <div class="mrow" id="profCodeRow" style="display:none"><button class="btn btn-p" id="btnLoadCode">Загрузить</button></div>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="soulm">
+  <div class="back" data-close="1"></div>
+  <div class="box">
+    <button class="x" data-close="1" aria-label="Закрыть">×</button>
+    <h3>Ставка на душу</h3>
+    <p>Последняя ставка, когда жетоны кончились. Честные 50 на 50, без подкрутки.</p>
+    <div id="soulBody"></div>
   </div>
 </div>
 
@@ -3756,9 +3837,23 @@ function casTabs(){
     + '<button class="gtype snd'+(ST.sound?" on":"")+'" data-act="csound">'+(ST.sound?"♪ звук":"звук выкл")+'</button></div>';
 }
 function betRow(){
+  const list = bets();
+  const custom = CB > 0 && list.indexOf(CB) < 0;
   return '<div class="gtop"><span class="srail-note">ставка</span><div class="langsw">'
-    + bets().map(b=>'<button data-act="cbet" data-b="'+b+'"'+(CB===b?' class="on"':"")+'>'+b+'</button>').join("")
-    + '</div></div>';
+    + list.map(b=>'<button data-act="cbet" data-b="'+b+'"'+(CB===b?' class="on"':"")+'>'+b+'</button>').join("")
+    + (custom ? '<button class="on">'+CB+'</button>' : "")
+    + '</div>'
+    + (coins() > 0 ? '<button class="allin" data-act="callin">ВА-БАНК · '+coins()+'</button>' : "")
+    + '</div>';
+}
+
+/* Когда жетонов не осталось — единственный оставшийся ход. */
+function soulPanel(){
+  if(coins() > 0) return "";
+  return '<div class="soul">'
+    + '<h4>Жетоны кончились</h4>'
+    + '<p>Заработать новые можно только задачами. Либо поставить на кон то, что осталось.</p>'
+    + '<button class="btn btn-p big" data-act="soul">Поставить душу</button></div>';
 }
 function casBank(){
   const c = cas(), diff = c.won - c.bet;
@@ -3821,6 +3916,7 @@ function drawCasino(){
       +   '</div>'
       + '</div>'
       + gamblePanel()
+      + soulPanel()
       + (GAMBLE ? "" :
           '<div class="paytable">'
           + '<div class="jackrow"><span>'+J+' '+J+' '+J+' — джекпот</span><b>×'+PAY_JACK+'</b></div>'
@@ -3853,6 +3949,7 @@ function drawCasino(){
       + '<div class="spinres '+(r ? (r.win?"win":"lose") : "")+'" id="rbres">'
       +   (r ? r.note + (r.pay>0 ? " · +"+r.pay+" ж" : " · −"+r.bet+" ж") : "&nbsp;")
       + '</div>'
+      + soulPanel()
       + '<div class="table">' + fields.map(f=>
           '<button class="field '+f[0]+(RBPICK===f[0]?" picked":"")+'" data-act="cpick" data-p="'+f[0]+'">'
           + '<span class="fname">'+f[1]+'</span><span class="fpay">'+f[2]+'</span>'
@@ -4718,6 +4815,95 @@ function bigDone(t, i, j, okShown){
 }
 
 /* =====================================================================
+   6ж-0. СТАВКА НА ДУШУ
+   Проигрыш стирает аккаунт по-настоящему, поэтому запуск закрыт
+   набором фразы вручную: случайно нажать невозможно.
+   ===================================================================== */
+const SOUL_PHRASE = "СТАВЛЮ ДУШУ";
+const SOUL_WIN = 1000;
+
+function drawSoul(){
+  const box = document.getElementById("soulBody");
+  if(!box) return;
+  const me = DB.profiles[DB.active];
+  const steps = allPassed(ST), topics = TOPICS.filter(t=>topicDone(t)).length;
+  box.innerHTML =
+    '<div class="soulwarn"><b>Если выпадет решка — аккаунт стирается.</b> Насовсем, без отмены. Пропадёт:'
+    + '<ul>'
+    +   '<li>профиль «'+me.name+'»' + (online() && me.cloud ? ' вместе с записью на сервере' : '') + '</li>'
+    +   '<li>пройденных шагов: <b>'+steps+'</b>, закрытых тем: <b>'+topics+'</b></li>'
+    +   '<li>результат диагностики и весь личный план</li>'
+    +   '<li>купленное в магазине</li>'
+    + '</ul></div>'
+    + '<div class="cs-list"><div>Шанс выиграть — ровно <b>1 из 2</b>. Выигрыш: <b>'+SOUL_WIN+' жетонов</b>.</div></div>'
+    + '<div class="cs-sec"><h4>Подтверждение</h4>'
+    +   '<p class="mnote">Чтобы согласиться, впиши фразу <b>'+SOUL_PHRASE+'</b> — заглавными, как здесь.</p>'
+    +   '<div class="authbox"><input type="text" id="soulIn" placeholder="'+SOUL_PHRASE+'" autocomplete="off"></div>'
+    +   '<div class="mrow">'
+    +     '<button class="btn btn-p" data-act="soulgo">Бросить монету</button>'
+    +     '<button class="btn btn-g" data-close="1">Передумал</button>'
+    +   '</div>'
+    +   '<div class="fb" id="soulFb"></div>'
+    + '</div>';
+}
+
+function openSoul(){
+  drawSoul();
+  document.querySelectorAll(".modal").forEach(m=>m.classList.remove("on"));
+  document.getElementById("soulm").classList.add("on");
+  beep(200, 0.5, "sawtooth", 0.05);
+}
+
+function soulGo(){
+  const inp = document.getElementById("soulIn"), fb = document.getElementById("soulFb");
+  if((inp.value || "").trim() !== SOUL_PHRASE){
+    fb.className = "fb on bad";
+    fb.innerHTML = "<b>Не то.</b> Впиши ровно: " + SOUL_PHRASE;
+    return;
+  }
+  const win = Math.random() < 0.5;
+  fb.className = "fb on " + (win ? "good" : "bad");
+  fb.innerHTML = "<b>Монета в воздухе…</b>";
+  document.querySelectorAll('[data-act="soulgo"]').forEach(b=> b.disabled = true);
+  setTimeout(()=>{
+    if(win){
+      ST.coins = coins() + SOUL_WIN;
+      ST.soulWon = (ST.soulWon || 0) + 1;
+      save(); drawCoins(true);
+      fb.innerHTML = "<b>Орёл. Душа осталась при тебе.</b> +" + SOUL_WIN + " жетонов.";
+      fanfare();
+      burst(document.querySelector("#soulm .box"), "var(--gold)");
+      setTimeout(()=>{ document.getElementById("soulm").classList.remove("on"); drawCasino(); }, 1800);
+    } else {
+      fb.innerHTML = "<b>Решка.</b> Аккаунт стирается.";
+      sadTone();
+      setTimeout(soulLose, 1400);
+    }
+  }, 1200);
+}
+
+function soulLose(){
+  const dead = DB.active;
+  if(online()){
+    try{ cloudPush({}); }catch(e){}
+    try{ cloudSignOut(); }catch(e){}
+    CFR = [];
+  }
+  delete DB.profiles[dead];
+  if(!Object.keys(DB.profiles).length){
+    const id = newId();
+    DB.profiles[id] = {id:id, name:"Я", color:0, made:Date.now(), st:BLANK()};
+  }
+  DB.active = Object.keys(DB.profiles)[0];
+  ST = DB.profiles[DB.active].st;
+  try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){}
+  document.getElementById("soulm").classList.remove("on");
+  rebuildAll();
+  showHome();
+  toast("Душа проиграна. Аккаунт стёрт.", false);
+}
+
+/* =====================================================================
    6ж. АДМИН-ПАНЕЛЬ
    Открывается кодом Konami: ↑ ↑ ↓ ↓ ← → ← → B A
    ===================================================================== */
@@ -5192,7 +5378,7 @@ function buildTopic(t){
     + termsHTML(t) + '</div></details>' : "";
   const rail = '<div class="steprail" id="rail-'+t.id+'"></div>';
   const el = document.createElement("section");
-  el.className = "page"; el.id = "page-"+t.id;
+  el.className = "page sec-" + t.sec; el.id = "page-"+t.id;
   el.innerHTML = '<button class="crumb" data-act="home">← все темы</button>'
     + '<div class="thead"><span class="tag">'+t.tag+'</span><h2>'+t.title+'</h2><p class="sub">'+md(t.sub)+'</p></div>'
     + terms + rail
@@ -6032,13 +6218,13 @@ function drawHome(){
   const box = document.getElementById("homeSections");
   box.innerHTML = SECTIONS.map(sec=>{
     const list = TOPICS.filter(t=>t.sec===sec.id);
-    return '<div class="sec-head"><h3>'+sec.name+'</h3></div><div class="cards">'
+    return '<div class="sec-head sec-'+sec.id+'"><h3>'+sec.name+'</h3></div><div class="cards">'
       + list.map(t=>{
         const n = passedCount(t), done = topicDone(t);
         const skip = !inPlan(t.id) && !done;
         const cls = done ? "is-done" : (n>0 ? "is-going" : (skip ? "is-skip" : ""));
         const pill = done ? "пройдено" : (n>0 ? n+" из "+t.steps.length : (skip ? "не в плане" : "не начата"));
-        return '<button class="card '+cls+'" data-act="topic" data-t="'+t.id+'">'
+        return '<button class="card sec-'+t.sec+' '+cls+'" data-act="topic" data-t="'+t.id+'">'
           + '<h4>'+t.title+'</h4><p>'+md(t.sub)+'</p>'
           + '<div class="foot"><span>'+t.steps.length+' шагов · '+t.practice.length+' задач</span><span class="pill">'+pill+'</span></div>'
           + '</button>';
@@ -6051,6 +6237,42 @@ function drawHome(){
    10. ОБРАБОТКА ОТВЕТОВ
    ===================================================================== */
 const MISSED = new Set();   /* где уже ошибались в этой сессии */
+
+/* Короткий салют из точек — визуальная отдача на верный ответ. */
+function burst(el, color){
+  if(REDUCED || !el || !el.getBoundingClientRect) return;
+  const r = el.getBoundingClientRect();
+  if(!r.width) return;
+  const cx = r.left + r.width/2, cy = r.top + r.height/2, n = 14;
+  for(let i=0;i<n;i++){
+    const p = document.createElement("i");
+    const a = (Math.PI*2*i)/n + Math.random()*0.6;
+    const d = 38 + Math.random()*54;
+    p.className = "spark";
+    p.style.cssText = "left:"+cx+"px;top:"+cy+"px;background:"+(color||"var(--ok)")
+      + ";--dx:"+(Math.cos(a)*d).toFixed(1)+"px;--dy:"+(Math.sin(a)*d).toFixed(1)+"px;"
+      + "animation-delay:"+(i*8)+"ms;";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 750 + i*8);
+  }
+}
+
+/* Жетон летит от места, где заработан, к счётчику в панели. */
+function coinFly(el){
+  const box = document.getElementById("coinBox");
+  if(REDUCED || !box) return;
+  if(box) { box.classList.remove("bump"); void box.offsetWidth; box.classList.add("bump"); }
+  if(!el || !el.getBoundingClientRect) return;
+  const a = el.getBoundingClientRect(), b = box.getBoundingClientRect();
+  if(!a.width || !b.width) return;
+  const c = document.createElement("i");
+  c.className = "flycoin"; c.textContent = "ж";
+  c.style.cssText = "left:"+(a.left+a.width/2)+"px;top:"+(a.top+a.height/2)+"px;"
+    + "--tx:"+(b.left+b.width/2-a.left-a.width/2).toFixed(1)+"px;"
+    + "--ty:"+(b.top+b.height/2-a.top-a.height/2).toFixed(1)+"px;";
+  document.body.appendChild(c);
+  setTimeout(()=>c.remove(), 850);
+}
 
 function markCheck(t, si, qi, state){
   const key = qk(t.id,si,qi);
@@ -6078,6 +6300,7 @@ function onOpt(btn){
     wrap.querySelectorAll(".opt").forEach(b=>{ b.disabled=true; if(+b.dataset.o===c.c) b.classList.add("right"); });
     feedback(fbid, true, "<b>Верно! </b>"+md(c.e));
     const tl = document.getElementById("tl-"+t.id+"-"+si+"-"+qi); if(tl) tl.innerHTML="";
+    burst(btn); coinFly(btn);
     markCheck(t, si, qi, "ok");
   } else {
     MISSED.add(qk(t.id,si,qi));
@@ -6098,6 +6321,7 @@ function onCheckInput(t, si, qi){
     const b = inp.parentElement.querySelector('[data-act="chk"]'); if(b) b.remove();
     feedback(fbid, true, "<b>Верно! </b>"+md(c.e));
     const tl = document.getElementById("tl-"+t.id+"-"+si+"-"+qi); if(tl) tl.innerHTML="";
+    burst(inp); coinFly(inp);
     markCheck(t, si, qi, "ok");
   } else {
     MISSED.add(qk(t.id,si,qi));
@@ -6246,6 +6470,14 @@ document.addEventListener("click", e=>{
     if(act==="ctake"){ doTake(); return; }
     if(act==="csound"){ ST.sound = !ST.sound; save(); drawCasino(); if(ST.sound) beep(760,0.12,"triangle",0.05); return; }
     if(act==="cpick"){ doPick(el.dataset.p); return; }
+    if(act==="callin"){
+      if(coins() <= 0) return;
+      CB = coins(); drawCasino();
+      toast("Ва-банк: " + CB + " ж", true);
+      return;
+    }
+    if(act==="soul"){ openSoul(); return; }
+    if(act==="soulgo"){ soulGo(); return; }
     if(act==="cspinrb"){ doSpinRB(); return; }
     if(act==="cset"){ ST.slotSet = el.dataset.s; save(); drawCasino(); return; }
     if(act==="cbuy"){ doBuy(el.dataset.i); return; }
