@@ -4721,8 +4721,18 @@ function bigDone(t, i, j, okShown){
    6ж. АДМИН-ПАНЕЛЬ
    Открывается кодом Konami: ↑ ↑ ↓ ↓ ← → ← → B A
    ===================================================================== */
-const KONAMI = ["arrowup","arrowup","arrowdown","arrowdown","arrowleft","arrowright","arrowleft","arrowright","b","a"];
+/* Сверяем ФИЗИЧЕСКИЕ клавиши (e.code), а не буквы: при русской
+   раскладке B даёт «и», A даёт «ф», и сравнение по букве не срабатывало.
+   Если code недоступен — переводим букву вручную, включая кириллицу. */
+const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","KeyB","KeyA"];
+const KEYMAP = {"b":"KeyB","a":"KeyA","и":"KeyB","ф":"KeyA",
+  "arrowup":"ArrowUp","arrowdown":"ArrowDown","arrowleft":"ArrowLeft","arrowright":"ArrowRight"};
+function konamiToken(e){
+  if(e.code && /^(Key[AB]|Arrow(Up|Down|Left|Right))$/.test(e.code)) return e.code;
+  return KEYMAP[String(e.key).toLowerCase()] || "";
+}
 let KBUF = [];
+let LOGO_TAPS = 0, LOGO_T = null;
 
 function adminStats(){
   const steps = TOPICS.reduce((s,t)=>s+t.steps.length,0);
@@ -6458,6 +6468,16 @@ document.getElementById("tabCourse").addEventListener("click", showHome);
 document.getElementById("btnProfiles").addEventListener("click", openProfiles);
 
 /* выпадающее меню в правом углу панели */
+/* На телефоне клавиатуры нет — тот же вход по семи нажатиям на знак Σ */
+document.querySelectorAll(".mark").forEach(m=>{
+  m.addEventListener("click", ()=>{
+    LOGO_TAPS++;
+    clearTimeout(LOGO_T);
+    LOGO_T = setTimeout(()=>{ LOGO_TAPS = 0; }, 1200);
+    if(LOGO_TAPS >= 7){ LOGO_TAPS = 0; openAdmin(); }
+  });
+});
+
 document.getElementById("btnMenu").addEventListener("click", e=>{
   e.stopPropagation();
   document.getElementById("menu").classList.toggle("on");
@@ -6472,7 +6492,9 @@ document.getElementById("btnAcc").addEventListener("click", openAcc);
 document.addEventListener("keydown", e=>{
   const tag = (e.target.tagName || "").toLowerCase();
   if(tag === "input" || tag === "textarea" || tag === "select") return;
-  KBUF.push(String(e.key).toLowerCase());
+  const tok = konamiToken(e);
+  if(!tok){ KBUF = []; return; }
+  KBUF.push(tok);
   if(KBUF.length > KONAMI.length) KBUF.shift();
   if(KBUF.length === KONAMI.length && KBUF.every((k,i)=>k === KONAMI[i])){
     KBUF = [];
