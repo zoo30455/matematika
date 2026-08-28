@@ -685,6 +685,7 @@ table.cmp td.who.zero{color:var(--ink-3);}
 .bwrap:focus-within, .bwrap:focus{border-color:var(--hot);}
 .bslot{display:inline-flex; align-items:center; min-height:1em;}
 .bslot.empty{min-width:26px; border-bottom:2px dotted var(--ink-3);}
+.bslot.here{background:var(--hot-soft); box-shadow:0 0 0 2px var(--hot-soft);}
 .mnum>.bslot.empty, .mden>.bslot.empty, .mrin>.bslot.empty, sup>.bslot.empty{min-width:18px;}
 .bgap{display:inline-block; width:3px; align-self:stretch; min-height:1em;}
 .bgap.cur{background:var(--hot); animation:bcaret 1s steps(2, jump-none) infinite;}
@@ -709,6 +710,7 @@ sup.bnode{font-size:.6em; vertical-align:super; align-items:baseline;}
 .brow.d .bkey{font-family:var(--mono); font-size:15px;}
 .bkey.wide{min-width:96px; font-size:13.5px; font-family:var(--mono); letter-spacing:.03em;}
 .bkey.del{color:var(--no); border-color:var(--no);}
+.bkey.out{color:var(--blue); border-color:var(--blue);}
 .bkey.frac{color:var(--ok); border-color:var(--ok); background:var(--ok-soft);}
 .bkey.frac:hover{background:var(--ok); color:var(--on-ink);}
 .fbar{display:inline-flex; flex-direction:column; align-items:center; gap:2px; margin-right:2px;}
@@ -5690,7 +5692,8 @@ function bGap(path, i){
   return '<span class="bgap'+(on ? " cur" : "")+'" data-act="bcur" data-bp="'+path+'" data-bi="'+i+'"></span>';
 }
 function bSlot(list, path){
-  let h = '<span class="bslot'+(list.length ? "" : " empty")+'">';
+  const here = BE.p === path && path !== "" ? " here" : "";
+  let h = '<span class="bslot'+(list.length ? "" : " empty")+here+'">';
   for(let i = 0; i <= list.length; i++){
     h += bGap(path, i);
     if(i < list.length) h += bNode(list[i], path, i);
@@ -5742,10 +5745,12 @@ function bPalette(task){
     +     '<span class="fbar"><i></i><b></b><i></i></span>дробь</button>'
     +   '<button class="bkey wide" data-act="bkey" data-k="p" title="Степень">x<sup>n</sup> степень</button>'
     +   '<button class="bkey wide" data-act="bkey" data-k="r" title="Корень">√&nbsp;корень</button>'
+    +   '<button class="bkey wide out" data-act="bout" title="Выйти из дроби или степени">↳ выйти</button>'
     +   '<button class="bkey wide del" data-act="bback" title="Стереть деталь">⌫ стереть</button>'
     + '</div>'
-    + '<p class="bnote">У дроби два окна — щёлкни по верхнему или нижнему, чтобы писать туда. '
-    +   'С клавиатуры: <b>Tab</b> — перейти в соседнее окно, <b>← →</b> — двигать курсор, '
+    + '<p class="bnote">У дроби и степени своё окно — пока курсор в нём, всё написанное попадает туда, '
+    +   'и окно подсвечено. Чтобы вернуться в строку, жми <b>↳ выйти</b>. '
+    +   'С клавиатуры: <b>Tab</b> — соседнее окно, <b>← →</b> — курсор, '
     +   '<b>/</b> — дробь, <b>^</b> — степень, <b>Enter</b> — проверить.</p>'
     + '</div>';
 }
@@ -7385,7 +7390,8 @@ document.addEventListener("click", e=>{
     if(act==="chk"){ onCheckInput(t, +el.dataset.s, +el.dataset.q); return; }
     if(act==="show"){ onShow(t, +el.dataset.s, +el.dataset.q); return; }
     if(act==="pchk"){ onPracticeCheck(t, +el.dataset.q); return; }
-    if(act==="go"){ const s = el.dataset.s; showStep(tid, (s==="p"||s==="g"||s==="b") ? s : +s); return; }
+    /* номер шага приходит числом, разделы (p, g, b, c) — буквой */
+    if(act==="go"){ const s = el.dataset.s; showStep(tid, /^[0-9]+$/.test(s) ? +s : s); return; }
     if(act==="gtype"){ genState(t).type = +el.dataset.i; newTask(t); return; }
     if(act==="glang"){ ST.lang = el.dataset.l; save(); drawGen(t); return; }
     if(act==="gpeek"){ document.getElementById("gpeek-"+tid).classList.toggle("on"); return; }
@@ -7417,13 +7423,14 @@ document.addEventListener("click", e=>{
       return;
     }
     if(act==="hint"){ document.getElementById("ph-"+tid+"-"+el.dataset.q).classList.toggle("on"); return; }
-    if(act==="bkey" || act==="bcur" || act==="bback" || act==="bclear" || act==="bwrap"){
+    if(act==="bkey" || act==="bcur" || act==="bback" || act==="bclear" || act==="bwrap" || act==="bout"){
       const host = el.closest(".constask");
       if(!host) return;
       bFocus(host.dataset.host);
       if(act==="bkey")  bKey(el.dataset.k, el.dataset.v);
       if(act==="bcur"){ BE.p = el.dataset.bp; BE.i = +el.dataset.bi; bPaint(); }
       if(act==="bback"){ bBack(); bPaint(); }
+      if(act==="bout"){ bOut(true); bPaint(); }
       if(act==="bclear"){ BE.root = []; BE.p = ""; BE.i = 0; bPaint(); }
       if(act==="bwrap" && e.target === el){ BE.p = ""; BE.i = BE.root.length; bPaint(); }
       const w = bWrap(); if(w) w.focus({preventScroll:true});
