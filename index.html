@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Летняя тетрадь по математике</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#1E2F86">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
-<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 
-</head>
-<body>
 <style>
 /* =========================================================
    РИЗОГРАФ — школьная двухкрасочная печать.
@@ -551,9 +539,12 @@ table.cmp td.who.zero{color:var(--ink-3);}
   font-family:var(--mono); font-size:12px; font-weight:600; z-index:4;
   animation:chipdrop .34s cubic-bezier(.2,1.5,.4,1); box-shadow:0 3px 0 rgba(0,0,0,.25);}
 @keyframes chipdrop{from{transform:translateY(-70px) scale(1.5) rotate(-25deg); opacity:0;}to{transform:none; opacity:1;}}
+.chip.c0{background:#1E2F86; color:#FFFDF7; border-color:#FFFDF7;}
 .chip.c1{background:#E23B16; color:#FFFDF7; border-color:#FFFDF7;}
 .chip.c2{background:#0B7A4B; color:#FFFDF7; border-color:#FFFDF7;}
 .chip.c3{background:#8B2E6B; color:#FFFDF7; border-color:#FFFDF7;}
+.chip.c4{background:#0E6E85; color:#FFFDF7; border-color:#FFFDF7;}
+.chip.c5{background:#5B3BA8; color:#FFFDF7; border-color:#FFFDF7;}
 .chip.won{animation:chipwin .55s cubic-bezier(.2,1.5,.4,1) both;}
 @keyframes chipwin{0%{transform:none;}45%{transform:scale(1.45) rotate(12deg);}100%{transform:scale(1.15);}}
 .chip.lost{animation:chiplost .6s ease-in forwards;}
@@ -688,6 +679,16 @@ table.cmp td.who.zero{color:var(--ink-3);}
 .tiny{font-family:var(--mono); font-size:9px; padding:5px 8px; cursor:pointer; border:1px solid var(--line); background:var(--card); color:var(--ink-2); transition:background-color .12s, border-color .12s;}
 .tiny:hover{border-color:var(--blue); background:var(--blue); color:var(--on-ink);}
 .tiny.danger:hover{border-color:var(--hot); background:var(--hot); color:var(--on-ink);}
+/* палитра профиля: открывается покупкой «Свой цвет» */
+.pal{grid-column:1/-1; display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+  margin-top:9px; padding-top:9px; border-top:1px dashed var(--line);}
+.pal .lbl{font-family:var(--mono); font-size:9px; color:var(--ink-3); margin-right:2px;}
+.sw{width:22px; height:22px; border:2px solid var(--line); cursor:pointer; padding:0;
+  transition:transform .12s, box-shadow .12s, border-color .12s;}
+.sw:hover{transform:translateY(-2px); box-shadow:0 3px 0 var(--ink);}
+.sw.on{border-color:var(--ink); box-shadow:0 0 0 2px var(--card-2), 0 0 0 4px var(--ink);}
+.sw.c0{background:#1E2F86;} .sw.c1{background:#E23B16;} .sw.c2{background:#0B7A4B;}
+.sw.c3{background:#8B2E6B;} .sw.c4{background:#0E6E85;} .sw.c5{background:#5B3BA8;}
 .newrow{display:flex; gap:8px; margin-top:11px; flex-wrap:wrap;}
 .newrow input{flex:1; min-width:160px; padding:10px 13px; border:2px solid var(--ink); background:var(--card-2); font-family:var(--sans); font-size:14px; color:var(--ink);}
 .newrow input:focus{outline:none; border-color:var(--hot);}
@@ -3733,7 +3734,7 @@ const SHOP = [
  {id:"insure", icon:"⛨",  name:"Страховка от зеро", price:50, qty:3,
   desc:"Выпал зеро при ставке на цвет — половина ставки возвращается. Настоящее правило европейской рулетки."},
  {id:"chip",   icon:"◉",  name:"Свой цвет",        price:60,  once:true,
-  desc:"Открывает выбор цвета фишки и аватарки в разделе «Профили»."},
+  desc:"Палитра из шести цветов. Где: клик по своей карточке слева или «Ещё» → «Профили на устройстве» — ряд квадратиков внизу. Меняет аватарку и фишку на рулетке."},
  {id:"skins",  icon:"⁂",  name:"Набор символов",   price:100, once:true,
   desc:"Барабаны на греческих буквах или геометрических знаках вместо математических."},
  {id:"high",   icon:"↑",  name:"Высокие ставки",   price:150, once:true,
@@ -3745,6 +3746,8 @@ function coins(){ if(typeof ST.coins !== "number") ST.coins = COIN_START; return
 function inv(){ if(!ST.inv) ST.inv = {}; return ST.inv; }
 function cas(){ if(!ST.cas) ST.cas = {bet:0, won:0, slot:0, rb:0, jack:0, zero:0}; return ST.cas; }
 function have(id){ return inv()[id] || 0; }
+/* цвет активного профиля: им красятся аватарка и фишка на рулетке */
+function myColor(){ const p = DB.profiles[DB.active]; return p ? (p.color % 6) : 0; }
 const REDUCED = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function drawCoins(anim){
@@ -3953,7 +3956,7 @@ function drawCasino(){
       + '<div class="table">' + fields.map(f=>
           '<button class="field '+f[0]+(RBPICK===f[0]?" picked":"")+'" data-act="cpick" data-p="'+f[0]+'">'
           + '<span class="fname">'+f[1]+'</span><span class="fpay">'+f[2]+'</span>'
-          + (RBPICK===f[0] ? '<span class="chip'+(ST.chipColor?" c"+ST.chipColor:"")+'">'+CB+'</span>' : '')
+          + (RBPICK===f[0] ? '<span class="chip'+(have("chip") ? " c"+myColor() : "")+'">'+CB+'</span>' : '')
           + '</button>').join("") + '</div>'
       + '<div class="stepnav">'
       +   '<span class="gate">'+(have("insure") ? "страховок от зеро: "+have("insure") : "шанс на цвет 18 из 37")+'</span>'
@@ -4226,6 +4229,8 @@ function doBuy(id){
   save(); drawCasino();
   beep(760, 0.14, "triangle", 0.05);
   toast("Куплено: " + it.name, true);
+  /* палитра живёт в другом окне — сразу туда и отправляем */
+  if(id === "chip") setTimeout(()=>{ if(typeof openProfiles === "function") openProfiles(); }, 700);
 }
 
 /* =====================================================================
@@ -5656,9 +5661,15 @@ function drawProfList(){
       +   (p.id===DB.active ? "" : '<button class="tiny" data-act="pswitch" data-p="'+p.id+'">Войти</button>')
       +   '<button class="tiny" data-act="pexport" data-p="'+p.id+'">Файл</button>'
       +   '<button class="tiny" data-act="prename" data-p="'+p.id+'">Имя</button>'
-      +   (have("color") ? '<button class="tiny" data-act="pcolor" data-p="'+p.id+'">Цвет</button>' : "")
       +   '<button class="tiny danger" data-act="pdel" data-p="'+p.id+'">Удалить</button>'
-      + '</div></div>';
+      + '</div>'
+      + (have("chip")
+          ? '<div class="pal"><span class="lbl">цвет</span>'
+            + [0,1,2,3,4,5].map(c=>'<button class="sw c'+c+(p.color%6===c?" on":"")
+              + '" data-act="pcolor" data-p="'+p.id+'" data-c="'+c+'" title="цвет '+(c+1)+'"></button>').join("")
+            + '</div>'
+          : '<div class="pal"><span class="lbl">цвет меняется после покупки «Свой цвет» в магазине казино</span></div>')
+      + '</div>';
   }).join("");
 }
 
@@ -6483,7 +6494,7 @@ document.addEventListener("click", e=>{
     if(act==="cbuy"){ doBuy(el.dataset.i); return; }
     if(act==="pcolor"){
       const p2 = DB.profiles[el.dataset.p];
-      if(p2){ p2.color = (p2.color + 1) % 6; save(); drawProfList(); drawProfChip(); }
+      if(p2){ p2.color = +el.dataset.c || 0; save(); drawProfList(); drawProfChip(); }
       return;
     }
     if(act==="fifty"){
@@ -6880,9 +6891,3 @@ if(online()){
     .catch(()=> setSync("нет связи"));
 }
 </script>
-
-<script>
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});}
-</script>
-</body>
-</html>
