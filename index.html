@@ -176,6 +176,15 @@ a{color:var(--ac); text-underline-offset:3px;}
 }
 .iconbtn:hover{color:var(--tx); border-color:var(--ac-line); background:var(--s3);}
 .iconbtn.snd{padding:0; width:34px; font-size:14px;}
+/* обучение зовут редко, но искать его не должны: единственная
+   акцентная кнопка среди нейтральных в правом углу */
+.iconbtn.help{border-color:var(--ac-line); color:var(--ac); background:var(--ac-dim); padding:0 12px 0 8px;}
+.iconbtn.help:hover{background:var(--ac); color:var(--ac-ink); border-color:var(--ac);}
+.iconbtn.help .qm{
+  width:18px; height:18px; flex:0 0 18px; border-radius:50%; display:grid; place-items:center;
+  background:var(--ac); color:var(--ac-ink); font-family:var(--f-head); font-weight:700; font-size:11px;
+}
+.iconbtn.help:hover .qm{background:var(--ac-ink); color:var(--ac);}
 .iconbtn.snd[aria-pressed="false"]{color:var(--tx-3); opacity:.55;}
 
 .coinbox{
@@ -991,6 +1000,8 @@ table.cmp td.who.zero{color:var(--tx-3);}
   .tb-brand h1{display:none;}
   .tab{padding:0 10px; font-size:13.5px;}
   #btnCheat{display:none;}
+  .iconbtn.help .ht{display:none;}
+  .iconbtn.help{padding:0; width:34px; justify-content:center;}
   .pmeta{display:none;}
   .prof{padding:0 4px;}
   .col{padding:calc(var(--u)*3) calc(var(--u)*2) calc(var(--u)*10);}
@@ -1019,7 +1030,7 @@ table.cmp td.who.zero{color:var(--tx-3);}
   </nav>
 
   <div class="tb-side">
-    <button class="iconbtn" id="btnTour" title="Как это устроено">Как тут всё</button>
+    <button class="iconbtn help" id="btnTour" title="Показать, что где"><span class="qm">?</span><span class="ht">Как тут всё</span></button>
     <button class="iconbtn snd" id="btnSound" title="Звук" aria-pressed="true">♪</button>
     <button class="iconbtn" id="btnCheat" title="Шпаргалка">Шпаргалка</button>
     <button class="coinbox" id="coinBox" title="Жетоны">
@@ -6866,7 +6877,8 @@ function drawQuick(){
     {ic:"✎", sec:"fun", t:"Задачи",      s:"как в тетради, с полным разбором", n:bigN+" пунктов", act:'data-act="jump" data-s="b"'},
     {ic:"∞", sec:"geo", t:"Тренажёр",    s:"числа новые каждый раз", n:"", act:'data-act="jump" data-s="g"'},
     {ic:"א", sec:"fun", t:"Иврит",       s:"термины и команды из условий", n:words+" слов", act:'data-act="heb"'},
-    {ic:"◎", sec:"eq",  t:"Проверка уровня", s: ST.diag ? "пройдена, можно заново" : "18 вопросов, десять минут", n:"", act:'data-act="diag"'}
+    {ic:"◎", sec:"eq",  t:"Проверка уровня", s: ST.diag ? "пройдена, можно заново" : "18 вопросов, десять минут", n:"", act:'data-act="diag"'},
+    {ic:"?", sec:"alg", t:"Как тут всё устроено", s:"короткий обход: что где лежит", n:"", act:'data-act="tour"'}
   ];
   box.innerHTML = rows.map(r=>
     '<button class="qrow sec-' + r.sec + '" ' + r.act + ' style="--sc:var(--h-' + r.sec + ')">'
