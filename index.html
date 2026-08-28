@@ -229,7 +229,10 @@ a{color:var(--ac); text-underline-offset:3px;}
 .menu hr{border:0; border-top:1px solid var(--line-soft); margin:5px 8px;}
 
 /* левой колонки в приложении больше нет */
-.rail,.scrim,.burger,.rail-foot,.nav,.overall,.steps-how{display:none !important;}
+.rail,.scrim,.burger,.rail-foot,.nav,.steps-how{display:none !important;}
+.overall-top{display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:9px;}
+.overall-top span{font-family:var(--f-num); font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--tx-3);}
+.overall-top b{font-family:var(--f-head); font-size:17px; font-weight:600;}
 
 /* ---------- КАРКАС ---------- */
 .app{display:block;}
@@ -945,6 +948,42 @@ table.cmp td.who.zero{color:var(--tx-3);}
 .menu-foot span{font-family:var(--f-num); font-size:9.5px; letter-spacing:.06em; color:var(--tx-3); text-transform:none;}
 .menu-foot .sync-line.ok{color:var(--ok);} .menu-foot .sync-line.bad{color:var(--bad);}
 
+/* ---------- экскурсия ---------- */
+.tour{position:fixed; inset:0; z-index:100; display:none;}
+.tour.on{display:block;}
+.tour-hole{
+  position:fixed; border-radius:var(--r-2); pointer-events:none;
+  box-shadow:0 0 0 9999px rgba(4,10,16,.72), 0 0 0 2px var(--ac);
+  transition:left var(--t-2), top var(--t-2), width var(--t-2), height var(--t-2);
+}
+.tour-card{
+  position:fixed; width:340px; max-width:calc(100vw - 28px);
+  background:var(--s1); border:1px solid var(--line); border-radius:var(--r-3);
+  box-shadow:var(--sh-3); padding:16px 18px;
+  transition:left var(--t-2), top var(--t-2);
+}
+.tour-card .tc-n{font-family:var(--f-num); font-size:10px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--tx-3); margin-bottom:7px;}
+.tour-card h4{font-size:16px; margin-bottom:6px;}
+.tour-card p{font-size:14px; color:var(--tx-2); line-height:1.55; margin-bottom:14px;}
+.tc-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.tc-row .btn{height:34px; padding:0 15px; font-size:13.5px;}
+.tc-skip{border:0; background:none; cursor:pointer; color:var(--tx-2);
+  font-family:var(--f-ui); font-size:12.5px; margin-left:auto; padding:0;}
+.tc-skip:hover{color:var(--ac);}
+.tc-dots{display:flex; gap:4px; margin-top:13px;}
+.tc-dots i{flex:1; height:3px; border-radius:2px; background:var(--s3);}
+.tc-dots i.on{background:var(--ac);}
+@media (max-width:560px){ .tour-card{width:calc(100vw - 28px);} }
+
+/* предложение экскурсии новичку */
+.offer{display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:14px 18px; border-radius:var(--r-3);
+  background:var(--ac-dim); border:1px solid var(--ac-line);}
+.offer > div{flex:1; min-width:180px;}
+.offer b{display:block; font-size:15px; font-weight:600;}
+.offer span{font-size:13.5px; color:var(--tx-2);}
+
 .notrans,.notrans *,.notrans *::before,.notrans *::after{transition:none !important; animation:none !important;}
 
 @media (max-width:820px){
@@ -980,6 +1019,7 @@ table.cmp td.who.zero{color:var(--tx-3);}
   </nav>
 
   <div class="tb-side">
+    <button class="iconbtn" id="btnTour" title="Как это устроено">Как тут всё</button>
     <button class="iconbtn snd" id="btnSound" title="Звук" aria-pressed="true">♪</button>
     <button class="iconbtn" id="btnCheat" title="Шпаргалка">Шпаргалка</button>
     <button class="coinbox" id="coinBox" title="Жетоны">
@@ -993,6 +1033,7 @@ table.cmp td.who.zero{color:var(--tx-3);}
     <div class="menu" id="menu">
       <button id="btnAcc">Мой аккаунт <i>вход</i></button>
       <button id="btnProfiles">Кто ещё занимается</button>
+      <button id="btnTour2">Как тут всё устроено <i>показать</i></button>
       <hr>
       <button id="btnDiag">Проверка уровня <i>заново</i></button>
       <button id="btnProg">Перенести занятия</button>
@@ -1007,21 +1048,13 @@ table.cmp td.who.zero{color:var(--tx-3);}
 <div class="scrim" id="scrim"></div>
 
 <div class="app">
-  <aside class="rail" id="rail">
-    <div class="overall"><div class="overall-top"><span>пройдено</span><b id="ovNum">0 / 0</b></div>
-      <div class="bar"><i id="ovBar"></i></div></div>
-    <nav class="nav" id="nav"></nav>
-    <div class="save-line" id="saveLine"></div>
-    <div class="sync-line" id="syncLine"></div>
-    <input type="file" id="fileIn" accept=".json,.txt,application/json" hidden>
-  </aside>
-
   <main class="stage">
     <div class="col">
 
       <section class="page active" id="page-hub">
         <div class="ov">
           <div class="ov-col">
+            <div id="tourOffer"></div>
             <div class="box" id="resumeBox"></div>
             <div class="box">
               <div class="box-head"><h3>Куда пойти</h3>
@@ -1032,7 +1065,13 @@ table.cmp td.who.zero{color:var(--tx-3);}
           </div>
           <div class="ov-col">
             <div class="box">
-              <div class="box-head"><h3>Сегодня</h3></div>
+              <div class="box-head"><h3>Твой счёт</h3></div>
+              <div class="box-body">
+                <div class="overall">
+                  <div class="overall-top"><span>пройдено</span><b id="ovNum">0 / 0</b></div>
+                  <div class="bar"><i id="ovBar"></i></div>
+                </div>
+              </div>
               <div class="today" id="todayBox"></div>
             </div>
             <div class="box">
@@ -1104,6 +1143,11 @@ table.cmp td.who.zero{color:var(--tx-3);}
   </main>
 </div>
 
+<input type="file" id="fileIn" accept=".json,.txt,application/json" hidden>
+<div class="tour" id="tour">
+  <div class="tour-hole" id="tourHole"></div>
+  <div class="tour-card" id="tourCard"></div>
+</div>
 <div class="toast" id="toast"></div>
 
 <div class="modal" id="cheat">
@@ -1192,7 +1236,7 @@ table.cmp td.who.zero{color:var(--tx-3);}
   <div class="back" data-close="1"></div>
   <div class="box">
     <button class="x" data-close="1" aria-label="Закрыть">×</button>
-    <h3>Пульт</h3>
+    <h3>Скрытые настройки</h3>
     <p>Открылась по секретному коду. Всё, что здесь, меняет только того, кто сейчас занимается.</p>
     <div id="admBody"></div>
   </div>
@@ -6123,6 +6167,148 @@ function consCheck(t, bi, li){
 }
 
 /* =====================================================================
+   ОБУЧЕНИЕ
+   Экскурсия по настоящим элементам: подсвечиваем то, о чём говорим,
+   и по дороге сами открываем нужный экран. Никаких картинок и
+   выдуманных примеров — человек видит свой собственный интерфейс.
+   ===================================================================== */
+let TOUR_I = 0, TOUR_ON = false;
+
+const TOUR = [
+  {sel:".tabs", where:"hub", pos:"bottom",
+   t:"Пять разделов", d:"Вся программа делится на пять частей, и переключаются они здесь. Больше нигде навигации нет — ни сбоку, ни внизу."},
+
+  {sel:"#resumeBox", where:"hub", pos:"bottom",
+   t:"Отсюда продолжаешь", d:"Первое, что видишь при входе: тема, на которой остановился, и номер следующего шага. Одна кнопка — и ты на месте."},
+
+  {sel:"#quickBox", where:"hub", pos:"top",
+   t:"Куда пойти", d:"Шесть входов в разное. Тренажёр — бесконечные задачи, «по строчкам» — где решение пишешь сам, задачи — как в тетради, с разбором."},
+
+  {sel:"#todayBox", where:"hub", pos:"left",
+   t:"Сегодня и счёт", d:"Пять шагов в день — нормальный темп. Цепочка считает дни подряд: пропустил — начинается заново."},
+
+  {sel:"#btnTopics", where:"hub", pos:"bottom",
+   t:"Курс", d:"Здесь все пятнадцать тем, разбитые на четыре части. Тема, отмеченная жёлтым, — из твоего плана после проверки уровня."},
+
+  {sel:"#homeSections .card", where:"topics", pos:"bottom",
+   t:"Тема", d:"Полоса внизу карточки — сколько шагов закрыто. Нажми, чтобы войти."},
+
+  {sel:".seg", where:"topic", pos:"bottom",
+   t:"Пять способов заниматься", d:"Внутри темы: шаги с объяснением, тренировка, решение по строчкам, задачи как в тетради и бесконечный тренажёр. Проходить всё подряд необязательно."},
+
+  {sel:".steprail", where:"topic", pos:"bottom",
+   t:"Шаги", d:"Шаг — одна мысль. Пока не ответишь на все вопросы шага, следующий закрыт: квадратик остаётся серым."},
+
+  {sel:"#btnCheat", where:"topic", pos:"bottom",
+   t:"Шпаргалка", d:"Все формулы курса на одной странице. Открывается откуда угодно, не выходя из задачи."},
+
+  {sel:"#coinBox", where:"hub", pos:"bottom",
+   t:"Жетоны", d:"Приходят только за решённое. Потратить их можно во вкладке «Жетоны» — там магазин и две игры, у которых перевес честно на стороне заведения."},
+
+  {sel:"#profChip", where:"hub", pos:"bottom",
+   t:"Всё личное — здесь", d:"Аккаунт, второй человек за этим же компьютером, проверка уровня, перенос занятий на телефон и оформление."},
+
+  {sel:"#btnSound", where:"hub", pos:"bottom",
+   t:"Звук", d:"Щелчки, верный и неверный ответ, закрытый шаг. Если мешает — выключается одной кнопкой."}
+];
+
+function tourTarget(st){
+  const el = document.querySelector(st.sel);
+  return (el && el.getBoundingClientRect().width) ? el : null;
+}
+
+function tourGo(st){
+  if(st.where === "hub" && !document.querySelector("#page-hub.active")) showHub();
+  if(st.where === "topics" && !document.querySelector("#page-home.active")) showTopics();
+  if(st.where === "topic"){
+    const t = nextSpot() || TOPICS[0];
+    if(!document.querySelector("#page-"+t.id+".active")) showTopic(t.id);
+    if(st.sel === ".steprail") showStep(t.id, maxOpen(t));
+  }
+}
+
+function tourDraw(guard){
+  const st = TOUR[TOUR_I];
+  if(!st){ tourStop(true); return; }
+  tourGo(st);
+  const hole = document.getElementById("tourHole");
+  const card = document.getElementById("tourCard");
+  const el = tourTarget(st);
+
+  /* шаг может быть про элемент, которого на этом экране нет
+     (например, «Шпаргалка» спрятана на узком экране) — молча идём дальше,
+     но не по кругу: guard считает подряд пропущенные. */
+  if(!el){
+    if((guard || 0) >= TOUR.length){ tourStop(true); return; }
+    TOUR_I++;
+    if(TOUR_I >= TOUR.length){ tourStop(true); return; }
+    tourDraw((guard || 0) + 1);
+    return;
+  }
+  el.scrollIntoView({block:"center", behavior:"auto"});
+
+  const r = el.getBoundingClientRect(), pad = 6;
+  hole.style.cssText = "left:"+(r.left-pad)+"px;top:"+(r.top-pad)+"px;"
+    + "width:"+(r.width+pad*2)+"px;height:"+(r.height+pad*2)+"px;";
+
+  card.innerHTML = '<div class="tc-n">'+(TOUR_I+1)+' из '+TOUR.length+'</div>'
+    + '<h4>'+st.t+'</h4><p>'+st.d+'</p>'
+    + '<div class="tc-row">'
+    +   '<button class="btn btn-g" data-act="tourprev"'+(TOUR_I?"":" disabled")+'>Назад</button>'
+    +   '<button class="btn btn-p" data-act="tournext">'+(TOUR_I === TOUR.length-1 ? "Всё понятно" : "Дальше")+'</button>'
+    +   '<button class="tc-skip" data-act="tourstop">Пропустить</button>'
+    + '</div>'
+    + '<div class="tc-dots">'+TOUR.map((_,i)=>'<i class="'+(i===TOUR_I?"on":"")+'"></i>').join("")+'</div>';
+
+  /* карточку ставим с той стороны, где есть место */
+  const cw = 340, ch = card.offsetHeight || 190, gap = 14;
+  let left, top;
+  if(st.pos === "left" && r.left > cw + gap*2){ left = r.left - cw - gap; top = r.top; }
+  else if(st.pos === "top" && r.top > ch + gap*2){ left = r.left; top = r.top - ch - gap; }
+  else { left = r.left; top = r.bottom + gap; }
+  left = Math.max(gap, Math.min(left, innerWidth - cw - gap));
+  top  = Math.max(gap, Math.min(top,  innerHeight - ch - gap));
+  card.style.left = left + "px";
+  card.style.top = top + "px";
+}
+
+function tourNext(d){
+  TOUR_I += d;
+  if(TOUR_I < 0) TOUR_I = 0;
+  if(TOUR_I >= TOUR.length){ tourStop(true); return; }
+  sfx("tap");
+  tourDraw();
+}
+
+function tourStart(){
+  TOUR_I = 0; TOUR_ON = true;
+  document.getElementById("tour").classList.add("on");
+  sfx("open");
+  tourDraw();
+  addEventListener("resize", tourDraw);
+}
+function tourStop(done){
+  TOUR_ON = false;
+  document.getElementById("tour").classList.remove("on");
+  removeEventListener("resize", tourDraw);
+  sfx(done ? "step" : "close");
+  if(done){ ST.tour = 1; save(); drawHub(); }
+}
+
+/* Один раз предлагаем экскурсию тому, кто здесь впервые. */
+function tourOffer(){
+  const box = document.getElementById("tourOffer");
+  if(!box) return;
+  const fresh = !ST.tour && allPassed(ST) === 0;
+  box.innerHTML = fresh
+    ? '<div class="offer"><div><b>Первый раз здесь?</b>'
+      + '<span>Полторы минуты — и будет понятно, что где лежит.</span></div>'
+      + '<button class="btn btn-p" data-act="tour">Показать</button>'
+      + '<button class="tc-skip" data-act="tourskip">Не надо</button></div>'
+    : "";
+}
+
+/* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
    ===================================================================== */
 const KEY = "summer-math-v2";
@@ -6530,7 +6716,7 @@ function drawRail(t){
   const seg = document.getElementById("seg-"+t.id);
   if(seg){
     const parts = [["s","Шаги"], ["p","Тренировка"]];
-    if(consList(t.id).length) parts.push(["c","Сборка"]);
+    if(consList(t.id).length) parts.push(["c","По строчкам"]);
     if((BIG[t.id]||[]).length) parts.push(["b","Задачи"]);
     if((GEN[t.id]||[]).length) parts.push(["g","Тренажёр"]);
     const now = (cur === "p" || cur === "c" || cur === "b" || cur === "g") ? cur : "s";
@@ -6675,11 +6861,11 @@ function drawQuick(){
               + (typeof HEB_VERBS !== "undefined" ? HEB_VERBS.length : 0);
   const doneT = TOPICS.filter(x=>topicDone(x)).length;
   const rows = [
-    {ic:"❊", sec:"alg", t:"Темы курса",  s:"объяснение, примеры, вопросы", n:doneT+" / "+TOPICS.length, act:'data-act="topics"'},
-    {ic:"⌗", sec:"eq",  t:"Сборка решения", s:"записать решение по строчкам", n:consN+" стр.", act:'data-act="jump" data-s="c"'},
-    {ic:"✎", sec:"fun", t:"Задачи",      s:"как в тетради, с разбором", n:bigN+" п.", act:'data-act="jump" data-s="b"'},
+    {ic:"❊", sec:"alg", t:"Темы курса",  s:"объяснение, примеры и вопросы", n:doneT+" из "+TOPICS.length, act:'data-act="topics"'},
+    {ic:"⌗", sec:"eq",  t:"Решение по строчкам", s:"написать решение самому, а не выбрать", n:consN+" строк", act:'data-act="jump" data-s="c"'},
+    {ic:"✎", sec:"fun", t:"Задачи",      s:"как в тетради, с полным разбором", n:bigN+" пунктов", act:'data-act="jump" data-s="b"'},
     {ic:"∞", sec:"geo", t:"Тренажёр",    s:"числа новые каждый раз", n:"", act:'data-act="jump" data-s="g"'},
-    {ic:"א", sec:"fun", t:"Иврит",       s:"термины и команды из условий", n:words+" сл.", act:'data-act="heb"'},
+    {ic:"א", sec:"fun", t:"Иврит",       s:"термины и команды из условий", n:words+" слов", act:'data-act="heb"'},
     {ic:"◎", sec:"eq",  t:"Проверка уровня", s: ST.diag ? "пройдена, можно заново" : "18 вопросов, десять минут", n:"", act:'data-act="diag"'}
   ];
   box.innerHTML = rows.map(r=>
@@ -6690,7 +6876,7 @@ function drawQuick(){
 }
 
 function drawHub(){
-  drawResume(); drawQuick(); drawToday(); drawAccBox(); drawPlanBox();
+  drawResume(); drawQuick(); drawToday(); drawAccBox(); drawPlanBox(); tourOffer();
 }
 
 function showHub(){
@@ -7518,6 +7704,7 @@ function drawAccBox(){
 
 function drawNav(){
   const nav = document.getElementById("nav");
+  if(!nav) return;
   nav.innerHTML = SECTIONS.map(sec=>{
     const list = TOPICS.filter(t=>t.sec===sec.id);
     return '<div><div class="sec-label sec-'+sec.id+'">'+sec.name+'</div>'
@@ -7544,8 +7731,9 @@ function drawProgress(){
     if(plan && !plan.has(t.id) && passedCount(t)===0) return;
     tot+=t.steps.length; don+=passedCount(t);
   });
-  document.getElementById("ovNum").textContent = don+" / "+tot;
-  document.getElementById("ovBar").style.width = (tot? don/tot*100 : 0)+"%";
+  const num = document.getElementById("ovNum"), b = document.getElementById("ovBar");
+  if(num) num.textContent = don+" / "+tot;
+  if(b) b.style.width = (tot? don/tot*100 : 0)+"%";
   const lab = document.querySelector(".overall-top span");
   if(lab) lab.textContent = (plan && plan.size < TOPICS.length) ? "шагов по плану" : "пройдено шагов";
   /* нить общего прогресса под верхней полосой */
@@ -7767,6 +7955,11 @@ document.addEventListener("click", e=>{
     if(act==="heb"){ showHeb(); return; }
     if(act==="casino"){ showCasino(); return; }
     if(act==="cheat"){ openCheat(); return; }
+    if(act==="tour"){ tourStart(); return; }
+    if(act==="tournext"){ tourNext(1); return; }
+    if(act==="tourprev"){ tourNext(-1); return; }
+    if(act==="tourstop"){ tourStop(false); return; }
+    if(act==="tourskip"){ ST.tour = 1; save(); tourOffer(); return; }
     if(act==="bsol"){
       const r = document.getElementById("brv-"+tid+"-"+el.dataset.i+"-"+el.dataset.j);
       r.classList.toggle("on");
@@ -8034,7 +8227,9 @@ document.addEventListener("click", e=>{
   }
 });
 document.addEventListener("keydown", e=>{
-  if(e.key==="Escape") document.querySelectorAll(".modal").forEach(m=>m.classList.remove("on"));
+  if(e.key!=="Escape") return;
+  if(TOUR_ON){ tourStop(false); return; }
+  document.querySelectorAll(".modal").forEach(m=>m.classList.remove("on"));
 });
 
 /* Конструктор понимает и клавиатуру: / — дробь, ^ — степень, * — точка. */
@@ -8105,6 +8300,8 @@ function openCheat(){ sfx("open");
   document.getElementById("cheat").classList.add("on"); closeRail();
 }
 on("btnCheat", openCheat);
+on("btnTour", tourStart);
+on("btnTour2", tourStart);
 
 /* Звук: одна кнопка в шапке, состояние живёт в профиле. */
 function drawSoundBtn(){
