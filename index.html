@@ -1,41 +1,42 @@
-<title>Летняя тетрадь по математике</title>
+<title>Лёд — математика 4 יח״ל</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;0,900;1,500;1,700;1,800&family=IBM+Plex+Mono:wght@400;500;600&family=Rubik:ital,wght@0,300..800;1,400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@500;600;700;800&family=Rubik:ital,wght@0,300..800;1,400..700&display=swap">
 
 <style>
 /* =========================================================
-   НОЧНОЕ КУПАНИЕ
-   Лето у моря после заката: густая тёмная вода, тёплый свет
-   с берега, цветущая бугенвиллея. Тёмная тема — основная,
-   светлая — тот же берег в полдень, выбеленный солнцем.
-   Каждый раздел курса держит свой цвет и ведёт его до конца.
+   ЛЁД
+   Материал, а не время года: толща льда на просвет, иней,
+   огранка, преломление. Тёмная гамма — глубина, светлая —
+   иней на стекле. Единственное тёплое пятно во всей палитре —
+   цвет ошибки: он и должен резать глаз.
    ========================================================= */
 
-/* ---------- тёмная (основная) ---------- */
+/* ---------- ЛЁД: глубина ---------- */
 :root{
-  --abyss:#071A26;   --deep:#0C2534;   --deep-2:#0F2C3D;
-  --card:#123244;    --card-2:#17415A; --card-3:#1C4E68;
-  --foam:#EAF7F4;    --foam-2:#A8C9CD; --foam-3:#82A8B0;
-  --edge:#1F4A61;    --edge-2:#173A4D;
+  --abyss:#04121C;   --deep:#08202F;   --deep-2:#0B2739;
+  --card:#0E3145;    --card-2:#134058; --card-3:#1A5273;
+  --foam:#EAF8FF;    --foam-2:#A9CEE2; --foam-3:#84AEC6;
+  --edge:#1D4E6B;    --edge-2:#153C55;
 
-  --coral:#FF6B54;   --coral-2:#FF8B78; --coral-soft:#3A1A18;  --coral-line:#7A3128;
-  --citrus:#FFC53D;  --citrus-2:#FFD873;
-  --aqua:#2FD6C0;    --aqua-2:#5FE6D4;  --aqua-soft:#0B3A38;   --aqua-line:#1C6D65;
-  --orchid:#BC7BFF;  --orchid-2:#D0A0FF;
-  --lime:#8BE86B;    --lime-2:#A9F08F;
-  --rose:#FF5C8A;
-  --on-accent:#071A26;
+  --ice:#5BD8F5;     --ice-2:#8CE7FF;   --ice-soft:#07303F;   --ice-line:#1C6C88;
+  --frost:#BFEEFF;   --frost-2:#E6F9FF;
+  --glacier:#7C9CFF; --glacier-2:#9FB6FF;
+  --crystal:#B79BFF; --crystal-2:#CDB8FF;
+  --melt:#48E5D0;    --melt-2:#78F0E0;
+  --ember:#FF6B84;   --ember-2:#FF93A5;
+  --on-accent:#04121C;
 
-  --sea-1:rgba(47,214,192,.16);
-  --sea-2:rgba(255,107,84,.14);
-  --sea-3:rgba(188,123,255,.12);
+  --sea-1:rgba(91,216,245,.16);
+  --sea-2:rgba(124,156,255,.13);
+  --sea-3:rgba(183,155,255,.11);
 
   --r-xs:6px; --r-s:10px; --r:16px; --r-l:24px; --r-xl:34px; --r-full:999px;
-  --lift:0 1px 0 rgba(255,255,255,.06) inset, 0 14px 34px -16px rgba(0,0,0,.75);
-  --lift-l:0 1px 0 rgba(255,255,255,.08) inset, 0 30px 60px -26px rgba(0,0,0,.85);
+  --lift:0 1px 0 rgba(255,255,255,.07) inset, 0 14px 34px -16px rgba(0,0,0,.8);
+  --lift-l:0 1px 0 rgba(255,255,255,.1) inset, 0 30px 60px -26px rgba(0,0,0,.9);
+  --glass:blur(20px) saturate(1.35);
 
-  --display:"Alegreya",Georgia,serif;
+  --display:"Manrope",system-ui,sans-serif;
   --sans:"Rubik",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
   --math:"Cambria Math",Georgia,"Times New Roman",serif;
@@ -46,45 +47,45 @@
 /* ---------- светлая ---------- */
 @media (prefers-color-scheme: light){
   :root:not([data-theme="dark"]){
-    --abyss:#E8F3F2;   --deep:#F4FAF9;   --deep-2:#FFFFFF;
-    --card:#FFFFFF;    --card-2:#F1F8F7; --card-3:#E2F0EE;
-    --foam:#072330;    --foam-2:#4A6B74; --foam-3:#4C6D76;
-    --edge:#CBE0DE;    --edge-2:#DEEDEB;
+    --abyss:#E4F1F8;   --deep:#F1F9FD;   --deep-2:#FFFFFF;
+    --card:#FFFFFF;    --card-2:#F0F8FC; --card-3:#DFEEF7;
+    --foam:#062231;    --foam-2:#3F6478; --foam-3:#4A7086;
+    --edge:#C4DEEC;    --edge-2:#DAEBF4;
 
-    --coral:#E0421F;   --coral-2:#FF6B54; --coral-soft:#FFE9E4;  --coral-line:#FFBFB2;
-    --citrus:#C98600;  --citrus-2:#FFC53D;
-    --aqua:#068C7A;    --aqua-2:#12BCA4;  --aqua-soft:#DCF5F1;   --aqua-line:#93DDD2;
-    --orchid:#8138CE;  --orchid-2:#A968EE;
-    --lime:#2E7A18;    --lime-2:#46A32E;
-    --rose:#D6265E;
+    --ice:#006E8E;     --ice-2:#0092BC;   --ice-soft:#DFF4FB;   --ice-line:#96D9EC;
+    --frost:#0A6788;   --frost-2:#2E9CC4;
+    --glacier:#3A5FE0; --glacier-2:#6B87F0;
+    --crystal:#7B4FD8; --crystal-2:#9C79E8;
+    --melt:#0A7367;    --melt-2:#12A08F;
+    --ember:#DB2C4E;   --ember-2:#F2536F;
     --on-accent:#FFFFFF;
 
-    --sea-1:rgba(6,140,122,.13);
-    --sea-2:rgba(224,66,31,.10);
-    --sea-3:rgba(129,56,206,.09);
-    --lift:0 1px 0 rgba(255,255,255,.9) inset, 0 12px 28px -14px rgba(7,35,48,.26);
-    --lift-l:0 1px 0 rgba(255,255,255,.9) inset, 0 26px 52px -22px rgba(7,35,48,.32);
+    --sea-1:rgba(0,147,190,.12);
+    --sea-2:rgba(58,95,224,.09);
+    --sea-3:rgba(123,79,216,.08);
+    --lift:0 1px 0 rgba(255,255,255,.9) inset, 0 12px 28px -14px rgba(6,34,49,.24);
+    --lift-l:0 1px 0 rgba(255,255,255,.9) inset, 0 26px 52px -22px rgba(6,34,49,.3);
   }
 }
 :root[data-theme="light"]{
-  --abyss:#E8F3F2;   --deep:#F4FAF9;   --deep-2:#FFFFFF;
-  --card:#FFFFFF;    --card-2:#F1F8F7; --card-3:#E2F0EE;
-  --foam:#072330;    --foam-2:#4A6B74; --foam-3:#4C6D76;
-  --edge:#CBE0DE;    --edge-2:#DEEDEB;
+  --abyss:#E4F1F8;   --deep:#F1F9FD;   --deep-2:#FFFFFF;
+  --card:#FFFFFF;    --card-2:#F0F8FC; --card-3:#DFEEF7;
+  --foam:#062231;    --foam-2:#3F6478; --foam-3:#4A7086;
+  --edge:#C4DEEC;    --edge-2:#DAEBF4;
 
-  --coral:#E0421F;   --coral-2:#FF6B54; --coral-soft:#FFE9E4;  --coral-line:#FFBFB2;
-  --citrus:#C98600;  --citrus-2:#FFC53D;
-  --aqua:#068C7A;    --aqua-2:#12BCA4;  --aqua-soft:#DCF5F1;   --aqua-line:#93DDD2;
-  --orchid:#8138CE;  --orchid-2:#A968EE;
-  --lime:#2E7A18;    --lime-2:#46A32E;
-  --rose:#D6265E;
+  --ice:#006E8E;     --ice-2:#0092BC;   --ice-soft:#DFF4FB;   --ice-line:#96D9EC;
+  --frost:#0A6788;   --frost-2:#2E9CC4;
+  --glacier:#3A5FE0; --glacier-2:#6B87F0;
+  --crystal:#7B4FD8; --crystal-2:#9C79E8;
+  --melt:#0A7367;    --melt-2:#12A08F;
+  --ember:#DB2C4E;   --ember-2:#F2536F;
   --on-accent:#FFFFFF;
 
-  --sea-1:rgba(6,140,122,.13);
-  --sea-2:rgba(224,66,31,.10);
-  --sea-3:rgba(129,56,206,.09);
-  --lift:0 1px 0 rgba(255,255,255,.9) inset, 0 12px 28px -14px rgba(7,35,48,.26);
-  --lift-l:0 1px 0 rgba(255,255,255,.9) inset, 0 26px 52px -22px rgba(7,35,48,.32);
+  --sea-1:rgba(0,147,190,.12);
+  --sea-2:rgba(58,95,224,.09);
+  --sea-3:rgba(123,79,216,.08);
+  --lift:0 1px 0 rgba(255,255,255,.9) inset, 0 12px 28px -14px rgba(6,34,49,.24);
+  --lift-l:0 1px 0 rgba(255,255,255,.9) inset, 0 26px 52px -22px rgba(6,34,49,.3);
 }
 
 /* ---------- имена, на которые опирается логика ---------- */
@@ -93,15 +94,22 @@
   --ink:var(--foam);        --ink-2:var(--foam-2);   --ink-3:var(--foam-3);
   --ink-soft:var(--foam-2); --ink-faint:var(--foam-3);
   --line:var(--edge);       --line-2:var(--edge-2);
-  --hot:var(--coral);       --hot-2:var(--coral-2);  --hot-soft:var(--coral-soft); --hot-line:var(--coral-line);
-  --blue:var(--aqua);       --blue-2:var(--aqua-2);  --blue-soft:var(--aqua-soft); --blue-line:var(--aqua-line);
-  --ok:var(--lime);         --ok-soft:var(--aqua-soft); --ok-line:var(--aqua-line);
-  --no:var(--rose);         --gold:var(--citrus);    --ochre:var(--citrus);
-  --accent:var(--aqua);     --accent-2:var(--aqua-2); --accent-soft:var(--aqua-soft); --accent-line:var(--aqua-line);
+  --hot:var(--ice);         --hot-2:var(--ice-2);    --hot-soft:var(--ice-soft);  --hot-line:var(--ice-line);
+  --blue:var(--glacier);    --blue-2:var(--glacier-2); --blue-soft:var(--ice-soft); --blue-line:var(--ice-line);
+  --ok:var(--melt);         --ok-soft:var(--ice-soft); --ok-line:var(--ice-line);
+  --no:var(--ember);        --gold:var(--frost);     --ochre:var(--frost);
+  --accent:var(--ice);      --accent-2:var(--ice-2); --accent-soft:var(--ice-soft); --accent-line:var(--ice-line);
   --on-ink:var(--on-accent);
-  --s-alg:var(--coral);     --s-eq:var(--aqua);      --s-fun:var(--orchid);  --s-geo:var(--lime);
+  --s-alg:var(--ice);       --s-eq:var(--glacier);   --s-fun:var(--crystal);  --s-geo:var(--melt);
   --shadow:var(--lift);     --shadow-lg:var(--lift-l);
   --serif:var(--display);
+  /* старые тёплые имена — чтобы ничего не осталось некрашеным */
+  --coral:var(--ice);       --coral-2:var(--ice-2);  --coral-soft:var(--ice-soft); --coral-line:var(--ice-line);
+  --citrus:var(--frost);    --citrus-2:var(--frost-2);
+  --aqua:var(--ice);        --aqua-2:var(--ice-2);   --aqua-soft:var(--ice-soft); --aqua-line:var(--ice-line);
+  --orchid:var(--crystal);  --orchid-2:var(--crystal-2);
+  --lime:var(--melt);       --lime-2:var(--melt-2);
+  --rose:var(--ember);
 }
 
 /* =========================================================
@@ -141,7 +149,7 @@ body::after{
 ::selection{background:var(--coral); color:var(--on-accent);}
 :focus-visible{outline:3px solid var(--citrus); outline-offset:3px; border-radius:4px;}
 
-h1,h2,h3,h4{font-family:var(--display); font-weight:800; line-height:1.06; letter-spacing:-.012em;}
+h1,h2,h3,h4{font-family:var(--display); font-weight:800; line-height:1.06; letter-spacing:-.035em;}
 h2{font-size:clamp(30px,4.6vw,50px);}
 h3{font-size:23px;}
 h4{font-size:17px;}
@@ -370,7 +378,7 @@ a{color:var(--aqua);}
   .contin .ring{position:static; transform:none; margin:0 0 12px; width:96px; height:96px;}
 }
 
-/* ---------- линии лета ---------- */
+/* ---------- линии курса ---------- */
 .routes{display:flex; flex-direction:column; gap:13px; margin-bottom:24px;}
 .route{--sc:var(--aqua); position:relative; overflow:hidden;
   border:1px solid var(--edge); border-radius:var(--r-xl); background:var(--card);
@@ -498,6 +506,97 @@ a{color:var(--aqua);}
 .schip.big.cur{background:var(--orchid); color:var(--on-accent);}
 .schip.gen.cur{background:var(--aqua); color:var(--on-accent);}
 .srail-note{font-family:var(--mono); font-size:9.5px; letter-spacing:.06em; color:var(--foam-3); margin-left:auto; padding-left:8px;}
+
+/* =========================================================
+   ПУЛЬТ
+   Главный экран: снежинка, полоска чисел и решётка плиток.
+   Плитка — кусок льда: огранка по краю, блик, который проезжает
+   при наведении, и толща, проступающая цветом раздела.
+   ========================================================= */
+.hub{padding-top:6px;}
+.hub-top{display:flex; align-items:center; gap:clamp(16px,3vw,32px); margin-bottom:26px; flex-wrap:wrap;}
+.hub-mark{width:clamp(84px,11vw,128px); flex:0 0 auto; filter:drop-shadow(0 0 26px color-mix(in oklab, var(--ice) 45%, transparent));}
+.hub-mark svg{width:100%; height:auto; display:block;}
+.hub-mark .flake path{
+  fill:none; stroke:var(--ice); stroke-width:3.2; stroke-linecap:round;
+  stroke-dasharray:130; stroke-dashoffset:130;
+  animation:grow 1.5s var(--ease) forwards;
+}
+.hub-mark .flake path:nth-child(2){animation-delay:.35s;}
+.hub-mark .flake path:nth-child(3){animation-delay:.55s;}
+.hub-mark .flake path:nth-child(4){animation-delay:.7s;}
+.hub-mark .flake{transform-origin:60px 60px; animation:turn 90s linear infinite;}
+@keyframes grow{to{stroke-dashoffset:0;}}
+@keyframes turn{to{transform:rotate(360deg);}}
+.hub-say{min-width:0; flex:1;}
+.hub-say .kicker{display:inline-block; font-family:var(--mono); font-size:9.5px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--on-accent); background:linear-gradient(120deg, var(--ice), var(--glacier));
+  padding:5px 13px; border-radius:var(--r-full); margin-bottom:12px;
+  box-shadow:0 8px 24px -12px var(--ice);}
+.hub-say h2{font-size:clamp(32px,5.4vw,58px); margin-bottom:8px;}
+.hub-say p{font-size:16.5px; color:var(--foam-2); max-width:52ch;}
+
+.hub-strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:10px; margin-bottom:18px;}
+.hs{display:flex; align-items:baseline; gap:7px; padding:12px 15px; border-radius:var(--r-l);
+  background:color-mix(in oklab, var(--card) 70%, transparent); border:1px solid var(--edge-2);
+  backdrop-filter:var(--glass); -webkit-backdrop-filter:var(--glass); flex-wrap:wrap;}
+.hs .k{font-family:var(--mono); font-size:8.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--foam-3); flex:1 0 100%;}
+.hs b{font-family:var(--display); font-size:26px; font-weight:800; line-height:1; color:var(--ice);}
+.hs .u{font-family:var(--mono); font-size:9.5px; color:var(--foam-3);}
+
+.hub-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(214px,1fr)); gap:12px;}
+.tile{
+  --sc:var(--ice);
+  position:relative; overflow:hidden; cursor:pointer; text-align:left; color:var(--foam);
+  display:flex; flex-direction:column; gap:3px; min-height:158px; padding:17px 18px 16px;
+  border:1px solid var(--edge); border-radius:var(--r-l);
+  background:linear-gradient(155deg, color-mix(in oklab, var(--card-2) 92%, transparent), var(--card));
+  transition:transform .24s var(--spring), border-color .24s, box-shadow .24s;
+}
+.tile.sec-alg{--sc:var(--s-alg);} .tile.sec-eq{--sc:var(--s-eq);}
+.tile.sec-fun{--sc:var(--s-fun);} .tile.sec-geo{--sc:var(--s-geo);}
+.tile.big{grid-column:span 2; min-height:190px;}
+@media (max-width:520px){ .tile.big{grid-column:span 1;} }
+/* толща льда: цвет раздела проступает из угла */
+.tile::before{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.6; transition:opacity .28s;
+  background:radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--sc) 26%, transparent), transparent 58%);
+}
+/* огранка */
+.tile::after{
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:linear-gradient(150deg, rgba(255,255,255,.16), transparent 34%, transparent 66%, rgba(255,255,255,.07));
+  mix-blend-mode:overlay;
+}
+.tile .sheen{
+  position:absolute; top:-60%; left:-70%; width:44%; height:220%; pointer-events:none;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.3), transparent);
+  transform:rotate(16deg) translateX(-40px); opacity:0; transition:none;
+}
+.tile:hover{transform:translateY(-6px); border-color:var(--sc); box-shadow:0 26px 46px -26px var(--sc), 0 0 0 1px color-mix(in oklab, var(--sc) 40%, transparent);}
+.tile:hover::before{opacity:1;}
+.tile:hover .sheen{opacity:1; animation:sheen .75s var(--ease);}
+@keyframes sheen{from{transform:rotate(16deg) translateX(-40px);} to{transform:rotate(16deg) translateX(560px);}}
+.tile:active{transform:translateY(-2px) scale(.985);}
+.tile .ic{position:absolute; right:15px; top:11px; font-size:34px; line-height:1; color:var(--sc); opacity:.34;}
+.tile.big .ic{font-size:46px;}
+.tile .lab{font-family:var(--mono); font-size:8.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--sc); position:relative;}
+.tile .ttl{font-family:var(--display); font-size:19.5px; font-weight:800; letter-spacing:-.03em;
+  line-height:1.15; margin-top:5px; padding-right:38px; position:relative;}
+.tile.big .ttl{font-size:clamp(23px,3vw,30px);}
+.tile .sub{font-size:13px; color:var(--foam-2); position:relative; margin-top:4px; flex:1;}
+.tile .bar{position:relative; height:6px; border-radius:var(--r-full); background:var(--deep);
+  overflow:hidden; margin-top:12px; box-shadow:inset 0 1px 3px rgba(0,0,0,.4);}
+.tile .bar i{display:block; height:100%; width:0; border-radius:var(--r-full);
+  background:linear-gradient(90deg, var(--sc), var(--frost)); transition:width 1s var(--ease);
+  box-shadow:0 0 12px -2px var(--sc);}
+
+/* переключатель звука */
+.iconbtn.snd{width:42px; padding:9px 0; text-align:center; font-size:15px; color:var(--ice);
+  border-color:color-mix(in oklab, var(--ice) 45%, var(--edge));}
+.iconbtn.snd[aria-pressed="false"]{color:var(--foam-3); border-color:var(--edge); text-decoration:line-through;}
 
 /* =========================================================
    ШАГ ТЕМЫ
@@ -1187,24 +1286,26 @@ sup.bnode{font-size:.6em; vertical-align:super; align-items:baseline;}
   <div class="tb-brand">
     <div class="mark">Σ</div>
     <div>
-      <h1>Летняя тетрадь</h1>
+      <h1>Лёд</h1>
       <p>математика · 4 יח״ל</p>
     </div>
   </div>
 
   <nav class="tabs">
-    <button class="tab on" id="tabCourse" data-act="home">Курс</button>
+    <button class="tab on" id="tabCourse" data-act="hub">Пульт</button>
+    <button class="tab" id="btnTopics" data-act="topics">Темы</button>
     <button class="tab" id="btnHeb">Иврит</button>
-    <button class="tab" id="btnTogether">Вместе</button>
-    <button class="tab" id="btnCasino">Казино</button>
+    <button class="tab" id="btnCasino">Лёд</button>
   </nav>
 
   <div class="tb-side">
+    <button class="iconbtn snd" id="btnSound" title="Звук" aria-pressed="true">♪</button>
     <button class="iconbtn" id="btnCheat" title="Шпаргалка">Шпаргалка</button>
     <button class="iconbtn" id="btnMenu" title="Ещё" aria-haspopup="true">Ещё ▾</button>
     <div class="menu" id="menu">
       <button id="btnDiag">Проверка уровня <i>заново</i></button>
       <button id="btnAcc">Мой аккаунт <i>вход</i></button>
+      <button id="btnTogether">Заниматься вместе</button>
       <hr>
       <button id="btnProfiles">Кто ещё занимается</button>
       <button id="btnProg">Перенести занятия</button>
@@ -1246,10 +1347,35 @@ sup.bnode{font-size:.6em; vertical-align:super; align-items:baseline;}
 
   <main class="stage">
     <div class="col">
-      <section class="page active" id="page-home">
+      <section class="page active" id="page-hub">
+        <div class="hub">
+          <div class="hub-top">
+            <div class="hub-mark" id="hubMark">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <g class="flake">
+                  <path d="M60 8 L60 112 M15.2 34 L104.8 86 M15.2 86 L104.8 34"/>
+                  <path d="M60 26 L48 38 M60 26 L72 38 M60 94 L48 82 M60 94 L72 82"/>
+                  <path d="M30.8 43 L28 27 M30.8 43 L15 46 M89.2 77 L92 93 M89.2 77 L105 74"/>
+                  <path d="M30.8 77 L15 74 M30.8 77 L28 93 M89.2 43 L105 46 M89.2 43 L92 27"/>
+                </g>
+              </svg>
+            </div>
+            <div class="hub-say">
+              <span class="kicker" id="hubKicker">лёд</span>
+              <h2 id="hubTitle">Что сегодня?</h2>
+              <p id="hubSub">Выбирай, с чего начать. Всё в одном месте.</p>
+            </div>
+          </div>
+          <div class="hub-strip" id="hubStrip"></div>
+          <div class="hub-grid" id="hubGrid"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-home">
+        <button class="crumb" data-act="hub">← пульт</button>
         <div class="hero" id="heroBox">
-          <span class="eyebrow">лето перед десятым</span>
-          <h2>Вся тетрадь — <em>по маленьким шагам</em></h2>
+          <span class="eyebrow">курс перед десятым</span>
+          <h2>Весь курс — <em>по маленьким шагам</em></h2>
           <p>Тема разбита на шаги, шаг — одна мысль: объяснили, разобрали пример, сразу спросили. Не ответишь — дальше не пустит. В конце каждой темы задачи как в тетради, сборка решения по строчкам и тренажёр, у которого числа не кончаются.</p>
           <div class="hero-stats">
             <div class="stat"><b id="stTopics">0</b><span>тем</span></div>
@@ -1327,7 +1453,7 @@ sup.bnode{font-size:.6em; vertical-align:super; align-items:baseline;}
   <div class="box">
     <button class="x" data-close="1" aria-label="Закрыть">×</button>
     <h3>Шпаргалка</h3>
-    <p>Всё, что стоит держать в голове до конца лета.</p>
+    <p>Всё, что стоит держать в голове до контрольной.</p>
     <div id="cheatBody"></div>
   </div>
 </div>
@@ -4660,6 +4786,7 @@ function endRB(r){
 
 /* ---- начисления и покупки ---- */
 function earn(n, why){
+  if(typeof sfx === "function") sfx("coin");
   coins();
   ST.coins += n;
   save(); drawCoins(true);
@@ -4681,6 +4808,107 @@ function doBuy(id){
   /* палитра живёт в другом окне — сразу туда и отправляем */
   if(id === "chip") setTimeout(()=>{ if(typeof openProfiles === "function") openProfiles(); }, 700);
 }
+
+/* =====================================================================
+   6ж-1. ЗВУК
+   Всё синтезируется на месте: ни одного файла, приложение остаётся
+   самодостаточным. Материал — лёд, поэтому голоса высокие и короткие,
+   с быстрым затуханием и лёгким «стеклянным» призвуком.
+
+   Веб не даёт заводить звук до первого касания страницы, поэтому
+   контекст создаётся лениво, при первом же действии пользователя.
+   ===================================================================== */
+let SFX_CTX = null, SFX_BUS = null, SFX_LAST = 0;
+
+function sfxOn(){ return ST && ST.sound !== false; }
+function sfxCtx(){
+  if(SFX_CTX) return SFX_CTX;
+  try{
+    SFX_CTX = new (window.AudioContext || window.webkitAudioContext)();
+    SFX_BUS = SFX_CTX.createGain();
+    SFX_BUS.gain.value = 0.5;
+    SFX_BUS.connect(SFX_CTX.destination);
+  }catch(e){ SFX_CTX = null; }
+  return SFX_CTX;
+}
+/* один голос: частота, длительность, форма, громкость, скольжение */
+function voice(o){
+  const c = sfxCtx();
+  if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const t = c.currentTime + (o.at || 0);
+  const osc = c.createOscillator(), g = c.createGain();
+  osc.type = o.type || "sine";
+  osc.frequency.setValueAtTime(o.f, t);
+  if(o.to) osc.frequency.exponentialRampToValueAtTime(Math.max(20, o.to), t + o.d);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(o.v || 0.05, t + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + o.d);
+  let node = g;
+  if(o.bright){                       /* стеклянный призвук */
+    const f = c.createBiquadFilter();
+    f.type = "highpass"; f.frequency.value = 900;
+    g.connect(f); node = f;
+  }
+  osc.connect(g); node.connect(SFX_BUS);
+  osc.start(t); osc.stop(t + o.d + 0.02);
+}
+/* короткий шумовой скол — из него собирается «треск льда» */
+function shard(dur, vol, hz){
+  const c = sfxCtx();
+  if(!c) return;
+  const n = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, n, c.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i = 0; i < n; i++) d[i] = (Math.random()*2 - 1) * Math.pow(1 - i/n, 3);
+  const src = c.createBufferSource(); src.buffer = buf;
+  const f = c.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = hz || 3200; f.Q.value = 1.4;
+  const g = c.createGain(); g.gain.value = vol || 0.05;
+  src.connect(f); f.connect(g); g.connect(SFX_BUS);
+  src.start();
+}
+
+/* Словарь голосов приложения. Названия — по смыслу события,
+   а не по звуку: так их не путаешь при правках. */
+const SFX = {
+  tap:     ()=>{ voice({f:1180, to:900,  d:.05, v:.028, type:"triangle", bright:true}); },
+  hover:   ()=>{ voice({f:2100, to:1900, d:.03, v:.012, type:"sine", bright:true}); },
+  open:    ()=>{ voice({f:520,  to:1040, d:.16, v:.04,  type:"triangle"}); shard(.1,.02,4200); },
+  close:   ()=>{ voice({f:900,  to:420,  d:.14, v:.035, type:"triangle"}); },
+  page:    ()=>{ voice({f:700,  to:1400, d:.13, v:.03,  type:"sine", bright:true});
+                 voice({f:1400, to:2100, d:.1,  v:.016, type:"sine", at:.05, bright:true}); },
+  right:   ()=>{ [1046,1318,1568].forEach((f,i)=> voice({f:f, d:.2, v:.05, type:"triangle", at:i*.055, bright:true})); },
+  wrong:   ()=>{ voice({f:220, to:150, d:.24, v:.05, type:"sawtooth"}); shard(.14,.03,700); },
+  step:    ()=>{ [1568,2093].forEach((f,i)=> voice({f:f, d:.26, v:.045, type:"sine", at:i*.07, bright:true}));
+                 shard(.16,.02,5200); },
+  topic:   ()=>{ [784,1046,1318,1568,2093].forEach((f,i)=> voice({f:f, d:.4, v:.05, type:"triangle", at:i*.08, bright:true}));
+                 shard(.3,.03,6000); },
+  coin:    ()=>{ voice({f:1760, d:.12, v:.04, type:"sine", bright:true});
+                 voice({f:2640, d:.1,  v:.02, type:"sine", at:.03, bright:true}); },
+  freeze:  ()=>{ shard(.35,.045,2600); voice({f:1600, to:320, d:.34, v:.03, type:"sine"}); },
+  crack:   ()=>{ shard(.09,.06,1800); shard(.16,.04,3600); voice({f:180, to:90, d:.3, v:.05, type:"sawtooth"}); },
+  spin:    ()=>{ voice({f:340, to:900, d:.5, v:.025, type:"sawtooth"}); },
+  jack:    ()=>{ [1046,1318,1568,2093,2637].forEach((f,i)=> voice({f:f, d:.5, v:.06, type:"triangle", at:i*.09, bright:true}));
+                 shard(.5,.04,7000); }
+};
+function sfx(name){
+  if(!sfxOn() || REDUCED_SND) return;
+  const now = Date.now();
+  /* защита от очереди одинаковых щелчков при быстрых кликах */
+  if(name === "hover" && now - SFX_LAST < 55) return;
+  SFX_LAST = now;
+  const f = SFX[name];
+  if(f) try{ f(); }catch(e){}
+}
+let REDUCED_SND = false;
+
+/* Старые вызовы из казино продолжают работать, но звучат уже льдом. */
+function beep(freq, dur, type, vol){
+  if(!sfxOn()) return;
+  try{ voice({f:freq, d:dur || .12, v:vol || .05, type:type || "triangle", bright:true}); }catch(e){}
+}
+function fanfare(){ sfx("jack"); }
+function sadTone(){ sfx("wrong"); }
 
 /* =====================================================================
    6г. ОБЛАКО: аккаунты и синхронизация
@@ -6460,7 +6688,7 @@ function stepHTML(t, si){
 
 function practiceHTML(t){
   let h = '<h3 class="step-title">Тренировка</h3>'
-    + '<p class="step-goal">Задачи из летней тетради и вокруг неё. Решай на бумаге, потом сверяйся.</p>'
+    + '<p class="step-goal">Задачи из тетради и вокруг неё. Решай на бумаге, потом сверяйся.</p>'
     + '<div class="pintro">Сначала попробуй сам. Не идёт — открой подсказку. Совсем не идёт — открой решение и разбери его по шагам, а потом закрой и прорешай заново.</div>';
   h += t.practice.map((p,i)=>{
     const key = qk(t.id,"p",i), state = ST.ans[key];
@@ -6695,7 +6923,7 @@ function showStep(id, si){
 /* Верхние вкладки: ровно одна активна. tab === "" снимает подсветку
    со всех, когда открыт раздел, которого во вкладках нет. */
 function setTab(tab){
-  const map = {course:"tabCourse", heb:"btnHeb", together:"btnTogether", casino:"btnCasino"};
+  const map = {hub:"tabCourse", topics:"btnTopics", heb:"btnHeb", casino:"btnCasino"};
   Object.keys(map).forEach(k=>{
     const el = document.getElementById(map[k]);
     if(el) el.classList.toggle("on", k === tab);
@@ -6704,6 +6932,7 @@ function setTab(tab){
 function closeMenu(){ const m = document.getElementById("menu"); if(m) m.classList.remove("on"); }
 
 function showTopic(id){
+  sfx("page");
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("active"));
   const pg = document.getElementById("page-"+id);
@@ -6721,15 +6950,120 @@ function showTopic(id){
   closeRail();
 }
 
-function showHome(){
+/* =====================================================================
+   ПУЛЬТ
+   Главная не курс, а выбор: отсюда открывается любой режим.
+   Плитки живые — на каждой видно, сколько там осталось.
+   ===================================================================== */
+function hubTiles(){
+  const t = nextSpot();
+  const doneT = TOPICS.filter(x=>topicDone(x)).length;
+  const bigN = Object.values(BIG).reduce((s,l)=>s+l.reduce((a,b)=>a+b.parts.length,0),0);
+  const consN = Object.keys(CONS).reduce((s,k)=>s+consCount(k),0);
+  const words = TOPICS.reduce((s,x)=>s+(x.terms?x.terms.length:0),0) + (typeof HEB_VERBS!=="undefined"?HEB_VERBS.length:0);
+  const friends = (typeof CFR!=="undefined" && CFR.length) || Object.keys(DB.friends||{}).length;
+  return [
+    t ? {id:"go", act:"topic", arg:t.id, sec:t.sec, big:true, ic:"▶",
+         lab:(passedCount(t)?"продолжить":"начать"), ttl:t.title,
+         sub:passedCount(t) ? "шаг "+(maxOpen(t)+1)+" из "+t.steps.length : md(t.sub),
+         meter:t.steps.length ? passedCount(t)/t.steps.length : 0}
+      : {id:"go", act:"topics", sec:"geo", big:true, ic:"✓", lab:"курс пройден",
+         ttl:"Все темы закрыты", sub:"держи форму тренажёром", meter:1},
+    {id:"topics", act:"topics", sec:"alg", ic:"❊", lab:"темы", ttl:"Курс",
+     sub:doneT+" из "+TOPICS.length+" закрыто", meter:doneT/TOPICS.length},
+    {id:"cons",   act:"jump", arg:"c", sec:"eq", ic:"⌗", lab:"по строчкам", ttl:"Сборка решения",
+     sub:consN+" "+plural(consN,"строка","строки","строк")+" в 10 темах"},
+    {id:"big",    act:"jump", arg:"b", sec:"fun", ic:"✎", lab:"как в тетради", ttl:"Задачи",
+     sub:bigN+" "+plural(bigN,"пункт","пункта","пунктов")+" с разбором"},
+    {id:"gen",    act:"jump", arg:"g", sec:"geo", ic:"∞", lab:"без конца", ttl:"Тренажёр",
+     sub:"числа новые каждый раз"},
+    {id:"heb",    act:"heb", sec:"fun", ic:"א", lab:"язык", ttl:"Иврит",
+     sub:words+" "+plural(words,"слово","слова","слов")+" и команд"},
+    {id:"cheat",  act:"cheat", sec:"alg", ic:"≡", lab:"всё сразу", ttl:"Шпаргалка",
+     sub:"формулы на одной странице"},
+    {id:"together", act:"together", sec:"eq", ic:"◈", lab:"вдвоём", ttl:"Вместе",
+     sub: friends ? friends+" "+plural(friends,"друг","друга","друзей")+" рядом" : "добавь друга по коду"},
+    {id:"casino", act:"casino", sec:"geo", ic:"◉", lab:coins()+" ж", ttl:"Лёд",
+     sub:"потратить заработанное"},
+    {id:"diag",   act:"diag", sec:"fun", ic:"◎", lab:"замер", ttl:"Проверка уровня",
+     sub: ST.diag ? "пройдена — можно заново" : "18 вопросов, десять минут"}
+  ];
+}
+
+function drawHub(){
+  const grid = document.getElementById("hubGrid"), strip = document.getElementById("hubStrip");
+  if(!grid) return;
+  const n = days()[today()] || 0, s = streak(), all = allPassed(ST);
+  document.getElementById("hubTitle").textContent =
+    all === 0 ? "С чего начнём?" : (n ? "Сегодня уже "+n+" "+plural(n,"шаг","шага","шагов") : "Что сегодня?");
+  document.getElementById("hubSub").textContent =
+    all === 0 ? "Выбирай, с чего начать. Всё в одном месте."
+              : "Всё, что есть в приложении, — на этом экране.";
+  document.getElementById("hubKicker").textContent = s > 1 ? s+" "+plural(s,"день","дня","дней")+" подряд" : "лёд";
+
+  strip.innerHTML = '<div class="hs"><span class="k">пройдено</span><b>'+all+'</b><span class="u">'+plural(all,"шаг","шага","шагов")+'</span></div>'
+    + '<div class="hs"><span class="k">сегодня</span><b>'+n+'</b><span class="u">из '+DAY_GOAL+'</span></div>'
+    + '<div class="hs"><span class="k">цепочка</span><b>'+s+'</b><span class="u">'+plural(s,"день","дня","дней")+'</span></div>'
+    + '<div class="hs"><span class="k">жетоны</span><b>'+coins()+'</b><span class="u">ж</span></div>';
+
+  grid.innerHTML = hubTiles().map(t=>{
+    const args = 'data-act="'+t.act+'"' + (t.arg ? ' data-t="'+(t.act==="topic"?t.arg:"")+'" data-s="'+(t.act==="jump"?t.arg:"")+'"' : "");
+    return '<button class="tile sec-'+t.sec+(t.big?" big":"")+'" '+args+'>'
+      + '<span class="ic">'+t.ic+'</span>'
+      + '<span class="lab">'+t.lab+'</span>'
+      + '<span class="ttl">'+t.ttl+'</span>'
+      + '<span class="sub">'+t.sub+'</span>'
+      + (t.meter !== undefined ? '<span class="bar"><i data-w="'+Math.round(t.meter*100)+'"></i></span>' : "")
+      + '<span class="sheen"></span></button>';
+  }).join("");
+  paintSoon(()=> grid.querySelectorAll(".tile .bar i").forEach(i=>{ i.style.width = i.dataset.w+"%"; }));
+}
+
+function showHub(){
+  sfx("page");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-hub").classList.add("active");
+  document.getElementById("tbTitle").textContent = "Лёд";
+  setTab("hub");
+  CUR = null;
+  drawHub(); drawNav(); drawProgress(); drawToday();
+  window.scrollTo({top:0});
+  closeRail();
+}
+
+/* Открыть у ближайшей незакрытой темы сразу нужный раздел. */
+function jumpTo(kind){
+  const has = t => kind==="b" ? (BIG[t.id]||[]).length
+              : kind==="c" ? consList(t.id).length
+              : (GEN[t.id]||[]).length;
+  const t = (nextSpot() && has(nextSpot())) ? nextSpot() : TOPICS.find(has);
+  if(!t) return;
+  showTopic(t.id); showStep(t.id, kind);
+}
+
+function showTopics(){
+  sfx("page");
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("active"));
   document.getElementById("page-home").classList.add("active");
-  document.getElementById("tbTitle").textContent = "Летняя тетрадь";
-  setTab("course");
+  document.getElementById("tbTitle").textContent = "Темы";
+  setTab("topics");
   CUR = null;
   drawHome(); drawNav(); drawProgress();
-  window.scrollTo({top:0, behavior:"smooth"});
+  window.scrollTo({top:0});
+  closeRail();
+}
+
+function showHome(){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-hub").classList.add("active");
+  document.getElementById("tbTitle").textContent = "Лёд";
+  setTab("hub");
+  CUR = null;
+  drawHub(); drawNav(); drawProgress(); drawToday();
+  window.scrollTo({top:0});
   closeRail();
 }
 
@@ -7466,7 +7800,7 @@ function drawContinue(){
   if(fg) paintSoon(()=>{ fg.style.strokeDashoffset = fg.dataset.off; });
 }
 
-/* ---- линии лета: маршрут по каждому разделу ---- */
+/* ---- линии курса: маршрут по каждому разделу ---- */
 function drawRoutes(){
   const box = document.getElementById("routesBox");
   if(!box) return;
@@ -7631,6 +7965,7 @@ function coinFly(el){
 function markCheck(t, si, qi, state){
   const key = qk(t.id,si,qi);
   const wasStep = stepPassed(t, si);
+  const wasTopic = topicDone(t);
   if(!ST.ans[key] && state==="ok") earn(MISSED.has(key) ? 2 : 5, "проверка");
   ST.ans[key] = state;
   /* шаг закрылся именно сейчас — это и есть единица дневного ритма */
@@ -7640,10 +7975,13 @@ function markCheck(t, si, qi, state){
   const card = document.getElementById("qc-"+t.id+"-"+si+"-"+qi);
   if(card) card.classList.add("solved");
   drawGate(t, si); drawRail(t); drawNav(); drawProgress();
-  if(!wasStep && nowStep) pulseStation(t.id);
+  if(!wasStep && nowStep){
+    pulseStation(t.id);
+    sfx(!wasTopic && topicDone(t) ? "topic" : "step");
+  }
 }
 
-/* Станция на линии лета отзывается на закрытый шаг. */
+/* Станция на линии курса отзывается на закрытый шаг. */
 function pulseStation(id){
   const st = document.getElementById("stn-"+id);
   if(!st || REDUCED) return;
@@ -7736,15 +8074,30 @@ function onPracticeCheck(t, i){
 /* =====================================================================
    11. СОБЫТИЯ
    ===================================================================== */
+/* Звук вешаем одним слушателем на весь документ: каждая новая кнопка
+   получает голос сама, без правок в месте, где её рисуют. */
+document.addEventListener("pointerdown", e=>{
+  const b = e.target.closest("button, .opt, .tile, .station, .card, .schip, .hopt, .field, .impopt, .sw");
+  if(b && !b.disabled) sfx(b.classList.contains("tile") ? "open" : "tap");
+}, true);
+document.addEventListener("pointerover", e=>{
+  const b = e.target.closest(".tile, .station, .card, .bkey, .schip");
+  if(b && !b.disabled && e.pointerType !== "touch") sfx("hover");
+}, true);
+
 document.addEventListener("click", e=>{
   const el = e.target.closest("[data-act]");
   if(el){
     const act = el.dataset.act, tid = el.dataset.t;
     const t = tid ? TOPICS.find(x=>x.id===tid) : null;
     if(act==="topic"){ showTopic(tid); return; }
-    if(act==="home"){ showHome(); return; }
+    if(act==="home"){ showTopics(); return; }
+    if(act==="hub"){ showHub(); return; }
+    if(act==="topics"){ showTopics(); return; }
+    if(act==="jump"){ jumpTo(el.dataset.s); return; }
     if(act==="diag"){ showDiag(); return; }
     if(act==="together"){ showTogether(); return; }
+    if(act==="heb"){ showHeb(); return; }
     if(act==="casino"){ showCasino(); return; }
     if(act==="cheat"){ openCheat(); return; }
     if(act==="bsol"){
@@ -8087,10 +8440,26 @@ document.getElementById("scrim").addEventListener("click", closeRail);
 document.getElementById("cheatBody").innerHTML = CHEAT.map(s=>
   '<div class="cs-sec"><h4>'+s.t+'</h4><div class="cs-list">'
   + s.items.map(i=>"<div>"+md(i)+"</div>").join("") + '</div></div>').join("");
-function openCheat(){
+function openCheat(){ sfx("open");
   document.getElementById("cheat").classList.add("on"); closeRail();
 }
 document.getElementById("btnCheat").addEventListener("click", openCheat);
+
+/* Звук: одна кнопка в шапке, состояние живёт в профиле. */
+function drawSoundBtn(){
+  const b = document.getElementById("btnSound");
+  if(!b) return;
+  const on = ST.sound !== false;
+  b.setAttribute("aria-pressed", on ? "true" : "false");
+  b.textContent = on ? "♪" : "♪";
+  b.title = on ? "Звук включён" : "Звук выключен";
+}
+document.getElementById("btnSound").addEventListener("click", ()=>{
+  ST.sound = ST.sound === false;
+  save(); drawSoundBtn();
+  if(ST.sound) sfx("open");
+  if(typeof drawCasino === "function" && document.querySelector("#page-casino.active")) drawCasino();
+});
 
 /* тема оформления */
 function applyTheme(v){
@@ -8110,11 +8479,14 @@ document.getElementById("btnTheme").addEventListener("click", ()=>{
 });
 
 /* диагностика и совместное обучение */
-document.getElementById("btnDiag").addEventListener("click", showDiag);
-document.getElementById("btnTogether").addEventListener("click", showTogether);
-document.getElementById("btnHeb").addEventListener("click", showHeb);
-document.getElementById("btnCasino").addEventListener("click", showCasino);
-document.getElementById("tabCourse").addEventListener("click", showHome);
+/* Кнопка может отсутствовать в разметке — вешаем осторожно. */
+function on(id, fn){ const el = document.getElementById(id); if(el) el.addEventListener("click", fn); }
+on("btnDiag", showDiag);
+on("btnTogether", showTogether);
+on("btnHeb", showHeb);
+on("btnCasino", showCasino);
+on("btnTopics", showTopics);
+on("tabCourse", showHub);
 document.getElementById("btnProfiles").addEventListener("click", openProfiles);
 
 /* выпадающее меню в правом углу панели */
@@ -8215,6 +8587,7 @@ function rebuildAll(){
   document.getElementById("pages").innerHTML = "";
   TOPICS.forEach(buildTopic);
   drawNav(); drawHome(); drawProgress(); drawSaveLine(); drawProfChip(); drawCoins(); drawToday();
+  drawSoundBtn(); if(document.getElementById("hubGrid")) drawHub();
   TOPICS.forEach(t=>{ drawRail(t); t.steps.forEach((s,i)=>drawGate(t,i)); });
 }
 function openProg(){
@@ -8286,9 +8659,8 @@ document.getElementById("stSteps").textContent = TOPICS.reduce((s,t)=>s+t.steps.
 document.getElementById("stQ").textContent = TOPICS.reduce((s,t)=>s+t.steps.reduce((a,x)=>a+x.checks.length,0),0);
 document.getElementById("stTasks").textContent = TOPICS.reduce((s,t)=>s+t.practice.length,0);
 drawNav(); drawHome(); drawProgress(); drawSaveLine(); drawProfChip(); drawProfList(); drawCoins();
+drawToday(); drawSoundBtn(); drawHub();
 TOPICS.forEach(t=>{ drawRail(t); t.steps.forEach((s,i)=>drawGate(t,i)); });
-/* первый запуск — сразу зовём на диагностику */
-if(!ST.diag) document.getElementById("btnDiag").classList.add("hot");
 
 /* сессия сохранилась с прошлого раза — подтягиваем прогресс из облака */
 if(online()){

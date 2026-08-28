@@ -1,14 +1,14 @@
 {
-  "name": "Летняя тетрадь по математике",
-  "short_name": "Тетрадь",
-  "description": "Повторение математики 4 יח\"ל по маленьким шагам",
+  "name": "Лёд — математика 4 יח\"ל",
+  "short_name": "Лёд",
+  "description": "Курс математики 4 יח\"ל по маленьким шагам",
   "lang": "ru",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#F4F1E8",
-  "theme_color": "#1E2F86",
+  "background_color": "#04121C",
+  "theme_color": "#5BD8F5",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
