@@ -1,4 +1,4 @@
-<title>Лёд — математика 4 יח״ל</title>
+<title>Лёд — математика</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geologica:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@400;500;600;700&family=Rubik:wght@400;500;600&display=swap">
@@ -957,6 +957,43 @@ table.cmp td.who.zero{color:var(--tx-3);}
 .menu-foot span{font-family:var(--f-num); font-size:9.5px; letter-spacing:.06em; color:var(--tx-3); text-transform:none;}
 .menu-foot .sync-line.ok{color:var(--ok);} .menu-foot .sync-line.bad{color:var(--bad);}
 
+/* ---------- замер перед экзаменом ---------- */
+.tab.hot{color:var(--ac);}
+.tab.hot::before{content:""; position:absolute; top:16px; right:5px; width:5px; height:5px;
+  border-radius:50%; background:var(--bad);}
+.exbar{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1px;
+  background:var(--line-soft); border:1px solid var(--line); border-radius:var(--r-3);
+  overflow:hidden; margin-bottom:calc(var(--u)*3);}
+.exb{background:var(--s1); padding:15px 18px;}
+.exb b{display:block; font-family:var(--f-head); font-size:26px; font-weight:600; line-height:1.15;}
+.exb span{font-family:var(--f-num); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--tx-3);}
+.exb.accent b{color:var(--ok);}
+.exverdict{background:var(--ac-dim); border:1px solid var(--ac-line); border-radius:var(--r-3);
+  padding:18px 20px; margin-bottom:calc(var(--u)*3);}
+.exverdict h3{font-size:17px; margin-bottom:8px;}
+.exverdict p{font-size:14px; color:var(--tx-2); margin-bottom:10px;}
+.exlist{margin:0; padding-left:20px; display:grid; gap:5px; font-size:14.5px;}
+.exblock{border:1px solid var(--line); border-radius:var(--r-3); background:var(--s1);
+  margin-bottom:calc(var(--u)*2); overflow:hidden;}
+.exblock.all-ok{border-color:rgba(61,214,140,.4);}
+.exblock.all-bad{border-color:rgba(242,102,110,.4);}
+.exb-head{display:flex; align-items:center; gap:11px; padding:12px 18px;
+  border-bottom:1px solid var(--line-soft); background:var(--s2);}
+.exb-n{width:22px; height:22px; flex:0 0 22px; border-radius:var(--r-1); display:grid; place-items:center;
+  font-family:var(--f-num); font-size:10.5px; background:var(--s3); color:var(--tx-3);}
+.exblock.all-ok .exb-n{background:var(--ok); color:var(--ac-ink);}
+.exblock.all-bad .exb-n{background:var(--bad); color:#fff;}
+.exb-head h4{flex:1; font-size:15px; font-weight:600;}
+.exb-st{font-family:var(--f-num); font-size:11px; color:var(--tx-3);}
+.extask{padding:16px 18px; border-bottom:1px solid var(--line-soft);}
+.extask:last-child{border-bottom:none;}
+.extask .ex-q{font-size:16px; margin-bottom:12px; line-height:1.5;}
+.ex-res{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:10px 14px;
+  border-radius:var(--r-2); font-weight:600; font-size:14px;}
+.ex-res.ok{background:var(--ok-dim); color:var(--ok);}
+.ex-res.no{background:var(--bad-dim); color:var(--bad);}
+.ex-res .ex-right{margin-left:auto; font-weight:400; color:var(--tx);}
+
 /* ---------- экскурсия ---------- */
 .tour{position:fixed; inset:0; z-index:100; display:none;}
 .tour.on{display:block;}
@@ -1023,6 +1060,7 @@ table.cmp td.who.zero{color:var(--tx-3);}
 
   <nav class="tabs">
     <button class="tab on" id="tabCourse" data-act="hub">Обзор</button>
+    <button class="tab hot" id="btnExam" data-act="exam">Замер</button>
     <button class="tab" id="btnTopics" data-act="topics">Курс</button>
     <button class="tab" id="btnHeb">Иврит</button>
     <button class="tab" id="btnTogether">Вместе</button>
@@ -1097,6 +1135,15 @@ table.cmp td.who.zero{color:var(--tx-3);}
             <div id="accBox"></div>
           </div>
         </div>
+      </section>
+
+      <section class="page" id="page-exam">
+        <div class="thead">
+          <span class="tag">замер перед экзаменом</span>
+          <h2>Что уже умеешь, а что нет</h2>
+          <p class="sub">22 задачи, по две на каждый блок тетради за 5 единиц — все взяты из неё самой. Это не оценка, а карта: за полчаса станет видно, куда тратить оставшиеся дни. Отвечай сам, без вариантов; не знаешь — так и жми. Ошибся — сразу покажу решение целиком.</p>
+        </div>
+        <div id="examBody"></div>
       </section>
 
       <section class="page" id="page-home">
@@ -6320,6 +6367,262 @@ function tourOffer(){
 }
 
 /* =====================================================================
+   ЗАМЕР ПЕРЕД ЭКЗАМЕНОМ
+   22 задачи, по две на каждый блок тетради за 5 единиц. Все взяты
+   из самой тетради, ответы сверены с её разделом ответов.
+
+   Задача замера — не оценка, а карта: за полчаса видно, какие блоки
+   провалены, и оставшиеся дни тратятся на них, а не на всё подряд.
+   Ответ вводится руками: вариантами можно угадать и обмануть замер.
+   ===================================================================== */
+const EXAM_DATE = "2026-09-09";
+
+const EXAM = [
+ {b:"Законы степеней", id:"pow", tasks:[
+  {q:"Вычисли $\\frac{5}{(-10)^{-2}}$", in:["500"], ph:"например: 7",
+   sol:["Отрицательный показатель — это единица делить на степень: $(-10)^{-2}=\\frac{1}{(-10)^2}=\\frac{1}{100}$.",
+        "Минус в чётной степени пропадает, поэтому знаменатель положительный.",
+        "Делить на дробь — умножать на перевёрнутую: $5:\\frac{1}{100}=5\\cdot100$."], a:"500"},
+  {q:"Упрости $\\frac{3\\cdot x^{-2}\\cdot x^{8}}{9\\cdot x^{4}\\cdot x^{-9}}$", in:["x^11/3","(1/3)x^11","x^11:3","1/3x^11"], ph:"например: t^5/9",
+   sol:["Сверху складываем показатели: $x^{-2}\\cdot x^{8}=x^{6}$, получается $3x^{6}$.",
+        "Снизу так же: $x^{4}\\cdot x^{-9}=x^{-5}$, получается $9x^{-5}$.",
+        "Делим: числа $3:9=\\frac{1}{3}$, показатели вычитаем $6-(-5)=11$."], a:"\\frac{x^{11}}{3}"}
+ ]},
+
+ {b:"Формулы сокращённого умножения", id:"short", tasks:[
+  {q:"Упрости $(x+y)(x-y)-(x+2y)^2$", in:["-4xy-5y^2","-5y^2-4xy","-4xy-5y²","-5y²-4xy"], ph:"например: -3ab+7b^2",
+   sol:["Первая скобка — разность квадратов: $(x+y)(x-y)=x^2-y^2$.",
+        "Вторая — квадрат суммы: $(x+2y)^2=x^2+4xy+4y^2$.",
+        "Вычитаем целиком, не забыв поменять все знаки: $x^2-y^2-x^2-4xy-4y^2$.",
+        "$x^2$ сокращается, остаётся $-4xy-5y^2$."], a:"-4xy-5y^2"},
+  {q:"Упрости $36x^2-(4-6x)^2$", in:["48x-16","-16+48x"], ph:"например: 12t-9",
+   sol:["Раскрываем квадрат разности: $(4-6x)^2=16-48x+36x^2$.",
+        "Подставляем: $36x^2-(16-48x+36x^2)=36x^2-16+48x-36x^2$.",
+        "$36x^2$ уходит, остаётся $48x-16$."], a:"48x-16"}
+ ]},
+
+ {b:"Алгебраические дроби", id:"frac", tasks:[
+  {q:"Упрости $\\frac{4x^2-9y^2}{3x+y}:\\frac{3y+2x}{9x^2+6xy+y^2}$", in:["6x^2-7xy-3y^2","(2x-3y)(3x+y)","6x²-7xy-3y²"], ph:"например: 2a^2+5ab-b^2",
+   sol:["Делить на дробь — умножать на перевёрнутую.",
+        "Сверху разность квадратов: $4x^2-9y^2=(2x-3y)(2x+3y)$.",
+        "Второй знаменатель — квадрат суммы: $9x^2+6xy+y^2=(3x+y)^2$.",
+        "Сокращаем $(3x+y)$ и $(2x+3y)$, остаётся $(2x-3y)(3x+y)$.",
+        "Раскрываем: $6x^2+2xy-9xy-3y^2$."], a:"6x^2-7xy-3y^2"},
+  {q:"Упрости $\\frac{3b-6}{2b^3-8b^2+8b}:\\frac{b^2-2b-8}{4b^3-16b}$", in:["6/(b-4)","6:(b-4)"], ph:"например: 9/(t+2)",
+   sol:["Раскладываем всё на множители.",
+        "$3b-6=3(b-2)$, а $2b^3-8b^2+8b=2b(b-2)^2$.",
+        "$b^2-2b-8=(b-4)(b+2)$, а $4b^3-16b=4b(b-2)(b+2)$.",
+        "Переворачиваем вторую дробь и перемножаем.",
+        "После сокращения $(b-2)$, $(b+2)$ и $b$ остаётся $\\frac{12b(b-2)}{2b(b-2)(b-4)}=\\frac{6}{b-4}$."], a:"\\frac{6}{b-4}"}
+ ]},
+
+ {b:"Квадратные уравнения", id:"quad", tasks:[
+  {q:"Реши $x^2-11x-42=0$. Оба корня через точку с запятой.", in:["14;-3","-3;14"], ph:"например: 7;-2",
+   sol:["$D=b^2-4ac=(-11)^2-4\\cdot1\\cdot(-42)=121+168=289$.",
+        "$\\sqrt{289}=17$.",
+        "$x=\\frac{11\\pm17}{2}$: получается $\\frac{28}{2}=14$ и $\\frac{-6}{2}=-3$."], a:"14;\\;-3"},
+  {q:"Реши $x^2-2x+32=0$", in:["нет","нетрешений","нет решений","нет корней","-","—","0 решений","пусто"], ph:"число или «нет»",
+   sol:["$D=(-2)^2-4\\cdot1\\cdot32=4-128=-124$.",
+        "Дискриминант отрицательный — корень из него не извлекается.",
+        "Значит, решений нет. Это полноценный ответ, а не тупик."], a:"\\text{нет решений}"}
+ ]},
+
+ {b:"Дробно-рациональные уравнения", id:"rat", tasks:[
+  {q:"Реши $\\frac{1}{x}+\\frac{3}{x+2}=2$. Оба корня через точку с запятой.", in:["1;-1","-1;1","±1"], ph:"например: 7;-2",
+   sol:["Запрет: $x\\neq0$ и $x\\neq-2$.",
+        "Умножаем всё на $x(x+2)$: $(x+2)+3x=2x(x+2)$.",
+        "Слева $4x+2$, справа $2x^2+4x$.",
+        "$4x$ сокращается: $2=2x^2$, значит $x^2=1$.",
+        "Оба корня запрет не нарушают."], a:"1;\\;-1"},
+  {q:"Реши $\\frac{16}{x+4}-4=\\frac{x}{x^2-16}$. Оба корня через точку с запятой.", in:["0;3.75","3.75;0","0;3,75","0;15/4"], ph:"например: 7;-2",
+   sol:["$x^2-16=(x-4)(x+4)$, значит запрет $x\\neq\\pm4$.",
+        "Умножаем на $(x-4)(x+4)$: $16(x-4)-4(x^2-16)=x$.",
+        "Раскрываем: $16x-64-4x^2+64=x$.",
+        "Числа уходят: $16x-4x^2=x$, значит $15x-4x^2=0$.",
+        "Выносим $x$: $x(15-4x)=0$, откуда $x=0$ или $x=3{,}75$."], a:"0;\\;3{,}75"}
+ ]},
+
+ {b:"Системы первой степени", id:"sys1", tasks:[
+  {q:"Реши систему $3x+2y=5$ и $\\frac{x}{2}-\\frac{1}{3}=\\frac{y}{3}-\\frac{1}{2}$. Запиши $x$.", in:["2/3","0.667","0,667"], ph:"например: 9/7",
+   sol:["Второе уравнение умножаем на 6, чтобы убрать дроби: $3x-2=2y-3$.",
+        "Приводим: $3x-2y=-1$.",
+        "Складываем с первым $3x+2y=5$: $6x=4$.",
+        "$x=\\frac{2}{3}$, тогда $y=\\frac{3}{2}$."], a:"x=\\frac{2}{3}"},
+  {q:"Реши систему $\\frac{4y+x-8}{-10}-\\frac{2y}{5}=0$ и $y-1\\frac{4}{5}+\\frac{x}{2}=\\frac{3x-4}{5}$. Ответ как $x;y$.",
+   in:["0;1"], ph:"например: 7;-2",
+   sol:["Первое умножаем на $-10$: $4y+x-8+4y=0$, то есть $x+8y=8$.",
+        "Второе умножаем на 10: $10y-18+5x=6x-8$, то есть $x-10y=-10$.",
+        "Вычитаем: $18y=18$, значит $y=1$.",
+        "Подставляем обратно: $x=8-8=0$."], a:"(0;1)"}
+ ]},
+
+ {b:"Системы второй степени", id:"sys2", tasks:[
+  {q:"Реши систему $x+3y=6$ и $x^2+y^2-4x+8y=84$. Запиши больший $x$.", in:["12"], ph:"например: 9",
+   sol:["Из первого выражаем $x=6-3y$ и подставляем во второе.",
+        "$(6-3y)^2+y^2-4(6-3y)+8y=84$.",
+        "$36-36y+9y^2+y^2-24+12y+8y=84$.",
+        "$10y^2-16y+12=84$, то есть $10y^2-16y-72=0$, после деления на 2: $5y^2-8y-36=0$.",
+        "$D=64+720=784$, $\\sqrt{784}=28$, откуда $y=\\frac{8\\pm28}{10}$: $y=3{,}6$ и $y=-2$.",
+        "При $y=-2$ выходит $x=12$, при $y=3{,}6$ — $x=-4{,}8$."], a:"(12;-2)\\ \\text{и}\\ (-4{,}8;3{,}6)"},
+  {q:"Реши систему $xy=-24$ и $2x-5y=31$. Запиши больший $x$.", in:["8"], ph:"например: 9",
+   sol:["Из первого $y=-\\frac{24}{x}$ и подставляем: $2x+\\frac{120}{x}=31$.",
+        "Умножаем на $x$: $2x^2-31x+120=0$.",
+        "$D=961-960=1$, значит $x=\\frac{31\\pm1}{4}$: $x=8$ и $x=7{,}5$.",
+        "Обе пары подходят: $(8;-3)$ и $(7{,}5;-3{,}2)$."], a:"(8;-3)\\ \\text{и}\\ (7{,}5;-3{,}2)"}
+ ]},
+
+ {b:"Парабола по чертежу", id:"para", tasks:[
+  {q:"$f(x)=x^2-7x+10$. Где парабола пересекает ось $x$? Через точку с запятой.", in:["2;5","5;2"], ph:"например: 7;-2",
+   sol:["На оси $x$ значение функции равно нулю: $x^2-7x+10=0$.",
+        "$D=49-40=9$, $\\sqrt{9}=3$.",
+        "$x=\\frac{7\\pm3}{2}$: получается $5$ и $2$."], a:"(2;0)\\ \\text{и}\\ (5;0)"},
+  {q:"$f(x)=-2(x+0{,}5)^2+12{,}5$. Запиши координаты вершины как $(p;k)$.", in:["(-0.5;12.5)","(-0,5;12,5)","(-0.5,12.5)"], ph:"например: (9;-7)",
+   sol:["Форма $a(x-p)^2+k$ показывает вершину прямо в записи.",
+        "В скобке стоит $x+0{,}5$, то есть $x-(-0{,}5)$ — значит $p=-0{,}5$.",
+        "Свободное число снаружи скобки и есть $k=12{,}5$.",
+        "Коэффициент $a=-2$ отрицательный: ветви вниз, вершина — максимум."], a:"(-0{,}5;\\;12{,}5)"}
+ ]},
+
+ {b:"Исследование параболы", id:"study", tasks:[
+  {q:"$f(x)=x^2-16x+60$. Запиши уравнение оси симметрии.", in:["x=8","8"], ph:"например: x=9",
+   sol:["Ось симметрии проходит через вершину: $x=-\\frac{b}{2a}$.",
+        "Здесь $b=-16$, $a=1$, значит $x=\\frac{16}{2}=8$.",
+        "Заодно: $f(8)=64-128+60=-4$, вершина $(8;-4)$."], a:"x=8"},
+  {q:"$f(x)=2(x-5)^2-2$. Чему равно наименьшее значение функции?", in:["-2"], ph:"например: 7",
+   sol:["Квадрат никогда не бывает меньше нуля.",
+        "Значит, $2(x-5)^2\\geq0$, и всё выражение не меньше $-2$.",
+        "Ноль достигается при $x=5$ — там и лежит минимум."], a:"-2"}
+ ]},
+
+ {b:"Чтение и сдвиги графика", id:"pre", tasks:[
+  {q:"График $y=x^2$ сдвинули на 1 вправо и на 4 вверх. Запиши координаты вершины как $(p;k)$.", in:["(1;4)","(1,4)"], ph:"например: (9;-7)",
+   sol:["Сдвиг вправо прячется внутри скобки со знаком минус: $y=(x-1)^2$.",
+        "Сдвиг вверх стоит снаружи: $y=(x-1)^2+4$.",
+        "Вершина читается прямо из записи."], a:"(1;4)"},
+  {q:"У функции $f(x)$ минимум в точке $(-2;-4)$. Где будет минимум у $g(x)=f(x)+4$?", in:["(-2;0)","(-2,0)"], ph:"например: (9;-7)",
+   sol:["Прибавление числа снаружи поднимает весь график вверх.",
+        "По горизонтали ничего не меняется: $x$ минимума остаётся $-2$.",
+        "А высота растёт на 4: $-4+4=0$."], a:"(-2;0)"}
+ ]},
+
+ {b:"Геометрия четырёхугольников", id:"geo", tasks:[
+  {q:"В параллелограмме $ABCD$: $BC=10$ см, $\\angle BCD=30°$, $BE\\perp CD$. Найди $BE$ в см.", in:["5"], ph:"например: 9",
+   sol:["Треугольник $BEC$ прямоугольный: $BE\\perp CD$.",
+        "Угол при вершине $C$ равен $30°$, гипотенуза $BC=10$.",
+        "Катет против угла $30°$ вдвое меньше гипотенузы.",
+        "$BE=\\frac{10}{2}=5$ см."], a:"BE=5\\ \\text{см}"},
+  {q:"Площадь параллелограмма $ABCD$ равна 60 см², сторона $AD=8$ см. Найди высоту к стороне $AD$.", in:["7.5","7,5","15/2"], ph:"например: 9",
+   sol:["Площадь параллелограмма — сторона на высоту к этой стороне.",
+        "$S=AD\\cdot h$, то есть $60=8\\cdot h$.",
+        "$h=\\frac{60}{8}=7{,}5$ см."], a:"h=7{,}5\\ \\text{см}"}
+ ]}
+];
+
+const EXAM_N = EXAM.reduce((s,b)=>s+b.tasks.length, 0);
+
+/* ---- состояние ---- */
+function exSt(){ if(!ST.exam) ST.exam = {}; return ST.exam; }
+const exKey = (bi,ti)=> "ex:"+EXAM[bi].id+":"+ti;
+
+function daysLeft(){
+  const d = Math.ceil((new Date(EXAM_DATE+"T09:00:00") - Date.now()) / 864e5);
+  return d;
+}
+
+/* ---- отрисовка ---- */
+function examHTML(){
+  const E = exSt();
+  return EXAM.map((b,bi)=>{
+    const done = b.tasks.filter((t,ti)=> E[exKey(bi,ti)]).length;
+    const okN  = b.tasks.filter((t,ti)=> E[exKey(bi,ti)] === "ok").length;
+    return '<div class="exblock'+(done===b.tasks.length ? (okN===b.tasks.length ? " all-ok" : " all-bad") : "")+'">'
+      + '<div class="exb-head"><span class="exb-n">'+(bi+1)+'</span><h4>'+b.b+'</h4>'
+      +   '<span class="exb-st">'+done+' / '+b.tasks.length+'</span></div>'
+      + b.tasks.map((t,ti)=>{
+          const k = exKey(bi,ti), st = E[k];
+          return '<div class="extask'+(st?" done":"")+'" id="ex-'+bi+'-'+ti+'">'
+            + '<div class="ex-q">'+md(t.q)+'</div>'
+            + (st
+               ? '<div class="ex-res '+(st==="ok"?"ok":"no")+'">'
+                 + (st==="ok" ? "Верно" : (st==="skip" ? "Пропущено" : "Неверно"))
+                 + '<span class="ex-right">'+md("$"+t.a+"$")+'</span></div>'
+               : '<div class="inrow">'
+                 + '<input class="inp" type="text" data-exin="'+bi+'|'+ti+'" placeholder="'+t.ph+'">'
+                 + '<button class="btn btn-p" data-act="exchk" data-b="'+bi+'" data-i="'+ti+'">Проверить</button>'
+                 + '<button class="btn btn-g" data-act="exskip" data-b="'+bi+'" data-i="'+ti+'">Не знаю</button>'
+                 + '</div>')
+            + '<div class="reveal'+(st && st!=="ok" ? " on" : "")+'" id="exsol-'+bi+'-'+ti+'">'
+            +   '<div class="rl">как это решается</div>'
+            +   t.sol.map((x,j)=>'<div class="wline"><span class="n">'+(j+1)+'</span><span>'+md(x)+'</span></div>').join("")
+            +   '<div class="ex-ans">'+md("$"+t.a+"$")+'</div>'
+            + '</div></div>';
+        }).join("")
+      + '</div>';
+  }).join("");
+}
+
+function drawExam(){
+  const box = document.getElementById("examBody");
+  if(!box) return;
+  const E = exSt();
+  const done = EXAM.reduce((s,b,bi)=> s + b.tasks.filter((t,ti)=>E[exKey(bi,ti)]).length, 0);
+  const ok   = EXAM.reduce((s,b,bi)=> s + b.tasks.filter((t,ti)=>E[exKey(bi,ti)]==="ok").length, 0);
+  const d = daysLeft();
+
+  let head = '<div class="exbar">'
+    + '<div class="exb"><b>'+(d > 0 ? d : 0)+'</b><span>'+(d > 0 ? plural(d,"день","дня","дней")+" до экзамена" : "экзамен сегодня")+'</span></div>'
+    + '<div class="exb"><b>'+done+'</b><span>из '+EXAM_N+' решено</span></div>'
+    + '<div class="exb'+(done?" accent":"")+'"><b>'+ok+'</b><span>верно</span></div>'
+    + '</div>';
+
+  if(done === EXAM_N){
+    const weak = EXAM.map((b,bi)=>({b:b, n:b.tasks.filter((t,ti)=>E[exKey(bi,ti)]==="ok").length}))
+                     .filter(x=> x.n < x.b.tasks.length);
+    head += '<div class="exverdict">'
+      + '<h3>Замер закончен: '+ok+' из '+EXAM_N+'</h3>'
+      + (weak.length
+          ? '<p>Оставшиеся дни имеет смысл тратить на это, а не на всё подряд:</p><ol class="exlist">'
+            + weak.sort((a,b)=>a.n-b.n).map(x=>'<li><b>'+x.b.b+'</b> — '+x.n+' из '+x.b.tasks.length+'</li>').join("")
+            + '</ol>'
+          : '<p>Ни одной дырки. Тогда бери тетрадь и решай подряд — база есть.</p>')
+      + '</div>';
+  }
+  box.innerHTML = head + examHTML();
+}
+
+function examCheck(bi, ti, skip){
+  const t = EXAM[bi].tasks[ti], k = exKey(bi,ti);
+  let val = "";
+  if(!skip){
+    const inp = document.querySelector('[data-exin="'+bi+'|'+ti+'"]');
+    val = inp ? inp.value : "";
+    if(!val.trim()) return;
+  }
+  const ok = !skip && inputOK(val, t.in);
+  exSt()[k] = skip ? "skip" : (ok ? "ok" : "no");
+  if(ok) earn(6, "замер");
+  save();
+  drawExam();
+  const el = document.getElementById("ex-"+bi+"-"+ti);
+  if(el){
+    el.scrollIntoView({block:"center", behavior:"smooth"});
+    if(ok){ sfx("right"); burst(el.querySelector(".ex-res"), "var(--ok)"); }
+    else sfx("wrong");
+  }
+}
+
+function showExam(){
+  sfx("page");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-exam").classList.add("active");
+  document.getElementById("tbTitle").textContent = "Замер";
+  setTab("exam");
+  CUR = null;
+  drawExam();
+  window.scrollTo({top:0});
+}
+
+/* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
    ===================================================================== */
 const KEY = "summer-math-v2";
@@ -6787,7 +7090,7 @@ function showStep(id, si){
 /* Верхние вкладки: ровно одна активна. tab === "" снимает подсветку
    со всех, когда открыт раздел, которого во вкладках нет. */
 function setTab(tab){
-  const map = {hub:"tabCourse", topics:"btnTopics", heb:"btnHeb", together:"btnTogether", casino:"btnCasino"};
+  const map = {hub:"tabCourse", exam:"btnExam", topics:"btnTopics", heb:"btnHeb", together:"btnTogether", casino:"btnCasino"};
   Object.keys(map).forEach(k=>{
     const el = document.getElementById(map[k]);
     if(el) el.classList.toggle("on", k === tab);
@@ -6835,6 +7138,22 @@ function nextSpot(){
 function drawResume(){
   const box = document.getElementById("resumeBox");
   if(!box) return;
+  /* Пока экзамен близко и замер не пройден — на первом месте он. */
+  const exDone = EXAM.reduce((a,b,bi)=> a + b.tasks.filter((t,ti)=>exSt()[exKey(bi,ti)]).length, 0);
+  const d = daysLeft();
+  if(exDone < EXAM_N && d >= 0 && d <= 30){
+    box.className = "box sec-eq";
+    box.innerHTML = '<div class="resume"><div class="rt"><span class="dot"></span>'
+      + '<span class="rn">' + (d > 0 ? d + " " + plural(d,"день","дня","дней") + " до экзамена" : "экзамен сегодня") + '</span></div>'
+      + '<h2>Сначала замер</h2>'
+      + '<p>22 задачи по всей тетради за 5 единиц. Полчаса — и будет видно, какие блоки провалены. Оставшиеся дни уйдут на них, а не на всё подряд.</p>'
+      + '<div class="rrow"><button class="btn btn-p big" data-act="exam">'
+      +   (exDone ? "Продолжить замер" : "Начать замер") + '</button>'
+      +   '<div class="track"><div class="bar"><i data-w="' + Math.round(exDone/EXAM_N*100) + '"></i></div>'
+      +     '<span>' + exDone + ' из ' + EXAM_N + '</span></div></div></div>';
+    paintSoon(()=>{ const i2 = box.querySelector(".bar i"); if(i2) i2.style.width = i2.dataset.w + "%"; });
+    return;
+  }
   const t = nextSpot();
   if(!t){
     const all = allPassed(ST);
@@ -6871,7 +7190,11 @@ function drawQuick(){
   const words = TOPICS.reduce((a,x)=>a+(x.terms?x.terms.length:0),0)
               + (typeof HEB_VERBS !== "undefined" ? HEB_VERBS.length : 0);
   const doneT = TOPICS.filter(x=>topicDone(x)).length;
+  const exDone = EXAM.reduce((a,b,bi)=> a + b.tasks.filter((t,ti)=>exSt()[exKey(bi,ti)]).length, 0);
   const rows = [
+    {ic:"◈", sec:"eq", t:"Замер перед экзаменом",
+     s: exDone ? (exDone===EXAM_N ? "пройден — смотри, где дырки" : "начат, продолжи") : "22 задачи по всей тетради",
+     n: exDone+" из "+EXAM_N, act:'data-act="exam"'},
     {ic:"❊", sec:"alg", t:"Темы курса",  s:"объяснение, примеры и вопросы", n:doneT+" из "+TOPICS.length, act:'data-act="topics"'},
     {ic:"⌗", sec:"eq",  t:"Решение по строчкам", s:"написать решение самому, а не выбрать", n:consN+" строк", act:'data-act="jump" data-s="c"'},
     {ic:"✎", sec:"fun", t:"Задачи",      s:"как в тетради, с полным разбором", n:bigN+" пунктов", act:'data-act="jump" data-s="b"'},
@@ -7961,6 +8284,9 @@ document.addEventListener("click", e=>{
     if(act==="home"){ showTopics(); return; }
     if(act==="hub"){ showHub(); return; }
     if(act==="topics"){ showTopics(); return; }
+    if(act==="exam"){ showExam(); return; }
+    if(act==="exchk"){ examCheck(+el.dataset.b, +el.dataset.i, false); return; }
+    if(act==="exskip"){ examCheck(+el.dataset.b, +el.dataset.i, true); return; }
     if(act==="jump"){ jumpTo(el.dataset.s); return; }
     if(act==="diag"){ showDiag(); return; }
     if(act==="together"){ showTogether(); return; }
@@ -8277,6 +8603,10 @@ document.addEventListener("keydown", e=>{
   if(e.key!=="Enter") return;
   const inp = e.target && e.target.closest && e.target.closest(".inp");
   if(!inp) return;
+  if(inp.dataset.exin){
+    const p = inp.dataset.exin.split("|");
+    examCheck(+p[0], +p[1], false); return;
+  }
   if(inp.dataset.bin){
     e.preventDefault();
     const q = inp.dataset.bin.split("|");
@@ -8354,6 +8684,7 @@ on("btnTogether", showTogether);
 on("btnHeb", showHeb);
 on("btnCasino", showCasino);
 on("btnTopics", showTopics);
+on("btnExam", showExam);
 on("tabCourse", showHub);
 on("btnProfiles", openProfiles);
 
