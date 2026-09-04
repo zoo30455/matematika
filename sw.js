@@ -1,6 +1,6 @@
 /* Сначала сеть, при её отсутствии — кэш. Так обновления приходят сразу,
    а без интернета приложение всё равно открывается. */
-const CACHE = "tetrad-v19";
+const CACHE = "tetrad-v20";
 const CORE = ["./", "./index.html", "./icon.svg", "./manifest.webmanifest"];
 
 self.addEventListener("install", e => {
