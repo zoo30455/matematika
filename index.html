@@ -1063,6 +1063,46 @@ table.cmp td.who.zero{color:var(--tx-3);}
 .fin-src{margin-top:16px; padding-top:12px; border-top:1px solid var(--line-soft);
   font-size:12px; color:var(--tx-2);}
 
+/* ---------- пробный экзамен ---------- */
+.erbox{background:var(--s1); border:1px solid var(--line); border-radius:var(--r-3);
+  padding:22px 24px; margin-bottom:calc(var(--u)*2);}
+.er-h{margin-bottom:9px;}
+.er-tag{font-family:var(--f-num); font-size:10px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--tx-2); padding-left:8px; border-left:2px solid var(--ac);}
+.erbox h3{font-size:20px; margin-bottom:9px;}
+.er-p{font-size:15px; color:var(--tx-2); line-height:1.6; max-width:64ch; margin-bottom:14px;}
+.er-rules{margin:0 0 18px; padding-left:19px;}
+.er-rules li{font-size:14.5px; line-height:1.6; color:var(--tx-2); margin-bottom:5px;}
+.erbar{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:calc(var(--u)*2);
+  padding:12px 18px; border-radius:var(--r-3); background:var(--s2); border:1px solid var(--line);}
+.er-n{font-family:var(--f-num); font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--tx-2);}
+.er-dots{display:flex; gap:5px; flex:1; min-width:100px;}
+.er-dots i{width:9px; height:9px; border-radius:var(--r-max); background:var(--s3);}
+.er-dots i.on{background:var(--ok);}
+.er-dots i.now{background:var(--ac); transform:scale(1.25);}
+.er-clock{font-family:var(--f-num); font-size:17px; font-weight:600;}
+.er-clock.low{color:var(--bad);}
+.er-he{font-family:var(--f-he); font-size:16px; color:var(--tx-2); margin-bottom:10px;}
+.er-q{font-size:19px; line-height:1.7; margin-bottom:12px;}
+.er-ru{margin-bottom:14px; padding:12px 16px; border-radius:var(--r-2);
+  background:var(--s2); border:1px solid var(--line-soft); font-size:16px;}
+.er-ru-n{font-family:var(--f-num); font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--tx-2); margin-top:7px;}
+.er-note{font-size:13.5px; color:var(--tx-2); margin:14px 0 16px;}
+.er-nav{display:flex; justify-content:space-between; gap:10px; margin-top:18px;}
+.opt.sel{border-color:var(--ac); background:var(--ac-dim);}
+.er-row{border:1px solid var(--line); border-radius:var(--r-3); padding:16px 20px;
+  margin-bottom:10px; background:var(--s1); border-left:3px solid var(--line);}
+.er-row.good{border-left-color:var(--ok);}
+.er-row.bad{border-left-color:var(--bad);}
+.er-row.skip{border-left-color:var(--tx-3);}
+.er-row-h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:7px;}
+.er-row-h b{font-size:15px; font-weight:600;}
+.er-row-h span{font-family:var(--f-num); font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--tx-2);}
+.er-row-q{font-size:15.5px; margin-bottom:12px; color:var(--tx-2);}
+.er-sol{padding-top:12px; border-top:1px solid var(--line-soft);}
+
 /* ---------- вспомни по памяти ---------- */
 .recbox{background:var(--s1); border:1px solid var(--line); border-left:3px solid var(--ac);
   border-radius:var(--r-2); padding:15px 18px; margin-bottom:9px;}
@@ -1323,6 +1363,11 @@ table.cmp td.who.zero{color:var(--tx-3);}
             <div id="accBox"></div>
           </div>
         </div>
+      </section>
+
+      <section class="page" id="page-erun">
+        <button class="crumb" data-act="plan">← План</button>
+        <div id="erBody"></div>
       </section>
 
       <section class="page" id="page-lesson">
@@ -7248,6 +7293,15 @@ function drawPlan(){
     + '<span>ты сказал, что это уже знаешь — тут не разбор, а быстрая проверка</span></div>'
     + PLAN_KNOWN.map(id=>planRow(id,"back")).join("") + '</div>';
 
+  h += '<div class="plsec"><div class="plsec-h"><b>Пробный экзамен</b>'
+    + '<span>как девятого: на иврите, со временем, решение на бумаге</span></div>'
+    + '<button class="prow-plan sec-eq" data-act="erun" style="--sc:var(--h-eq)">'
+    +   '<span class="pi">⏱</span>'
+    +   '<span class="pt"><b>Пройти целиком</b><span>'
+    +     (ST.er && ST.er.done ? 'уже пройден — можно повторить'
+        : (ST.er && ST.er.t0 ? 'начат, время идёт' : 'восемь заданий, час времени')) + '</span></span>'
+    +   '<span class="pg">экзамен</span></button></div>';
+
   h += '<p class="mnote" style="margin-top:18px">'
     + (left > 0 ? "До экзамена "+left+" "+plural(left,"день","дня","дней")+"." : "Экзамен сегодня.")
     + ' План рассчитан так, чтобы каждая тема вернулась через сутки: это тот разрыв, при котором через неделю помнится лучше всего.</p>';
@@ -8695,6 +8749,7 @@ const FINAL = {
  parab1:{
   src:"Летнее задание · «חקירה מלאה של פונקציה ריבועית», строка 3",
   q:"Дана функция $f(x)=2(x-5)^{2}-2$. Проведи исследование.",
+  bare:"$f(x)=2(x-5)^{2}-2$",
   fields:[
    {lab:"Вершина $(x;y)$", in:["5;-2","(5;-2)"], ph:"например: 3;-4"},
    {lab:"Корни через точку с запятой", in:["4;6","6;4"], ph:"например: 1;7"},
@@ -8712,6 +8767,7 @@ const FINAL = {
  parab2:{
   src:"Летнее задание · «חקירה מלאה של פונקציה ריבועית», строка 1",
   q:"Дана функция $f(x)=x^{2}-16x+60$. Проведи исследование.",
+  bare:"$f(x)=x^{2}-16x+60$",
   fields:[
    {lab:"Корни через точку с запятой", in:["6;10","10;6"], ph:"например: 1;7"},
    {lab:"Вершина $(x;y)$", in:["8;-4","(8;-4)"], ph:"например: 3;-4"},
@@ -10236,6 +10292,207 @@ Object.assign(EXTRA, {
    ok:"Да, всё зеркально по сравнению с ветвями вверх.", no:"Нарисуй в голове перевёрнутую параболу."}
  ]
 });
+
+/* =====================================================================
+   ПРОБНЫЙ ЭКЗАМЕН
+
+   Главный вывод всего, что я прочитал по методикам: самая полезная
+   тренировка та, что похожа на то, как знание придётся применять.
+   Медики, осматривавшие живых пациентов, лучше сдавали осмотр; те, кто
+   готовился по письменным тестам, лучше сдавали письменные.
+
+   А теперь сравни. Девятого сентября: пишешь решение от руки целиком,
+   условие на иврите, время ограничено, подсмотреть нельзя. На сайте
+   до сих пор было: жмёшь варианты, вводишь короткий ответ, времени
+   сколько угодно, подсказка в двух кликах.
+
+   Этот режим закрывает разрыв. Условия на иврите, таймер идёт, разбор
+   закрыт до конца. Решаешь на бумаге полностью — сюда вводишь только
+   готовый ответ, а в конце сверяешь свою запись с полным разбором.
+   ===================================================================== */
+
+/* Ивритские формулировки к задачам с листка. Формулы те же — меняется
+   только глагол задания, а он на экзамене и будет по-ивритски. */
+const EXAM_HE = {
+ powers:    "פשטו את הביטוי:",
+ factor:    "פרקו לגורמים:",
+ fractions: "פרקו לגורמים, צמצמו ורשמו את תחום ההצבה:",
+ quadeq:    "פתרו את המשוואה:",
+ rateq:     "פתרו את המשוואה:",
+ systems:   "פתרו את מערכת המשוואות:",
+ parab1:    "חקרו את הפונקציה:",
+ parab2:    "חקרו את הפונקציה:"
+};
+
+/* На экзамене формулировка ивритская, поэтому русскую отрезаем и
+   оставляем только саму формулу. */
+function erBare(F){
+  if(F.bare) return F.bare;
+  const q = F.q, c = q.indexOf(":"), d = q.indexOf("$");
+  return (c > -1 && (d === -1 || c < d)) ? q.slice(c + 1).replace(/^(<br>|\s)+/, "") : q;
+}
+
+const ER_MINS = 60;                 /* столько же, сколько на контрольной */
+const ER_IDS = ["powers","factor","fractions","quadeq","rateq","systems","parab2","parab1"];
+
+function erSt(){ if(!ST.er) ST.er = {}; return ST.er; }
+function erLeft(){
+  const s = erSt();
+  if(!s.t0) return ER_MINS * 60;
+  return Math.max(0, ER_MINS * 60 - Math.floor((Date.now() - s.t0) / 1000));
+}
+function erClock(){
+  const t = erLeft();
+  return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+}
+function erTasks(){ return ER_IDS.filter(id => FINAL[id]); }
+
+let ER_TICK = null;
+function erTimer(on){
+  if(ER_TICK){ clearInterval(ER_TICK); ER_TICK = null; }
+  if(!on) return;
+  ER_TICK = setInterval(()=>{
+    const el = document.getElementById("erClock");
+    if(!el){ erTimer(false); return; }
+    el.textContent = erClock();
+    if(erLeft() <= 0){ erTimer(false); erFinish(); }
+    else if(erLeft() <= 300) el.classList.add("low");
+  }, 1000);
+}
+
+/* ---- экраны ---- */
+function erIntro(){
+  const n = erTasks().length;
+  return '<div class="erbox">'
+    + '<div class="er-h"><span class="er-tag">пробный экзамен</span></div>'
+    + '<h3>Как девятого сентября</h3>'
+    + '<p class="er-p">'+n+' заданий с листка, '+ER_MINS+' минут, условия на иврите. '
+    + 'Решай <b>на бумаге и полностью</b> — так, как будешь писать на контрольной. Сюда вводи только готовый ответ.</p>'
+    + '<ul class="er-rules">'
+    +   '<li>Разбор закрыт до самого конца — подсмотреть нельзя.</li>'
+    +   '<li>Не знаешь — пропускай и иди дальше, вернёшься если останется время.</li>'
+    +   '<li>Черновик не выбрасывай: в конце сверишь свою запись с разбором.</li>'
+    +   '<li>Таймер идёт, даже если закроешь вкладку.</li>'
+    + '</ul>'
+    + '<div class="mrow"><button class="btn btn-p" data-act="erstart">Начать, время пошло</button>'
+    + '<button class="btn btn-g" data-act="plan">Не сейчас</button></div>'
+    + '</div>';
+}
+
+function erTaskHTML(){
+  const s = erSt(), ids = erTasks(), id = ids[s.i], F = FINAL[id];
+  const t = TOPICS.find(x=>x.id===id);
+  const ans = (s.ans && s.ans[id]) || {};
+  let h = '<div class="erbar">'
+    + '<span class="er-n">задание '+(s.i+1)+' из '+ids.length+'</span>'
+    + '<div class="er-dots">' + ids.map((x,j)=>
+        '<i class="'+(j===s.i?"now":((s.ans&&s.ans[x]&&Object.keys(s.ans[x]).length)?"on":""))+'"></i>').join("") + '</div>'
+    + '<span class="er-clock" id="erClock">'+erClock()+'</span></div>';
+
+  h += '<div class="erbox">'
+    + '<div class="er-he rtl">'+md(EXAM_HE[id] || "")+'</div>'
+    + '<div class="er-q rtl">'+md(erBare(F))+'</div>'
+    + (s.ru ? '<div class="er-ru">'+md(F.q)+'<div class="er-ru-n">'+t.title+'</div></div>'
+            : '<button class="lesmore" data-act="erru">Не понял условие — показать по-русски</button>')
+    + '<p class="er-note">Решение пиши на бумаге целиком. Сюда — только ответ.</p>';
+
+  h += '<div class="fin-fields">' + F.fields.map((f,i)=>{
+    const v = ans[i] !== undefined ? ans[i] : "";
+    let body;
+    if(f.o){
+      body = '<div class="opts">' + f.o.map((x,oi)=>
+        '<button class="opt'+(String(v)===String(oi)?" sel":"")+'" data-act="eropt" data-i="'+i+'" data-o="'+oi+'">'
+        + md(x)+'</button>').join("") + '</div>';
+    } else {
+      body = '<input class="inp" type="text" data-erin="'+i+'" value="'+String(v).replace(/"/g,"&quot;")+'" '
+           + 'placeholder="'+(f.ph||"ответ")+'" autocomplete="off">';
+    }
+    return '<label class="fin-f"><span class="fin-l">'+md(f.lab)+'</span>'+body+'</label>';
+  }).join("") + '</div>';
+
+  h += '<div class="er-nav">'
+    + (s.i > 0 ? '<button class="btn btn-g" data-act="erprev">← Назад</button>' : '<span></span>')
+    + (s.i < ids.length - 1
+       ? '<button class="btn btn-p" data-act="ernext">Дальше →</button>'
+       : '<button class="btn btn-p" data-act="erfin">Сдать работу</button>')
+    + '</div></div>';
+  return h;
+}
+
+function erResultHTML(){
+  const s = erSt(), ids = erTasks();
+  let ok = 0;
+  const rows = ids.map(id=>{
+    const F = FINAL[id], t = TOPICS.find(x=>x.id===id), a = (s.ans && s.ans[id]) || {};
+    const marks = F.fields.map((f,i)=>{
+      const v = a[i];
+      if(v === undefined || String(v).trim() === "") return null;
+      if(f.o) return +v === f.c;
+      if(f.ex) return exCheck(String(v), f.ex).ok;
+      return inputOK(String(v), f.in);
+    });
+    const good = marks.every(x => x === true);
+    if(good) ok++;
+    const skipped = marks.every(x => x === null);
+    return '<div class="er-row '+(good?"good":(skipped?"skip":"bad"))+'">'
+      + '<div class="er-row-h"><b>'+t.title+'</b>'
+      + '<span>'+(good ? "верно" : (skipped ? "пропущено" : "не сошлось"))+'</span></div>'
+      + '<div class="er-row-q">'+md(F.q)+'</div>'
+      + '<div class="er-sol"><div class="rl">как это решается — сверь со своим черновиком</div>'
+      +   F.sol.map((x,j)=>'<div class="wline"><span class="n">'+(j+1)+'</span><span>'+md(x)+'</span></div>').join("")
+      +   '<div class="ex-ans">Ответ: '+md(F.a)+'</div></div>'
+      + '</div>';
+  }).join("");
+
+  const spent = s.t0 ? Math.round((Math.min(Date.now(), s.tEnd || Date.now()) - s.t0) / 60000) : ER_MINS;
+  return '<div class="erbox">'
+    + '<div class="er-h"><span class="er-tag">результат</span></div>'
+    + '<h3>'+ok+' из '+ids.length+' · '+spent+' мин</h3>'
+    + '<p class="er-p">Теперь главное: возьми свой черновик и сверь <b>запись</b>, а не только ответ. '
+    + 'На контрольной баллы дают за ход, и потерять их можно даже с верным ответом — '
+    + 'если пропущены запреты, не проверены корни или в доказательстве нет ссылок.</p>'
+    + '</div>' + rows
+    + '<div class="mrow" style="margin-top:18px">'
+    + '<button class="btn btn-p" data-act="erreset">Пройти заново</button>'
+    + '<button class="btn btn-g" data-act="plan">К плану</button></div>';
+}
+
+function drawExamRun(){
+  const box = document.getElementById("erBody");
+  if(!box) return;
+  const s = erSt();
+  erTimer(false);
+  if(s.done){ box.innerHTML = erResultHTML(); }
+  else if(!s.t0){ box.innerHTML = erIntro(); }
+  else { box.innerHTML = erTaskHTML(); erTimer(true); }
+  window.scrollTo({top:0});
+}
+
+function erSave(){
+  const s = erSt(), id = erTasks()[s.i];
+  if(!s.ans) s.ans = {};
+  if(!s.ans[id]) s.ans[id] = {};
+  document.querySelectorAll("[data-erin]").forEach(inp=>{
+    if(inp.value.trim() !== "") s.ans[id][+inp.dataset.erin] = inp.value;
+  });
+  save();
+}
+function erGo(d){ erSave(); const s = erSt(); s.i = Math.max(0, Math.min(erTasks().length - 1, s.i + d)); s.ru = 0; save(); drawExamRun(); sfx("page"); }
+function erPick(i, o){ erSave(); const s = erSt(), id = erTasks()[s.i];
+  if(!s.ans) s.ans = {}; if(!s.ans[id]) s.ans[id] = {};
+  s.ans[id][i] = o; save(); drawExamRun(); sfx("tap"); }
+function erFinish(){ erSave(); const s = erSt(); s.done = 1; s.tEnd = Date.now(); save(); erTimer(false); drawExamRun(); sfx("jack"); }
+function erReset(){ ST.er = {}; save(); drawExamRun(); }
+
+function showExamRun(){
+  sfx("page");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-erun").classList.add("active");
+  document.getElementById("tbTitle").textContent = "Пробный экзамен";
+  setTab("");
+  CUR = null;
+  drawExamRun();
+}
 
 /* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
@@ -11923,6 +12180,14 @@ document.addEventListener("click", e=>{
     if(act==="plan"){ showPlan(); return; }
     if(act==="recopen"){ recOpen(tid); return; }
     if(act==="recmark"){ recMark(tid, +el.dataset.v); return; }
+    if(act==="erun"){ showExamRun(); return; }
+    if(act==="erstart"){ const st = erSt(); st.t0 = Date.now(); st.i = 0; st.ans = {}; st.done = 0; save(); drawExamRun(); return; }
+    if(act==="ernext"){ erGo(1); return; }
+    if(act==="erprev"){ erGo(-1); return; }
+    if(act==="eropt"){ erPick(+el.dataset.i, +el.dataset.o); return; }
+    if(act==="erru"){ erSave(); erSt().ru = 1; save(); drawExamRun(); return; }
+    if(act==="erfin"){ erFinish(); return; }
+    if(act==="erreset"){ erReset(); return; }
     if(act==="lesson"){ showLesson(el.dataset.t); return; }
     if(act==="leschk"){ lesCheck(); return; }
     if(act==="lespick"){ const b2 = lesBeatNow(); lesAnswer(+el.dataset.o === b2.c, el.dataset.o); return; }
