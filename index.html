@@ -957,6 +957,42 @@ table.cmp td.who.zero{color:var(--tx-3);}
 .menu-foot span{font-family:var(--f-num); font-size:9.5px; letter-spacing:.06em; color:var(--tx-3); text-transform:none;}
 .menu-foot .sync-line.ok{color:var(--ok);} .menu-foot .sync-line.bad{color:var(--bad);}
 
+/* ---------- план на пять дней ---------- */
+.pldays{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line-soft);
+  border:1px solid var(--line); border-radius:var(--r-3); overflow:hidden; margin-bottom:calc(var(--u)*3);}
+.pld{background:var(--s1); padding:12px 10px; text-align:center;}
+.pld b{display:block; font-family:var(--f-head); font-size:19px; font-weight:600; color:var(--tx-3);}
+.pld span{font-size:11px; color:var(--tx-3); line-height:1.3; display:block; margin-top:2px;}
+.pld.now{background:var(--ac-dim);}
+.pld.now b{color:var(--ac);}
+.pld.now span{color:var(--tx);}
+.pld.past b, .pld.past span{opacity:.45;}
+.plhead{margin-bottom:calc(var(--u)*3);}
+.plhead h3{font-size:20px; margin-bottom:6px;}
+.plhead p{font-size:14.5px; color:var(--tx-2); max-width:64ch;}
+.plsec{margin-bottom:calc(var(--u)*3);}
+.plsec-h{display:flex; align-items:baseline; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+.plsec-h b{font-size:15px; font-weight:600;}
+.plsec-h span{font-size:12.5px; color:var(--tx-3);}
+.prow-plan{display:grid; grid-template-columns:30px minmax(0,1fr) auto; align-items:center; gap:13px;
+  width:100%; text-align:left; cursor:pointer; color:var(--tx); margin-bottom:8px;
+  background:var(--s1); border:1px solid var(--line); border-radius:var(--r-2); padding:13px 16px;
+  transition:border-color var(--t-1), transform var(--t-1);}
+.prow-plan:hover{border-color:var(--ac-line); transform:translateX(3px);}
+.prow-plan .pi{width:30px; height:30px; border-radius:var(--r-1); display:grid; place-items:center;
+  font-family:var(--f-num); font-size:12px; background:var(--s3); color:var(--sc,var(--ac));}
+.prow-plan.done .pi{background:var(--ok); color:var(--ac-ink);}
+.prow-plan .pt b{display:block; font-size:15px; font-weight:600;}
+.prow-plan .pt span{font-size:12.5px; color:var(--tx-3);}
+.prow-plan .pg{font-family:var(--f-num); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--tx-3);}
+.mixbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px;
+  padding:11px 16px; border-radius:var(--r-2); background:var(--s2); border:1px solid var(--line);}
+.mixbar span{font-family:var(--f-num); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--tx-3);}
+.mixbar .dots{display:flex; gap:4px; flex:1; min-width:120px;}
+.mixbar .dots i{flex:1; height:5px; border-radius:var(--r-max); background:var(--s3); transition:background-color var(--t-3);}
+.mixbar .dots i.on{background:var(--ok);}
+.mixbar b{font-family:var(--f-num); font-size:12px;}
+
 /* ---------- замер перед экзаменом ---------- */
 .tab.hot{color:var(--ac);}
 .tab.hot::before{content:""; position:absolute; top:16px; right:5px; width:5px; height:5px;
@@ -1089,7 +1125,8 @@ table.cmp td.who.zero{color:var(--tx-3);}
 
   <nav class="tabs">
     <button class="tab on" id="tabCourse" data-act="hub">Обзор</button>
-    <button class="tab hot" id="btnExam" data-act="exam">Замер</button>
+    <button class="tab hot" id="btnPlan" data-act="plan">План</button>
+    <button class="tab" id="btnExam" data-act="exam">Замер</button>
     <button class="tab" id="btnTopics" data-act="topics">Курс</button>
     <button class="tab" id="btnHeb">Иврит</button>
     <button class="tab" id="btnTogether">Вместе</button>
@@ -1164,6 +1201,15 @@ table.cmp td.who.zero{color:var(--tx-3);}
             <div id="accBox"></div>
           </div>
         </div>
+      </section>
+
+      <section class="page" id="page-plan">
+        <div class="thead">
+          <span class="tag">пять дней</span>
+          <h2>Что делать сегодня</h2>
+          <p class="sub">План собран под срок: каждая тема возвращается через сутки, а с третьего дня добавляются задачи вперемешку. Это не для красоты — так материал держится в голове дольше, чем при разборе подряд.</p>
+        </div>
+        <div id="planBody"></div>
       </section>
 
       <section class="page" id="page-exam">
@@ -6916,6 +6962,165 @@ function showExam(){
 }
 
 /* =====================================================================
+   ПЛАН НА ПЯТЬ ДНЕЙ
+
+   Собран не на глаз, а по трём вещам, которые в исследованиях
+   держатся крепче всего:
+
+   1. Возврат. Cepeda и др.: для проверки через неделю лучший разрыв
+      между первым и вторым подходом — 20–40 % срока, то есть при
+      пяти днях примерно сутки. Поэтому каждая тема возвращается
+      на следующий день, а потом ещё раз вперемешку.
+   2. Разбор вместо решения — на входе. Для новичка разобранный
+      пример даёт больше, чем самостоятельная попытка, и быстрее.
+      Дальше поддержка убирается: пример → пример с пропусками → сам.
+   3. Вперемешку — на выходе. Однотипные задачи подряд дают быстрый
+      результат на месте, но забываются; перемешанные учат ещё и
+      выбирать метод, а именно это спрашивают на контрольной.
+   ===================================================================== */
+
+/* Что в какой день. new — новое, back — вернуться, mix — вперемешку. */
+const PLAN = [
+ {d:1, t:"Фундамент", new:["powers"], back:[], mix:[],
+  why:"Степени держат всё остальное: без них не читаются ни дроби, ни уравнения."},
+ {d:2, t:"Раскрытие и разложение", new:["factor"], back:["powers"], mix:[],
+  why:"Формулы сокращённого умножения и трёхчлен. Дальше без них никуда."},
+ {d:3, t:"Дроби и дробные уравнения", new:["fractions","rateq"], back:["factor"], mix:["powers","factor"],
+  why:"Самый большой блок тетради — 59 уравнений. Стоит прямо на вчерашнем разложении."},
+ {d:4, t:"Системы", new:["systems"], back:["rateq","fractions"], mix:["powers","factor","fractions"],
+  why:"Подстановка поверх квадратных, которые ты уже знаешь."},
+ {d:5, t:"Прогон", new:[], back:["systems"], mix:["powers","factor","fractions","rateq","systems"],
+  why:"Ничего нового. Только вперемешку — как на контрольной."}
+];
+
+const MIX_GOAL = 10;          /* сколько перемешанных задач за день */
+
+function planDay(){
+  const left = daysLeft();
+  const i = Math.min(PLAN.length - 1, Math.max(0, PLAN.length - Math.max(left, 1)));
+  return i;
+}
+function planSt(){ if(!ST.plan) ST.plan = {}; return ST.plan; }
+const mixKey = ()=> "mix:" + today();
+function mixDone(){ return planSt()[mixKey()] || 0; }
+
+/* ---- перемешанный повтор ---- */
+let MIXT = null, MIX_IDS = [];
+
+function mixPick(){
+  const ids = MIX_IDS.filter(id => (GEN[id]||[]).length);
+  if(!ids.length) return null;
+  const id = rpick(ids);
+  const g = rpick(GEN[id]);
+  const t = g.f();
+  t._topic = TOPICS.find(x=>x.id===id).title;
+  t._type = g.n;
+  return t;
+}
+function drawMix(){
+  const box = document.getElementById("mixBody");
+  if(!box) return;
+  const n = mixDone();
+  if(!MIXT) MIXT = mixPick();
+  if(!MIXT){ box.innerHTML = '<p class="mnote">На сегодня перемешивать пока нечего — сначала пройди новые темы.</p>'; return; }
+  const t = MIXT;
+  box.innerHTML = '<div class="mixbar"><span>сделано сегодня</span>'
+    + '<div class="dots">' + Array.from({length:MIX_GOAL},(_,i)=>'<i class="'+(i<n?"on":"")+'"></i>').join("") + '</div>'
+    + '<b>'+n+' / '+MIX_GOAL+'</b></div>'
+    + '<div class="task">'
+    +   '<div class="tn">'+t._topic+' · '+t._type+'</div>'
+    +   '<div class="tq">'+md(t.q)+'</div>'
+    +   (t.o
+        ? '<div class="opts">' + order(t.o.length,"mix"+n).map(oi=>
+            '<button class="opt" data-act="mixopt" data-o="'+oi+'">'+md(t.o[oi])+'</button>').join("") + '</div>'
+        : '<div class="inrow"><input class="inp" type="text" id="mixIn" placeholder="'+(t.ph||"твой ответ")+'">'
+          + '<button class="btn btn-p" data-act="mixchk">Проверить</button></div>')
+    +   '<div class="fb" id="mixFb"></div>'
+    +   '<div class="qtools"><button class="btn btn-s" data-act="mixsol">Решение</button>'
+    +     '<button class="btn btn-s" data-act="mixnext">Другая задача →</button></div>'
+    +   '<div class="reveal" id="mixRv"><div class="rl">как это решается</div>'
+    +     (t.sol||[]).map((x,i)=>'<div class="wline"><span class="n">'+(i+1)+'</span><span>'+md(x)+'</span></div>').join("")
+    +     '<div class="ex-ans">'+md(t.a)+'</div></div>'
+    + '</div>';
+}
+function mixAnswer(ok){
+  const fb = document.getElementById("mixFb");
+  if(fb){
+    fb.className = "fb on " + (ok ? "good" : "bad");
+    fb.innerHTML = ok ? "<b>Верно.</b> Следующая будет из другой темы — в этом весь смысл."
+                      : "<b>Не сходится.</b> Загляни в решение, потом бери следующую.";
+  }
+  if(ok){
+    planSt()[mixKey()] = mixDone() + 1;
+    earn(4, "повторение");
+    save(); sfx("right");
+  } else { sfx("wrong"); document.getElementById("mixRv").classList.add("on"); }
+  setTimeout(()=>{ if(ok){ MIXT = null; drawMix(); } }, ok ? 900 : 0);
+}
+
+/* ---- экран плана ---- */
+function planRow(id, kind){
+  const t = TOPICS.find(x=>x.id===id);
+  if(!t) return "";
+  const n = passedCount(t), tot = t.steps.length, done = topicDone(t);
+  const lab = kind === "new" ? (done ? "пройдена" : n+" из "+tot+" шагов")
+                             : (done ? "готова к повтору" : "сначала пройди её");
+  const act = kind === "new" ? 'data-act="topic" data-t="'+t.id+'"'
+                             : 'data-act="jump2" data-t="'+t.id+'" data-s="g"';
+  return '<button class="prow-plan sec-'+t.sec+(done?" done":"")+'" '+act+' style="--sc:var(--h-'+t.sec+')">'
+    + '<span class="pi">'+(done ? "✓" : (TOPICS.indexOf(t)+1))+'</span>'
+    + '<span class="pt"><b>'+t.title+'</b><span>'+lab+'</span></span>'
+    + '<span class="pg">'+(kind === "new" ? "разобрать" : "прогнать")+'</span></button>';
+}
+
+function drawPlan(){
+  const box = document.getElementById("planBody");
+  if(!box) return;
+  const i = planDay(), day = PLAN[i], left = daysLeft();
+
+  let h = '<div class="pldays">' + PLAN.map((p,j)=>
+    '<div class="pld'+(j===i?" now":"")+(j<i?" past":"")+'"><b>'+p.d+'</b><span>'+p.t+'</span></div>').join("") + '</div>';
+
+  h += '<div class="plhead"><h3>День '+day.d+' из 5 · '+day.t+'</h3>'
+    + '<p>'+day.why+'</p></div>';
+
+  if(day.new.length){
+    h += '<div class="plsec"><div class="plsec-h"><b>Разобрать</b>'
+      + '<span>объяснение, пример, потом сам</span></div>'
+      + day.new.map(id=>planRow(id,"new")).join("") + '</div>';
+  }
+  if(day.back.length){
+    h += '<div class="plsec"><div class="plsec-h"><b>Вернуться ко вчерашнему</b>'
+      + '<span>через сутки — самый выгодный момент повторить</span></div>'
+      + day.back.map(id=>planRow(id,"back")).join("") + '</div>';
+  }
+  if(day.mix.length){
+    MIX_IDS = day.mix;
+    h += '<div class="plsec"><div class="plsec-h"><b>Вперемешку</b>'
+      + '<span>задачи из разных тем подряд — так учатся выбирать метод</span></div>'
+      + '<div id="mixBody"></div></div>';
+  } else {
+    MIX_IDS = [];
+  }
+  h += '<p class="mnote" style="margin-top:18px">'
+    + (left > 0 ? "До экзамена "+left+" "+plural(left,"день","дня","дней")+"." : "Экзамен сегодня.")
+    + ' План рассчитан так, чтобы каждая тема вернулась через сутки: это тот разрыв, при котором через неделю помнится лучше всего.</p>';
+  box.innerHTML = h;
+  if(day.mix.length) drawMix();
+}
+
+function showPlan(){
+  sfx("page");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-plan").classList.add("active");
+  document.getElementById("tbTitle").textContent = "План";
+  setTab("plan");
+  CUR = null;
+  drawPlan();
+  window.scrollTo({top:0});
+}
+
+/* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
    ===================================================================== */
 const KEY = "summer-math-v2";
@@ -7383,7 +7588,7 @@ function showStep(id, si){
 /* Верхние вкладки: ровно одна активна. tab === "" снимает подсветку
    со всех, когда открыт раздел, которого во вкладках нет. */
 function setTab(tab){
-  const map = {hub:"tabCourse", exam:"btnExam", topics:"btnTopics", heb:"btnHeb", together:"btnTogether", casino:"btnCasino"};
+  const map = {hub:"tabCourse", plan:"btnPlan", exam:"btnExam", topics:"btnTopics", heb:"btnHeb", together:"btnTogether", casino:"btnCasino"};
   Object.keys(map).forEach(k=>{
     const el = document.getElementById(map[k]);
     if(el) el.classList.toggle("on", k === tab);
@@ -7485,6 +7690,8 @@ function drawQuick(){
   const doneT = TOPICS.filter(x=>topicDone(x)).length;
   const exDone = EXAM.reduce((a,b,bi)=> a + b.tasks.filter((t,ti)=>exSt()[exKey(bi,ti)]).length, 0);
   const rows = [
+    {ic:"◆", sec:"alg", t:"План на сегодня",
+     s: PLAN[planDay()].t + " · день " + PLAN[planDay()].d + " из 5", n:"", act:'data-act="plan"'},
     {ic:"◈", sec:"eq", t:"Замер перед экзаменом",
      s: exDone ? (exDone===EXAM_N ? "пройден — смотри, где дырки" : "начат, продолжи") : "22 задачи по всей тетради",
      n: exDone+" из "+EXAM_N, act:'data-act="exam"'},
@@ -8578,6 +8785,17 @@ document.addEventListener("click", e=>{
     if(act==="hub"){ showHub(); return; }
     if(act==="topics"){ showTopics(); return; }
     if(act==="exam"){ showExam(); return; }
+    if(act==="plan"){ showPlan(); return; }
+    if(act==="jump2"){ showTopic(el.dataset.t); showStep(el.dataset.t, el.dataset.s); return; }
+    if(act==="mixopt"){ mixAnswer(+el.dataset.o === MIXT.c); return; }
+    if(act==="mixchk"){
+      const v = (document.getElementById("mixIn")||{}).value || "";
+      if(!v.trim()) return;
+      mixAnswer(MIXT.in ? inputOK(v, MIXT.in) : false);
+      return;
+    }
+    if(act==="mixsol"){ document.getElementById("mixRv").classList.toggle("on"); return; }
+    if(act==="mixnext"){ MIXT = null; drawMix(); return; }
     if(act==="exchk"){ examCheck(+el.dataset.b, +el.dataset.i, false); return; }
     if(act==="exskip"){ examCheck(+el.dataset.b, +el.dataset.i, true); return; }
     if(act==="excopy"){ examCopy(el); return; }
@@ -8979,6 +9197,7 @@ on("btnHeb", showHeb);
 on("btnCasino", showCasino);
 on("btnTopics", showTopics);
 on("btnExam", showExam);
+on("btnPlan", showPlan);
 on("tabCourse", showHub);
 on("btnProfiles", openProfiles);
 
