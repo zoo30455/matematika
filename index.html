@@ -994,6 +994,18 @@ table.cmp td.who.zero{color:var(--tx-3);}
 .ex-res.no{background:var(--bad-dim); color:var(--bad);}
 .ex-res .ex-right{margin-left:auto; font-weight:400; color:var(--tx);}
 
+/* строка результата замера */
+.exsend{display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  background:var(--ac-dim); border:1px solid var(--ac-line); border-radius:var(--r-3);
+  padding:16px 18px; margin-bottom:calc(var(--u)*3);}
+.exsend > div:first-child{flex:1; min-width:220px;}
+.exsend b{display:block; font-size:15px; font-weight:600;}
+.exsend span{font-size:13.5px; color:var(--tx-2);}
+.excode{flex:1 0 100%; display:none; margin-top:4px; padding:11px 14px; border-radius:var(--r-2);
+  background:var(--s1); border:1px solid var(--line); font-family:var(--f-num);
+  font-size:11.5px; line-height:1.7; color:var(--tx); word-break:break-all; user-select:all;}
+.excode.on{display:block;}
+
 /* ---------- экскурсия ---------- */
 .tour{position:fixed; inset:0; z-index:100; display:none;}
 .tour.on{display:block;}
@@ -6573,7 +6585,12 @@ function drawExam(){
     + '<div class="exb"><b>'+(d > 0 ? d : 0)+'</b><span>'+(d > 0 ? plural(d,"день","дня","дней")+" до экзамена" : "экзамен сегодня")+'</span></div>'
     + '<div class="exb"><b>'+done+'</b><span>из '+EXAM_N+' решено</span></div>'
     + '<div class="exb'+(done?" accent":"")+'"><b>'+ok+'</b><span>верно</span></div>'
-    + '</div>';
+    + '</div>'
+    + (done ? '<div class="exsend">'
+        + '<div><b>Показать результат мне</b>'
+        + '<span>Кнопка свернёт весь замер в одну строку и положит её в буфер. Вставь её в переписку — я разберу, куда бить оставшиеся дни.</span></div>'
+        + '<button class="btn btn-p" data-act="excopy">Скопировать строку</button>'
+        + '<div class="excode" id="exCode"></div></div>' : "");
 
   if(done === EXAM_N){
     const weak = EXAM.map((b,bi)=>({b:b, n:b.tasks.filter((t,ti)=>E[exKey(bi,ti)]==="ok").length}))
@@ -6588,6 +6605,28 @@ function drawExam(){
       + '</div>';
   }
   box.innerHTML = head + examHTML();
+}
+
+/* Весь замер в одну строку: её можно переслать, и по ней сразу видно,
+   какие блоки провалены. Никуда сама она не уходит — только в буфер. */
+function examCode(){
+  const E = exSt();
+  const mark = v => v === "ok" ? "1" : (v === "skip" ? "?" : (v ? "0" : "."));
+  const done = EXAM.reduce((a,b,bi)=> a + b.tasks.filter((t,ti)=>E[exKey(bi,ti)]).length, 0);
+  const ok   = EXAM.reduce((a,b,bi)=> a + b.tasks.filter((t,ti)=>E[exKey(bi,ti)]==="ok").length, 0);
+  return "ЗАМЕР-5ед " + ok + "/" + EXAM_N + (done < EXAM_N ? " (решено "+done+")" : "")
+    + " · " + EXAM.map((b,bi)=> b.id + ":" + b.tasks.map((t,ti)=>mark(E[exKey(bi,ti)])).join("")).join(" ");
+}
+
+function examCopy(btn){
+  const code = examCode();
+  const say = ok =>{
+    const box = document.getElementById("exCode");
+    if(box){ box.textContent = code; box.classList.add("on"); }
+    toast(ok ? "Строка скопирована — вставь её в переписку" : "Скопируй строку ниже вручную", ok);
+  };
+  (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject())
+    .then(()=> say(true)).catch(()=> say(false));
 }
 
 function examCheck(bi, ti, skip){
@@ -8287,6 +8326,7 @@ document.addEventListener("click", e=>{
     if(act==="exam"){ showExam(); return; }
     if(act==="exchk"){ examCheck(+el.dataset.b, +el.dataset.i, false); return; }
     if(act==="exskip"){ examCheck(+el.dataset.b, +el.dataset.i, true); return; }
+    if(act==="excopy"){ examCopy(el); return; }
     if(act==="jump"){ jumpTo(el.dataset.s); return; }
     if(act==="diag"){ showDiag(); return; }
     if(act==="together"){ showTogether(); return; }
