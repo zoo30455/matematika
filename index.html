@@ -1044,16 +1044,33 @@ table.cmp td.who.zero{color:var(--tx-3);}
 
 .notrans,.notrans *,.notrans *::before,.notrans *::after{transition:none !important; animation:none !important;}
 
-@media (max-width:820px){
-  .topbar{grid-template-columns:auto 1fr auto; gap:10px; padding:0 14px;}
-  .tb-brand h1{display:none;}
-  .tab{padding:0 10px; font-size:13.5px;}
+/* Ниже 900 навигация не помещается рядом с правым углом: её зажимало
+   до полосы в 88px, и вкладки уезжали за край без всякого намёка.
+   Поэтому переносим её на отдельную строку во всю ширину. */
+@media (max-width:900px){
+  .topbar{
+    grid-template-columns:auto 1fr; grid-template-rows:auto auto;
+    height:auto; padding:0 14px; gap:10px 10px;
+  }
+  .tb-brand{grid-row:1; grid-column:1; height:56px;}
+  .tb-side{grid-row:1; grid-column:2; justify-content:flex-end; height:56px;}
+  .tabs{
+    grid-row:2; grid-column:1/-1; margin:0 -14px; padding:0 14px;
+    border-top:1px solid var(--line-soft);
+  }
+  .tab{height:46px; padding:0 11px; font-size:13.5px;}
+  .tab::after{left:11px; right:11px;}
   #btnCheat{display:none;}
   .iconbtn.help .ht{display:none;}
   .iconbtn.help{padding:0; width:34px; justify-content:center;}
   .pmeta{display:none;}
   .prof{padding:0 4px;}
   .col{padding:calc(var(--u)*3) calc(var(--u)*2) calc(var(--u)*10);}
+}
+@media (max-width:560px){
+  .tb-brand h1{display:none;}
+  .tab{padding:0 8px; font-size:13px;}
+  .tab::after{left:8px; right:8px;}
 }
 @media (max-width:560px){
   body{font-size:15px;}
