@@ -1015,6 +1015,34 @@ table.cmp td.who.zero{color:var(--tx-3);}
   background:var(--ok-dim); border:1px solid rgba(61,214,140,.35);}
 .fb .rr{color:var(--tx-3); font-size:13px;}
 
+.segdot{display:inline-block; width:6px; height:6px; border-radius:var(--r-max);
+  background:var(--ac); margin-left:6px; vertical-align:middle;}
+
+/* ---------- задача с листка ---------- */
+.finbox{margin-top:calc(var(--u)*4); padding:20px 22px; border-radius:var(--r-3);
+  background:var(--s1); border:1px solid var(--line); border-top:3px solid var(--ac);}
+.finbox.done{border-top-color:var(--ok);}
+.fin-h{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
+.fin-tag{font-family:var(--f-num); font-size:10px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--tx-2); padding-left:8px; border-left:2px solid var(--ac);}
+.finbox.done .fin-tag{border-left-color:var(--ok);}
+.fin-ok{font-family:var(--f-num); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tx-2); background:var(--ok-dim); border:1px solid rgba(61,214,140,.35);
+  padding:3px 9px; border-radius:var(--r-max);}
+.fin-note{font-size:13.5px; color:var(--tx-2); max-width:62ch; margin-bottom:16px; line-height:1.55;}
+.fin-q{font-size:17px; line-height:1.7; margin-bottom:18px;}
+.fin-fields{display:flex; flex-direction:column; gap:14px; margin-bottom:16px;}
+.fin-f{display:block;}
+.fin-l{display:flex; align-items:baseline; gap:9px; flex-wrap:wrap;
+  font-size:14px; color:var(--tx-2); margin-bottom:6px;}
+.fin-m{font-family:var(--f-num); font-size:10px; letter-spacing:.08em; text-transform:uppercase;}
+.fin-m.good{color:var(--tx-2);}
+.fin-m.bad{color:var(--tx-2);}
+.fin-f .inp{width:100%; max-width:420px;}
+.fin-acts{display:flex; gap:9px; flex-wrap:wrap;}
+.fin-src{margin-top:16px; padding-top:12px; border-top:1px solid var(--line-soft);
+  font-size:12px; color:var(--tx-2);}
+
 /* ---------- план на пять дней ---------- */
 .pldays{display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--line-soft);
   border:1px solid var(--line); border-radius:var(--r-3); overflow:hidden; margin-bottom:calc(var(--u)*3);}
@@ -8260,6 +8288,251 @@ Object.assign(EXTRA, {
 });
 
 /* =====================================================================
+   ЗАДАЧА С ЛИСТКА
+
+   Одна на тему, в самом конце тренажёра. Всё остальное на сайте ведёт
+   за руку по шагам — здесь наоборот: условие целиком, как в летнем
+   задании, решаешь на бумаге сам, а сюда вбиваешь только готовый ответ.
+   Никаких подсказок до того, как ответил.
+
+   Условия взяты дословно из «עבודת קיץ לעולים ל-5 יח״ל כיתה י», ответы
+   сверены с ключом самого листка либо пересчитаны и проверены подстановкой.
+   ===================================================================== */
+
+const FINAL = {
+
+ powers:{
+  src:"Летнее задание · «פשטו את הביטויים», пункт ט",
+  q:"Упрости: $\\dfrac{-12\\cdot(a^{-3})^{2}\\cdot(a^{-6})^{0}}{2\\cdot(a^{-4})^{-3}\\cdot a^{6}}$",
+  fields:[{lab:"Ответ", ex:{ref:"-6/a^24"}, ph:"например: -3/a^5"}],
+  sol:["Сверху: $(a^{-3})^{2}=a^{-6}$, а $(a^{-6})^{0}=1$. Остаётся $-12a^{-6}$.",
+       "Снизу: $(a^{-4})^{-3}=a^{12}$, и рядом ещё $a^{6}$. Вместе $2a^{18}$.",
+       "Числа: $-12:2=-6$.",
+       "Буквы: $-6-18=-24$, то есть $a^{-24}$.",
+       "Отрицательный показатель уводим под дробную черту."],
+  a:"$-\\dfrac{6}{a^{24}}$"
+ },
+
+ factor:{
+  src:"Летнее задание · «פשטו את הביטויים», пункт 8",
+  q:"Разложи на множители: $36x^{2}-(4-6x)^{2}$",
+  fields:[{lab:"Ответ", ex:{ref:"16(3x-1)", form:"mult", factors:1}, ph:"например: 4(2x+3)"}],
+  sol:["Слева $36x^{2}$ — это $(6x)^{2}$, справа уже готовый квадрат. Значит перед нами разность квадратов.",
+       "$(6x)^{2}-(4-6x)^{2}=\\big(6x-(4-6x)\\big)\\big(6x+(4-6x)\\big)$.",
+       "Первая скобка: $6x-4+6x=12x-4$.",
+       "Вторая скобка: $6x+4-6x=4$.",
+       "Получилось $4(12x-4)=48x-16$. Здесь ещё есть общий множитель.",
+       "Выносим $16$."],
+  a:"$16(3x-1)$"
+ },
+
+ fractions:{
+  src:"Летнее задание · «פרקו לגורמים, צמצמו», пункт ב.1",
+  q:"Разложи на множители, сократи и укажи область определения:<br>"
+   + "$\\dfrac{4x^{2}-9y^{2}}{3x+y} : \\dfrac{3y+2x}{9x^{2}+6xy+y^{2}}$",
+  fields:[
+   {lab:"Что получилось после сокращения", ex:{ref:"(2x-3y)(3x+y)"}, ph:"например: (a-b)(a+2b)"},
+   {lab:"Область определения (תחום הצבה)",
+    o:["$y \\neq -3x$ и $x \\neq -1{,}5y$","Только $y \\neq -3x$","Ограничений нет"], c:0}
+  ],
+  sol:["Раскладываем всё, что раскладывается. $4x^{2}-9y^{2}=(2x-3y)(2x+3y)$ — разность квадратов.",
+       "$9x^{2}+6xy+y^{2}=(3x+y)^{2}$ — полный квадрат.",
+       "Деление переворачиваем в умножение: $\\dfrac{(2x-3y)(2x+3y)}{3x+y}\\cdot\\dfrac{(3x+y)^{2}}{3y+2x}$.",
+       "Запреты пишем **до** сокращения, по знаменателям исходного: $3x+y\\neq0$ и $2x+3y\\neq0$.",
+       "Сокращаем $(2x+3y)$ и одну скобку $(3x+y)$.",
+       "Остаётся $(2x-3y)(3x+y)$, а если раскрыть — $6x^{2}-7xy-3y^{2}$."],
+  a:"$(2x-3y)(3x+y)$ при $y\\neq-3x$ и $x\\neq-1{,}5y$"
+ },
+
+ quadeq:{
+  src:"Летнее задание · «משוואה ריבועית מלאה», пункт 5",
+  q:"Реши уравнение: $x^{2}-7x-30=0$",
+  fields:[{lab:"Корни через точку с запятой", in:["10;-3","-3;10"], ph:"например: 2;-5"}],
+  sol:["Свободный член отрицательный — значит у чисел разные знаки.",
+       "Ищем пару с произведением $-30$ и суммой $7$: подходят $10$ и $-3$.",
+       "Значит $x^{2}-7x-30=(x-10)(x+3)$.",
+       "Произведение равно нулю — обнуляем каждую скобку."],
+  a:"$x=10$ или $x=-3$"
+ },
+
+ rateq:{
+  src:"Летнее задание · «משוואות הכוללות שימוש בפירוק הטרינום», пункт 41",
+  q:"Реши уравнение: $\\dfrac{6}{x+4}=\\dfrac{x}{x+2}+\\dfrac{9}{x^{2}+6x+8}$",
+  fields:[
+   {lab:"Запрещённые значения (תחום הצבה)",
+    o:["$x \\neq -2$ и $x \\neq -4$","Только $x \\neq 0$","Ограничений нет"], c:0},
+   {lab:"Корни через точку с запятой", in:["3;-1","-1;3"], ph:"например: 2;-5"}
+  ],
+  sol:["Сначала раскладываем последний знаменатель: $x^{2}+6x+8=(x+2)(x+4)$.",
+       "Отсюда сразу пишем запреты: $x\\neq-2$ и $x\\neq-4$.",
+       "Общий знаменатель — $(x+2)(x+4)$. Умножаем на него всё уравнение.",
+       "Слева $6(x+2)$, справа $x(x+4)+9$.",
+       "$6x+12=x^{2}+4x+9$, переносим всё влево: $x^{2}-2x-3=0$.",
+       "Подбор: произведение $-3$, сумма $2$ — это $3$ и $-1$. Значит $(x-3)(x+1)=0$.",
+       "Оба корня в область определения попадают, значит оба годятся."],
+  a:"$x=3$ или $x=-1$"
+ },
+
+ systems:{
+  src:"Летнее задание · системы со второй степенью, пункт 5",
+  q:"Реши систему:<br>$xy=-24$<br>$2x-5y=31$",
+  fields:[
+   {lab:"Решение с целыми числами $(x;y)$", in:["8;-3","(8;-3)"], ph:"например: 2;5"},
+   {lab:"Второе решение $(x;y)$ — через точку", in:["7.5;-3.2","(7.5;-3.2)"], ph:"например: 1.5;-2.5"}
+  ],
+  sol:["Из второго уравнения выражаем $x$: $2x=31+5y$, то есть $x=\\dfrac{31+5y}{2}$.",
+       "Подставляем в первое: $\\dfrac{31+5y}{2}\\cdot y=-24$.",
+       "Умножаем на $2$: $y(31+5y)=-48$, то есть $5y^{2}+31y+48=0$.",
+       "$D=31^{2}-4\\cdot5\\cdot48=961-960=1$, корень из него $1$.",
+       "$y=\\dfrac{-31\\pm1}{10}$: получается $y=-3$ и $y=-3{,}2$.",
+       "Для $y=-3$: $x=\\dfrac{31-15}{2}=8$. Проверка: $8\\cdot(-3)=-24$.",
+       "Для $y=-3{,}2$: $x=\\dfrac{31-16}{2}=7{,}5$. Проверка: $7{,}5\\cdot(-3{,}2)=-24$."],
+  a:"$(8;-3)$ и $(7{,}5;-3{,}2)$"
+ },
+
+ parab1:{
+  src:"Летнее задание · «חקירה מלאה של פונקציה ריבועית», строка 3",
+  q:"Дана функция $f(x)=2(x-5)^{2}-2$. Проведи исследование.",
+  fields:[
+   {lab:"Вершина $(x;y)$", in:["5;-2","(5;-2)"], ph:"например: 3;-4"},
+   {lab:"Корни через точку с запятой", in:["4;6","6;4"], ph:"например: 1;7"},
+   {lab:"Пересечение с осью $y$ — значение $f(0)$", in:["48"], ph:"число"}
+  ],
+  sol:["Запись уже в виде вершины: $f(x)=a(x-p)^{2}+k$, значит вершина сразу видна — $(5;-2)$.",
+       "Ветви: $a=2>0$, парабола улыбается.",
+       "Корни: $2(x-5)^{2}-2=0$, отсюда $(x-5)^{2}=1$.",
+       "Значит $x-5=1$ или $x-5=-1$, то есть $x=6$ и $x=4$.",
+       "Пересечение с осью $y$: подставляем $x=0$. $2\\cdot25-2=48$.",
+       "Ось симметрии: $x=5$."],
+  a:"Вершина $(5;-2)$, корни $4$ и $6$, $f(0)=48$, ось $x=5$"
+ },
+
+ parab2:{
+  src:"Летнее задание · «חקירה מלאה של פונקציה ריבועית», строка 1",
+  q:"Дана функция $f(x)=x^{2}-16x+60$. Проведи исследование.",
+  fields:[
+   {lab:"Корни через точку с запятой", in:["6;10","10;6"], ph:"например: 1;7"},
+   {lab:"Вершина $(x;y)$", in:["8;-4","(8;-4)"], ph:"например: 3;-4"},
+   {lab:"Куда смотрят ветви",
+    o:["Вверх — парабола улыбается","Вниз — парабола плачет"], c:0}
+  ],
+  sol:["Корни ищем подбором: произведение $60$, сумма $16$ — это $6$ и $10$.",
+       "Значит $x^{2}-16x+60=(x-6)(x-10)$, и корни $6$ и $10$.",
+       "Ось симметрии проходит ровно посередине между корнями: $x=\\dfrac{6+10}{2}=8$.",
+       "Подставляем: $f(8)=64-128+60=-4$. Вершина $(8;-4)$.",
+       "Ветви: $a=1>0$, значит вверх.",
+       "С осью $y$: $f(0)=60$."],
+  a:"Корни $6$ и $10$, вершина $(8;-4)$, ветви вверх, $f(0)=60$"
+ }
+
+};
+
+/* ---- состояние ---- */
+function finSt(){ if(!ST.fin) ST.fin = {}; return ST.fin; }
+function finOf(id){ const s = finSt(); if(!s[id]) s[id] = {tries:0}; return s[id]; }
+
+/* ---- вид ---- */
+function finHTML(t){
+  const F = FINAL[t.id];
+  if(!F) return "";
+  const st = finOf(t.id);
+  let h = '<div class="finbox'+(st.ok?" done":"")+'" id="fin-'+t.id+'">'
+    + '<div class="fin-h"><span class="fin-tag">задача с листка</span>'
+    + (st.ok ? '<span class="fin-ok">решена ✓</span>' : "") + '</div>'
+    + '<p class="fin-note">Одна на всю тему, и здесь по шагам никто не ведёт. Реши целиком на бумаге, '
+    + 'как на контрольной, — сюда впиши только готовый ответ.</p>'
+    + '<div class="fin-q">'+md(F.q)+'</div>';
+
+  h += '<div class="fin-fields">' + F.fields.map((f,i)=>{
+    const val = st.v && st.v[i] !== undefined ? st.v[i] : "";
+    let body;
+    if(f.o){
+      body = '<div class="opts">' + f.o.map((x,oi)=>
+        '<button class="opt'+(st.mark && st.mark[i]!==undefined && +val===oi ? (st.mark[i]?" good":" bad") : "")+'" '
+        + 'data-act="finopt" data-t="'+t.id+'" data-i="'+i+'" data-o="'+oi+'">'+md(x)+'</button>').join("") + '</div>';
+    } else {
+      body = '<input class="inp" type="text" data-finin="'+t.id+'" data-i="'+i+'" '
+           + 'value="'+String(val).replace(/"/g,"&quot;")+'" placeholder="'+(f.ph||"ответ")+'" autocomplete="off">';
+    }
+    const mk = st.mark && st.mark[i] !== undefined
+      ? '<span class="fin-m '+(st.mark[i]?"good":"bad")+'">'+(st.mark[i]?"верно":"не сходится")+'</span>' : "";
+    return '<label class="fin-f"><span class="fin-l">'+md(f.lab)+mk+'</span>'+body+'</label>';
+  }).join("") + '</div>';
+
+  h += '<div class="fin-acts">'
+    + '<button class="btn btn-p" data-act="finchk" data-t="'+t.id+'">Проверить ответ</button>'
+    + (st.tries || st.ok ? '<button class="btn btn-s" data-act="finsol" data-t="'+t.id+'">Разбор целиком</button>' : "")
+    + '</div>'
+    + '<div class="fb" id="finfb-'+t.id+'"></div>'
+    + '<div class="reveal'+(st.open?" on":"")+'" id="finsol-'+t.id+'"><div class="rl">как это решается</div>'
+    +   F.sol.map((x,j)=>'<div class="wline"><span class="n">'+(j+1)+'</span><span>'+md(x)+'</span></div>').join("")
+    +   '<div class="ex-ans">Ответ: '+md(F.a)+'</div></div>'
+    + '<div class="fin-src">'+F.src+'</div>'
+    + '</div>';
+  return h;
+}
+
+function drawFinal(t){
+  const box = document.getElementById("finwrap-"+t.id);
+  if(box) box.innerHTML = finHTML(t);
+}
+
+/* ---- проверка ---- */
+function finPick(t, i, oi){
+  const st = finOf(t.id);
+  if(!st.v) st.v = {};
+  st.v[i] = oi;
+  save(); drawFinal(t); sfx("tap");
+}
+
+function finCheck(t){
+  const F = FINAL[t.id], st = finOf(t.id);
+  if(!st.v) st.v = {};
+  /* забираем то, что набрано в полях */
+  document.querySelectorAll('[data-finin="'+t.id+'"]').forEach(inp=>{
+    st.v[+inp.dataset.i] = inp.value;
+  });
+
+  const mark = {}, empty = [];
+  F.fields.forEach((f,i)=>{
+    const v = st.v[i];
+    if(v === undefined || String(v).trim() === ""){ empty.push(i); mark[i] = false; return; }
+    if(f.o) mark[i] = (+v === f.c);
+    else if(f.ex) mark[i] = exCheck(String(v), f.ex).ok;
+    else mark[i] = inputOK(String(v), f.in);
+  });
+  st.mark = mark;
+  st.tries = (st.tries || 0) + 1;
+  const all = F.fields.every((f,i)=>mark[i]);
+  const n = F.fields.filter((f,i)=>mark[i]).length;
+
+  if(all){ if(!st.ok){ st.ok = 1; earn(25, "задача с листка"); } sfx("jack"); }
+  else sfx("wrong");
+  save();
+  drawFinal(t);
+
+  const fb = document.getElementById("finfb-"+t.id);
+  if(fb){
+    fb.className = "fb on " + (all ? "good" : "bad");
+    if(all){
+      fb.innerHTML = "<b>Решено.</b> Целиком, без шагов и подсказок — именно так это и будет на контрольной.";
+    } else if(empty.length === F.fields.length){
+      fb.innerHTML = "Заполни поля — хотя бы то, в чём уверен.";
+    } else {
+      fb.innerHTML = "<b>Сходится "+n+" из "+F.fields.length+".</b> "
+        + (st.tries >= 2
+           ? "Загляни в разбор — он теперь открыт, там весь ход целиком."
+           : "Проверь то, что помечено, и попробуй ещё раз. Разбор откроется кнопкой рядом.");
+    }
+  }
+  if(!all && st.tries >= 2){
+    st.open = 1; save();
+    const rv = document.getElementById("finsol-"+t.id);
+    if(rv) rv.classList.add("on");
+  }
+}
+
+/* =====================================================================
    5. СОСТОЯНИЕ И ПАМЯТЬ
    ===================================================================== */
 const KEY = "summer-math-v2";
@@ -8520,7 +8793,14 @@ const GS = {};   /* состояние тренажёра по темам, жи�
 
 function genHTML(t){
   const list = GEN[t.id] || [];
-  if(!list.length) return "";
+  const fin = !!FINAL[t.id];
+  if(!list.length && !fin) return "";
+  if(!list.length) return '<div class="panel" id="pnl-'+t.id+'-g">'
+    + '<h3 class="step-title">Тренажёр</h3>'
+    + '<div id="finwrap-'+t.id+'"></div>'
+    + '<div class="stepnav">'
+    +   '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="p">← К тренировке</button>'
+    + '</div></div>';
   return '<div class="panel" id="pnl-'+t.id+'-g">'
     + '<h3 class="step-title">Тренажёр</h3>'
     + '<p class="step-goal">Задачи собираются заново с новыми числами. Приём тот же, ответ каждый раз другой — так закрепляется навык, а не запоминается ответ.</p>'
@@ -8533,6 +8813,7 @@ function genHTML(t){
     + '<div class="gtypes" id="gt-'+t.id+'"></div>'
     + '<div id="gbox-'+t.id+'"></div>'
     + '<div class="gstat" id="gst-'+t.id+'"></div>'
+    + '<div id="finwrap-'+t.id+'"></div>'
     + '<div class="stepnav">'
     +   '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="p">← К тренировке</button>'
     +   '<span class="gate"></span>'
@@ -8581,7 +8862,7 @@ function drawGen(t){
   const s = genState(t), box = document.getElementById("gbox-"+t.id);
   if(!box) return;
   const k = s.task;
-  if(!k){ box.innerHTML = ""; drawGenTypes(t); drawGenStat(t); drawGenLang(t); return; }
+  if(!k){ box.innerHTML = ""; drawGenTypes(t); drawGenStat(t); drawGenLang(t); drawFinal(t); return; }
   let body;
   if(k.o){
     const useHe = ST.lang==="he" && k.oh;
@@ -8609,7 +8890,7 @@ function drawGen(t){
     +   (k.sol||[]).map((x,j)=>'<div class="wline"><span class="n">'+(j+1)+'</span><span>'+md(x)+'</span></div>').join("")
     +   '<div class="ex-ans">Ответ: '+md(k.a)+'</div></div>'
     + '</div>';
-  drawGenTypes(t); drawGenStat(t); drawGenLang(t);
+  drawGenTypes(t); drawGenStat(t); drawGenLang(t); drawFinal(t);
 }
 
 function genScore(t, ok){
@@ -8669,11 +8950,15 @@ function drawRail(t){
     const parts = [["s","Шаги"], ["p","Тренировка"]];
     if(consList(t.id).length) parts.push(["c","По строчкам"]);
     if((BIG[t.id]||[]).length) parts.push(["b","Задачи"]);
-    if((GEN[t.id]||[]).length) parts.push(["g","Тренажёр"]);
+    if((GEN[t.id]||[]).length || FINAL[t.id]) parts.push(["g","Тренажёр"]);
     const now = (cur === "p" || cur === "c" || cur === "b" || cur === "g") ? cur : "s";
     seg.innerHTML = parts.map(p=>
       '<button class="'+(now===p[0]?"on":"")+'" data-act="go" data-t="'+t.id+'" data-s="'
-      + (p[0]==="s" ? String(open) : p[0]) + '">'+p[1]+'</button>').join("");
+      + (p[0]==="s" ? String(open) : p[0]) + '">'+p[1]
+      /* точка на «Тренажёре», пока не решена задача с листка */
+      + (p[0]==="g" && FINAL[t.id] && !(ST.fin && ST.fin[t.id] && ST.fin[t.id].ok)
+         ? '<i class="segdot" title="есть задача с листка"></i>' : "")
+      + '</button>').join("");
   }
 
   /* нижний ряд — номера шагов, только когда мы в шагах */
@@ -9930,7 +10215,7 @@ document.addEventListener("click", e=>{
     if(act==="lespick"){ const b2 = lesBeatNow(); lesAnswer(+el.dataset.o === b2.c, el.dataset.o); return; }
     if(act==="lesnext"){ lesAdvance(); return; }
     if(act==="lesall"){ lesSt()[LES_ID+"_all"] = 1; drawLesson(); return; }
-    if(act==="lesreset"){ lesClear(LES_ID); LES_RUN = 0; LES_SLOW = 0; save(); drawLesson(); return; }
+    if(act==="lesreset"){ lesClear(LES_ID); LES_RUN = 0; LES_SLOW = 0; save(); drawLesson(); window.scrollTo({top:0}); return; }
     if(act==="lesalt" || act==="leswhy"){ const x = document.getElementById("lesAlt"); if(x) x.classList.toggle("on"); return; }
     if(act==="jump2"){ showTopic(el.dataset.t); showStep(el.dataset.t, el.dataset.s); return; }
     if(act==="mixopt"){ mixAnswer(+el.dataset.o === MIXT.c); return; }
@@ -10138,9 +10423,24 @@ document.addEventListener("click", e=>{
     if(act==="show"){ onShow(t, +el.dataset.s, +el.dataset.q); return; }
     if(act==="pchk"){ onPracticeCheck(t, +el.dataset.q); return; }
     /* номер шага приходит числом, разделы (p, g, b, c) — буквой */
-    if(act==="go"){ const s = el.dataset.s; showStep(tid, /^[0-9]+$/.test(s) ? +s : s); return; }
+    if(act==="go"){
+      const s = el.dataset.s, step = /^[0-9]+$/.test(s) ? +s : s;
+      /* кнопка могла быть нажата не со страницы темы (например из урока) —
+         тогда сначала открываем саму тему, иначе панель переключится втёмную */
+      if(CUR !== tid) showTopic(tid);
+      showStep(tid, step);
+      window.scrollTo({top:0});
+      return;
+    }
     if(act==="gtype"){ genState(t).type = +el.dataset.i; newTask(t); return; }
     if(act==="glang"){ ST.lang = el.dataset.l; save(); drawGen(t); return; }
+    if(act==="finchk"){ finCheck(t); return; }
+    if(act==="finopt"){ finPick(t, +el.dataset.i, +el.dataset.o); return; }
+    if(act==="finsol"){
+      const st = finOf(tid); st.open = st.open ? 0 : 1; save();
+      document.getElementById("finsol-"+tid).classList.toggle("on");
+      return;
+    }
     if(act==="gpeek"){ document.getElementById("gpeek-"+tid).classList.toggle("on"); return; }
     if(act==="gnext"){ newTask(t); return; }
     if(act==="ghint"){ document.getElementById("ghint-"+tid).classList.toggle("on"); return; }
@@ -10266,6 +10566,11 @@ document.addEventListener("keydown", e=>{
     examCheck(+p[0], +p[1], false); return;
   }
   if(inp.id === "lesIn"){ lesCheck(); return; }
+  if(inp.dataset.finin){
+    const tt = TOPICS.find(x=>x.id===inp.dataset.finin);
+    if(tt) finCheck(tt);
+    return;
+  }
   if(inp.dataset.bin){
     e.preventDefault();
     const q = inp.dataset.bin.split("|");
