@@ -491,6 +491,10 @@ a{color:var(--ac); text-underline-offset:3px;}
 .fb.good{background:var(--ok-dim); color:var(--ok); border-color:rgba(61,214,140,.28);}
 .fb.bad{background:var(--bad-dim); color:var(--bad); border-color:rgba(242,102,110,.28);}
 .fb b{font-weight:600;}
+/* Какая это была тема — говорим только после ответа, поэтому строка
+   живёт внутри отклика и нарочно тише самого отклика. */
+.tn-late{margin-top:7px; padding-top:7px; border-top:1px solid var(--line-soft);
+  font-family:var(--f-num); font-size:12px; color:var(--tx-2); letter-spacing:.02em;}
 .qtools{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; align-items:center;}
 .fiftybtn{margin-left:auto;}
 .hintbox{background:var(--ac-dim); border:1px solid var(--ac-line); border-radius:var(--r-2);
@@ -7186,6 +7190,11 @@ function showExam(){
    3. Вперемешку — на выходе. Однотипные задачи подряд дают быстрый
       результат на месте, но забываются; перемешанные учат ещё и
       выбирать метод, а именно это спрашивают на контрольной.
+      Важная поправка: перемешивание работает не потому, что задачи
+      разные, а потому, что похожие стоят рядом и их приходится
+      различать. Где материал очевидно разный, эффекта не находят.
+      Поэтому мешаем гнёздами (см. CONFUSE) и не пишем над задачей,
+      из какой она темы, — иначе выбирать нечего.
    ===================================================================== */
 
 /* Что в какой день. new — новое, back — вернуться, mix — вперемешку. */
@@ -7206,6 +7215,43 @@ const PLAN = [
    бросать нельзя — они идут в конце каждого дня короткой проверкой. */
 const PLAN_KNOWN = ["parab1","readgraph","lingeo","inequal","coordgeo"];
 
+/* Гнёзда спутываемых заданий.
+
+   Перемешивание — самый крупный из измеренных эффектов (61 % против
+   38 % на неожиданной проверке через месяц), но работает оно не от
+   того, что задачи разные. Оно работает от **различения**: рядом
+   стоят задания, которые выглядят одинаково, а решаются по-разному,
+   и приходится каждый раз выбирать способ заново. Там, где материал
+   очевидно разный, эффекта не находят вовсе.
+
+   Поэтому мешаем не «темы вообще», а вот эти гнёзда, и держимся
+   одного гнезда несколько задач подряд, меняя внутри него вид. */
+const CONFUSE = [
+ {t:"разложить — но чем",
+  i:[["factor","Общий множитель"],["factor","Разность квадратов"],
+     ["factor","Полный квадрат"],["factor","Трином через корни"]]},
+ {t:"дробь: сократить или решить",
+  i:[["fractions","Сокращение дроби"],["fractions","Разность квадратов в дроби"],
+     ["fractions","Область определения"],["rateq","Дробь равна числу"],
+     ["rateq","Одинаковые знаменатели"]]},
+ {t:"уравнение: какой случай",
+  i:[["quadeq","Неполное: без свободного члена"],["quadeq","Неполное: без слагаемого с x"],
+     ["quadeq","Дискриминант"],["quadeq","Полное уравнение"],
+     ["higheq","Кубическое"],["higheq","Четвёртая степень"]]},
+ {t:"показатели: складывать или умножать",
+  i:[["powers","Умножение и деление"],["powers","Степень степени"],
+     ["powers","Отрицательный показатель"],["powers","Дробь с буквами"]]},
+ {t:"где окажется точка",
+  i:[["parab1","Вершина из формы вершины"],["parab1","Сдвиг графика"],
+     ["parab2","Вершина по общему виду"],["parab2","Форма с корнями"],
+     ["readgraph","Преобразование графика"]]},
+ {t:"прямая на координатах",
+  i:[["linear","Точка пересечения прямых"],["linear","Наклон по двум точкам"],
+     ["linear","Перпендикулярная прямая"],["coordgeo","Расстояние между точками"],
+     ["coordgeo","Середина отрезка"],["lingeo","Площадь треугольника"]]}
+];
+const MIX_RUN_LEN = 3;        /* столько задач подряд из одного гнезда */
+
 const MIX_GOAL = 12;          /* сколько перемешанных задач за день */
 
 function planDay(){
@@ -7219,12 +7265,44 @@ function mixDone(){ return planSt()[mixKey()] || 0; }
 
 /* ---- перемешанный повтор ---- */
 let MIXT = null, MIX_IDS = [];
+let MIX_NEST = null, MIX_LEFT = 0, MIX_PREV = "";
+
+/* Гнездо, из которого сегодня вообще есть что брать: хотя бы два
+   разных вида, иначе различать не между чем. */
+function mixNests(ids){
+  return CONFUSE.map(n => ({t:n.t, i:n.i.filter(([id,nm]) =>
+      ids.includes(id) && (GEN[id]||[]).some(g => g.n === nm))}))
+    .filter(n => n.i.length >= 2);
+}
 
 function mixPick(){
   const ids = MIX_IDS.filter(id => (GEN[id]||[]).length);
   if(!ids.length) return null;
-  const id = rpick(ids);
-  const g = rpick(GEN[id]);
+
+  const nests = mixNests(ids);
+  let id = null, g = null;
+
+  if(nests.length){
+    /* держимся одного гнезда несколько задач подряд — различать
+       можно только то, что стоит рядом */
+    if(!MIX_NEST || MIX_LEFT <= 0 || !nests.some(n => n.t === MIX_NEST.t)){
+      const other = nests.filter(n => !MIX_NEST || n.t !== MIX_NEST.t);
+      MIX_NEST = rpick(other.length ? other : nests);
+      MIX_LEFT = MIX_RUN_LEN;
+      MIX_PREV = "";
+    }
+    /* внутри гнезда вид обязан смениться, иначе это уже блоками */
+    let pool = MIX_NEST.i.filter(x => x.join("|") !== MIX_PREV);
+    if(!pool.length) pool = MIX_NEST.i;
+    const pick = rpick(pool);
+    MIX_PREV = pick.join("|");
+    MIX_LEFT--;
+    id = pick[0];
+    g = (GEN[id] || []).find(x => x.n === pick[1]) || null;
+  }
+
+  if(!g){ id = rpick(ids); g = rpick(GEN[id]); MIX_NEST = null; MIX_LEFT = 0; MIX_PREV = ""; }
+
   const t = g.f();
   t._topic = TOPICS.find(x=>x.id===id).title;
   t._type = g.n;
@@ -7241,7 +7319,10 @@ function drawMix(){
     + '<div class="dots">' + Array.from({length:MIX_GOAL},(_,i)=>'<i class="'+(i<n?"on":"")+'"></i>').join("") + '</div>'
     + '<b>'+n+' / '+MIX_GOAL+'</b></div>'
     + '<div class="task">'
-    +   '<div class="tn">'+t._topic+' · '+t._type+'</div>'
+    /* Тема и вид задачи нарочно не написаны: если сказать заранее,
+       каким приёмом решать, выбирать будет нечего — а именно выбор
+       приёма и есть то, ради чего перемешивают. Скажем после ответа. */
+    +   '<div class="tn">вперемешку · приём выбираешь сам</div>'
     +   '<div class="tq">'+md(t.q)+'</div>'
     +   (t.o
         ? '<div class="opts">' + order(t.o.length,"mix"+n).map(oi=>
@@ -7258,10 +7339,12 @@ function drawMix(){
 }
 function mixAnswer(ok){
   const fb = document.getElementById("mixFb");
+  /* вот теперь можно сказать, что это было: выбор уже сделан */
+  const late = MIXT ? '<div class="tn-late">это было: ' + MIXT._topic + ' · ' + MIXT._type + '</div>' : "";
   if(fb){
     fb.className = "fb on " + (ok ? "good" : "bad");
-    fb.innerHTML = ok ? "<b>Верно.</b> Следующая будет из другой темы — в этом весь смысл."
-                      : "<b>Не сходится.</b> Загляни в решение, потом бери следующую.";
+    fb.innerHTML = (ok ? "<b>Верно.</b> И приём ты выбрал сам — на контрольной будет ровно так же."
+                       : "<b>Не сходится.</b> Загляни в решение, потом бери следующую.") + late;
   }
   if(ok){
     planSt()[mixKey()] = mixDone() + 1;
@@ -7317,7 +7400,7 @@ function drawPlan(){
   if(day.mix.length){
     MIX_IDS = day.mix;
     h += '<div class="plsec"><div class="plsec-h"><b>Вперемешку</b>'
-      + '<span>задачи из разных тем подряд — так учатся выбирать метод</span></div>'
+      + '<span>рядом стоит похожее с виду, но решаемое по-разному — и тема не подсказана</span></div>'
       + '<div id="mixBody"></div></div>';
   } else {
     MIX_IDS = [];
@@ -12728,7 +12811,16 @@ document.addEventListener("click", e=>{
       mixAnswer(MIXT.in ? inputOK(v, MIXT.in) : false);
       return;
     }
-    if(act==="mixsol"){ document.getElementById("mixRv").classList.toggle("on"); return; }
+    if(act==="mixsol"){
+      document.getElementById("mixRv").classList.toggle("on");
+      /* открыл решение — значит выбор уже не за ним; можно назвать тему */
+      const fb = document.getElementById("mixFb");
+      if(fb && MIXT && !/tn-late/.test(fb.innerHTML)){
+        if(!/\bon\b/.test(fb.className)) fb.className = "fb on";   /* цвет отклика не сбиваем */
+        fb.innerHTML += '<div class="tn-late">это было: ' + MIXT._topic + ' · ' + MIXT._type + '</div>';
+      }
+      return;
+    }
     if(act==="mixnext"){ MIXT = null; drawMix(); return; }
     if(act==="exchk"){ examCheck(+el.dataset.b, +el.dataset.i, false); return; }
     if(act==="exskip"){ examCheck(+el.dataset.b, +el.dataset.i, true); return; }
