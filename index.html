@@ -9350,8 +9350,9 @@ function finHTML(t){
   let h = '<div class="finbox'+(st.ok?" done":"")+'" id="fin-'+t.id+'">'
     + '<div class="fin-h"><span class="fin-tag">задача с листка</span>'
     + (st.ok ? '<span class="fin-ok">решена ✓</span>' : "") + '</div>'
-    + '<p class="fin-note">Одна на всю тему, и здесь по шагам никто не ведёт. Реши целиком на бумаге, '
-    + 'как на контрольной, — сюда впиши только готовый ответ.</p>'
+    + '<p class="fin-note">Она одна на всю тему и не меняется — «Следующая задача» относится '
+    + 'к тренажёру выше, а не к ней. Здесь по шагам никто не ведёт: реши целиком на бумаге, '
+    + 'как на контрольной, и впиши сюда только готовый ответ.</p>'
     + '<div class="fin-q">'+md(F.q)+'</div>';
 
   h += '<div class="fin-fields">' + F.fields.map((f,i)=>{
@@ -9385,7 +9386,16 @@ function finHTML(t){
 
 function drawFinal(t){
   const box = document.getElementById("finwrap-"+t.id);
-  if(box) box.innerHTML = finHTML(t);
+  if(!box) return;
+  /* Перерисовка не имеет права съедать набранное. Тренажёр обновляет
+     всю панель на каждой «Следующей задаче», а поля здесь заполняются
+     задолго до «Проверить»: без этого вписанный ответ пропадал. */
+  const st = finOf(t.id), live = box.querySelectorAll('[data-finin="'+t.id+'"]');
+  if(live.length){
+    if(!st.v) st.v = {};
+    live.forEach(inp=>{ st.v[+inp.dataset.i] = inp.value; });
+  }
+  box.innerHTML = finHTML(t);
 }
 
 /* ---- проверка ---- */
@@ -11757,12 +11767,16 @@ function genHTML(t){
     + '<div class="gtypes" id="gt-'+t.id+'"></div>'
     + '<div id="gbox-'+t.id+'"></div>'
     + '<div class="gstat" id="gst-'+t.id+'"></div>'
-    + '<div id="finwrap-'+t.id+'"></div>'
+    /* «Следующая задача» должна стоять вплотную к тренажёру. Пока между
+       ними лежала задача с листка — одна на всю тему и потому неизменная, —
+       кнопка выглядела сломанной: жмёшь, а задача прямо над ней та же. */
     + '<div class="stepnav">'
     +   '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="p">← К тренировке</button>'
     +   '<span class="gate"></span>'
     +   '<button class="btn btn-p" data-act="gnext" data-t="'+t.id+'">Следующая задача →</button>'
-    + '</div></div>';
+    + '</div>'
+    + '<div id="finwrap-'+t.id+'"></div>'
+    + '</div>';
 }
 
 function genState(t){
