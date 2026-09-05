@@ -1181,6 +1181,76 @@ table.cmp td.who.zero{color:var(--tx-3);}
 .mixbar .dots i.on{background:var(--ok);}
 .mixbar b{font-family:var(--f-num); font-size:12px;}
 
+/* ---------- учитель: сегодняшний день ---------- */
+.tch{margin-bottom:calc(var(--u)*3);}
+.tch-h{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:12px;}
+.tch-h b{font-family:var(--f-head); font-size:20px; font-weight:600;}
+.tch-h span{font-family:var(--f-num); font-size:11px; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--ac);}
+.budrow{display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding:12px 14px; background:var(--s2); border:1px solid var(--line); border-radius:var(--r-2);}
+.bud-l{font-size:13px; color:var(--tx-2); margin-right:4px;}
+.bud{cursor:pointer; text-align:left; padding:8px 13px; border-radius:var(--r-1);
+  background:var(--s1); border:1px solid var(--line); color:var(--tx);
+  transition:border-color var(--t-1), background-color var(--t-1);}
+.bud b{display:block; font-size:13.5px; font-weight:600;}
+.bud span{display:block; font-size:11.5px; color:var(--tx-3); margin-top:1px;}
+.bud:hover{border-color:var(--ac-line);}
+.bud.on{background:var(--ac-dim); border-color:var(--ac-line);}
+.bud.on b{color:var(--ac);}
+.tch-lag{margin-top:12px; padding:12px 16px; border-radius:var(--r-2);
+  background:var(--s2); border:1px solid var(--line); border-left:3px solid var(--warn);
+  font-size:13.5px; color:var(--tx-2); line-height:1.55; max-width:70ch;}
+.tch-warn{margin-top:12px; padding:16px 18px; border-radius:var(--r-2);
+  background:var(--warn-dim); border:1px solid var(--warn);}
+.tch-warn b{display:block; font-size:15px; margin-bottom:6px;}
+.tch-warn p{font-size:14px; color:var(--tx-2); margin-bottom:12px; max-width:64ch;}
+
+.tcard{display:grid; grid-template-columns:52px minmax(0,1fr) auto; align-items:center; gap:14px;
+  width:100%; text-align:left; cursor:pointer; color:var(--tx); margin-bottom:8px;
+  background:var(--s1); border:1px solid var(--line); border-left:3px solid var(--line);
+  border-radius:var(--r-2); padding:13px 16px;
+  transition:border-color var(--t-1), transform var(--t-1), opacity var(--t-1);}
+.tcard:hover{border-color:var(--ac-line); transform:translateX(3px);}
+.tcard .tc-min{font-family:var(--f-num); font-size:17px; color:var(--tx-2); text-align:center;}
+.tcard .tc-min i{display:block; font-style:normal; font-size:9.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--tx-3);}
+.tcard .tc-t b{display:block; font-size:15px; font-weight:600;}
+.tcard .tc-t span{font-size:12.5px; color:var(--tx-3);}
+.tcard .tc-g{font-family:var(--f-num); font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--tx-3);}
+.tcard.v-weak{border-left-color:var(--bad);}
+.tcard.v-weak .tc-t span{color:var(--bad);}
+.tcard.v-part{border-left-color:var(--warn);}
+.tcard.v-unknown{border-left-color:var(--tx-3);}
+.tcard.v-ok{border-left-color:var(--ok);}
+.tcard.v-ok .tc-t span{color:var(--ok);}
+.tcard.skip{opacity:.5;}
+.tcard.skip:hover{opacity:1;}
+.cutsec .plsec-h b{color:var(--tx-2);}
+
+.rights{display:grid; gap:1px; background:var(--line-soft);
+  border:1px solid var(--line); border-radius:var(--r-3); overflow:hidden; margin-bottom:10px;}
+.rgt{background:var(--s1); padding:15px 18px;}
+.rgt-h{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:5px;}
+.rgt-h b{font-size:14.5px; font-weight:600;}
+.rgt p{font-size:13.5px; color:var(--tx-2); line-height:1.55; max-width:70ch;}
+
+.exday .exd{display:grid; grid-template-columns:92px minmax(0,1fr); gap:14px;
+  padding:13px 0; border-top:1px solid var(--line-soft);}
+.exday .exd:first-of-type{border-top:none;}
+.exd-n{font-family:var(--f-num); font-size:11px; letter-spacing:.05em; color:var(--tx-3);
+  padding-top:2px;}
+.exd-b b{display:block; font-size:14.5px; font-weight:600; margin-bottom:3px;}
+.exd-b p{font-size:13.5px; color:var(--tx-2); line-height:1.55; max-width:70ch;}
+.exday.hot .plsec-h b{color:var(--ac);}
+
+@media (max-width:560px){
+  .tcard{grid-template-columns:44px minmax(0,1fr); gap:11px;}
+  .tcard .tc-g{display:none;}
+  .exday .exd{grid-template-columns:1fr; gap:3px;}
+}
+
 /* ---------- замер перед экзаменом ---------- */
 .tab.hot{color:var(--ac);}
 .tab.hot::before{content:""; position:absolute; top:16px; right:5px; width:5px; height:5px;
@@ -1413,9 +1483,9 @@ table.cmp td.who.zero{color:var(--tx-3);}
 
       <section class="page" id="page-plan">
         <div class="thead">
-          <span class="tag">пять дней</span>
+          <span class="tag">до девятого</span>
           <h2>Что делать сегодня</h2>
-          <p class="sub">План собран под срок: каждая тема возвращается через сутки, а с третьего дня добавляются задачи вперемешку. Это не для красоты — так материал держится в голове дольше, чем при разборе подряд.</p>
+          <p class="sub">Порядок собран не по списку тем, а по замеру: сверху то, что провалено на нём, — это доказанная дырка. Дальше план обрезается по времени, которое у тебя сегодня реально есть, и вслух говорит, что вычёркивает.</p>
         </div>
         <div id="planBody"></div>
       </section>
@@ -7049,9 +7119,15 @@ const EXAM_N = EXAM.reduce((s,b)=>s+b.tasks.length, 0);
 function exSt(){ if(!ST.exam) ST.exam = {}; return ST.exam; }
 const exKey = (bi,ti)=> "ex:"+EXAM[bi].id+":"+ti;
 
+/* Считаем календарные дни, а не доли суток: до экзамена «четыре дня»
+   значит четыре даты в календаре, сколько бы часов ни осталось от
+   сегодняшнего. Через дробную разницу и Math.ceil выходило на день
+   больше — и накануне экзамена это врало заметнее всего. */
 function daysLeft(){
-  const d = Math.ceil((new Date(EXAM_DATE+"T09:00:00") - Date.now()) / 864e5);
-  return d;
+  const ex = new Date(EXAM_DATE + "T00:00:00"), n = new Date();
+  const a = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  const b = new Date(ex.getFullYear(), ex.getMonth(), ex.getDate());
+  return Math.round((b - a) / 864e5);
 }
 
 /* ---- отрисовка ---- */
@@ -7175,6 +7251,278 @@ function showExam(){
 }
 
 /* =====================================================================
+   УЧИТЕЛЬ
+
+   План на пять дней отвечает на вопрос «в каком порядке проходить темы».
+   За несколько дней до экзамена важнее три других вопроса, на которые
+   он не отвечает:
+
+     1. Что уже доказано решёнными задачами, а что известно только
+        со слов «это я вроде знаю». Разрыв между «знаю» и знаю
+        максимален именно там, где человек уверен, — поэтому список
+        знакомых тем не может составляться по памяти, он составляется
+        по замеру.
+     2. Что делать, если сегодня есть не весь день, а час. Учитель
+        в этом случае не сокращает всё понемногу, а вычёркивает
+        целые куски и говорит вслух, какие.
+     3. Что делать в само утро экзамена — включая то, что человеку
+        положено по закону и о чём ему обычно никто не говорит.
+
+   Здесь эти три.
+   ===================================================================== */
+
+/* ---------- 1. Доказательства вместо слов ---------- */
+
+/* Блок замера -> тема курса. Замер сделан из самой тетради и
+   проверяется по значению, поэтому он и есть доказательство. */
+const EX2TOPIC = {
+  pow:"powers", short:"factor", frac:"fractions", quad:"quadeq",
+  rat:"rateq",  sys1:"systems", sys2:"systems",   para:"parab1",
+  study:"parab2", pre:"readgraph", geo:"quads"
+};
+
+/* Для каждой темы: сколько задач замера решено верно, неверно, не тронуто. */
+function exTally(){
+  const E = (ST.exam || {}), r = {};
+  EXAM.forEach(b=>{
+    const id = EX2TOPIC[b.id];
+    if(!id) return;
+    if(!r[id]) r[id] = {ok:0, bad:0, none:0};
+    b.tasks.forEach((t,ti)=>{
+      const v = E["ex:" + b.id + ":" + ti];
+      if(v === "ok") r[id].ok++;
+      else if(v)     r[id].bad++;
+      else           r[id].none++;
+    });
+  });
+  return r;
+}
+
+/* weak — провалено, part — начато и не дорешано, ok — доказано,
+   unknown — не проверялось вовсе. Четвёртое не то же самое, что первое:
+   про непроверенное мы не знаем ничего, и это надо говорить прямо. */
+function verdictOf(id, T){
+  const v = (T || exTally())[id];
+  if(!v || (v.ok + v.bad) === 0) return "unknown";
+  if(v.bad) return "weak";
+  if(v.none) return "part";
+  return "ok";
+}
+const VLAB = {weak:"провалено на замере", part:"замер не дорешан",
+              ok:"доказано на замере", unknown:"не проверялось"};
+
+function exDoneN(){
+  const E = (ST.exam || {});
+  return EXAM.reduce((s,b)=> s + b.tasks.filter((t,ti)=> E["ex:"+b.id+":"+ti]).length, 0);
+}
+
+/* ---------- 2. Сколько сегодня есть времени ---------- */
+
+const BUDS = [
+  {k:"s", t:"час",        m:60,  d:"только самое дорогое"},
+  {k:"m", t:"два-три",    m:160, d:"обычный день"},
+  {k:"l", t:"весь день",  m:320, d:"хватит и на прогон"}
+];
+const budKey  = ()=> "bud:" + today();
+function budNow(){ return planSt()[budKey()] || "m"; }
+function budMin(){ const b = BUDS.find(x=>x.k===budNow()); return b ? b.m : 160; }
+function budSet(k){ planSt()[budKey()] = k; save(); drawPlan(); sfx("tap"); }
+
+/* ---------- 3. Порядок на сегодня ---------- */
+
+/* Что стоит первым. Провал на замере обгоняет всё: он доказан,
+   и чинится дешевле всего — материал уже написан, надо только пройти.
+   Непроверенное идёт раньше доказанного, а доказанное не выбрасывается,
+   а ужимается до короткой проверки. */
+const VRANK = {weak:0, part:1, unknown:2, ok:3};
+
+function planPool(day){
+  const T = exTally(), pool = [];
+  const push = (id, src)=>{
+    const t = TOPICS.find(x=>x.id===id);
+    if(!t || pool.some(x=>x.id===id)) return;
+    const v = verdictOf(id, T);
+    const les = !!LESSONS[id];
+    const done = planTopicDone(id);
+    /* Пройденное и доказанное второй раз подряд не разбирают: ему хватает
+       короткой проверки. Полный урок стоит только там, где его не было. */
+    pool.push({id:id, t:t, v:v, src:src, les:les, done:done,
+               min: (done || v === "ok") ? 8 : (les ? 45 : 30)});
+  };
+  TOPICS.forEach(t=>{ if(verdictOf(t.id, T) === "weak") push(t.id, "замер"); });
+  (day.new || []).forEach(id => push(id, "план"));
+  PLAN_KNOWN.forEach(id => push(id, "на слово"));
+  pool.sort((a,b)=>{
+    const d = VRANK[a.v] - VRANK[b.v];
+    if(d) return d;
+    return (a.done ? 1 : 0) - (b.done ? 1 : 0);
+  });
+  return pool;
+}
+
+/* Сколько влезает в сегодняшнее время. Припоминание и перемешанные
+   задачи вычитаются первыми: они дешёвые и отдают больше всего. */
+function planFit(day, pool){
+  let left = budMin();
+  if(day.back && day.back.length) left -= 10;
+  if(day.mix  && day.mix.length)  left -= 15;
+  const inn = [], out = [];
+  pool.forEach(p=>{
+    if(p.done && p.v === "ok"){ out.push(p); return; }
+    if(left - p.min >= 0){ inn.push(p); left -= p.min; }
+    else out.push(p);
+  });
+  return {inn:inn, out:out, left:left};
+}
+
+/* ---------- 4. Экзамен на перевод: чем он отличается ---------- */
+
+/* Это не багрут. Это внутренний экзамен на перевод в группу, где
+   математика сильнее, — и правила игры у него другие.
+
+   Главное отличие: в варианте намеренно есть материал выше твоей
+   нынешней группы. Не знать часть заданий — не провал, а условие
+   задачи. Смотрят не на то, всё ли решено, а на то, тянешь ли ты
+   уровень: аккуратно ли сделано знакомое и сколько верного метода
+   видно там, где тема ещё не пройдена.
+
+   Отсюда две вещи, которые дороже всего:
+   не терять на том, что умеешь, и не оставлять пустых мест. */
+const PLACE = [
+ {t:"Часть заданий будет незнакомой — так и задумано", h:"",
+  d:"Экзамен меряет не текущую группу, а следующую. Если бы ты знал всё, переводить было бы некуда. Незнакомое задание — это не сигнал, что ты не тянешь, а ровно то место, ради которого экзамен и проводится."},
+ {t:"Дороже всего — потерять на знакомом", h:"",
+  d:"Балл за задачу, которую ты умеешь и запорол на знаке, стоит столько же, сколько за трудную. Аккуратность на своих темах решает больше, чем героизм на чужих."},
+ {t:"Пустое место не даёт ничего, начатое — даёт", h:"",
+  d:"На незнакомой задаче напиши то, что видно: что дано, к какому типу похоже, первый разумный шаг. Учитель, решающий вопрос о переводе, читает именно это — рассуждение, а не только ответ."},
+ {t:"Спросить заранее — бесплатно", h:"",
+  d:"Что именно входит, сколько времени, можно ли калькулятор и словарь — на внутреннем экзамене это решает учитель, а не министерство. Вопрос стоит нисколько, а ответ может стоить целой задачи."},
+ {t:"Про иврит скажи до, а не после", h:"",
+  d:"Если тормозит не математика, а язык условия, это стоит сказать учителю заранее. На внутреннем экзамене такие вещи решаются разговором. После экзамена то же самое звучит как оправдание."},
+ {t:"Цель — попасть в группу, а не получить оценку", h:"",
+  d:"Разница практическая: на оценку выгодно добивать знакомое до идеала, на перевод — показать, что ты справляешься с материалом посильнее. Поэтому трудные задачи не пропускаются молча."}
+];
+
+/* ---------- 5. Девятого утром ---------- */
+
+const EXAMDAY = [
+ {n:"−1 день", t:"Ничего нового",
+  d:"Восьмого вечером новую тему не берут: она не успевает уложиться и вытесняет то, что уже лежало. Только памятка и сон. Сон перед экзаменом даёт заметно больше, чем те же часы, досиженные над учебником."},
+ {n:"первые 5 мин", t:"Прочитать всё, не решая",
+  d:"Пройти глазами весь вариант и поставить пометки: решаю точно, решаю наверное, не знаю. Ничего не пишешь, только размечаешь. Дальше начинаешь с тех, где «точно», — они дают баллы по самой низкой цене."},
+ {n:"порядок", t:"Не подряд",
+  d:"Задания стоят не по возрастанию трудности. Идти по порядку — значит с высокой вероятностью застрять на второй задаче и не дойти до пятой, которую решил бы за три минуты."},
+ {n:"каждая задача", t:"Писать ход, а не ответ",
+  d:"Оценка ставится по шагам. Правильный ответ без записи стоит меньше, чем неоконченное решение с верным началом. Если решение не сошлось — не зачёркивай его: перечёркнутое не проверяют."},
+ {n:"застрял", t:"Три минуты и дальше",
+  d:"Отметь задачу и иди дальше. Мозг продолжает её решать сам, и на втором заходе она часто открывается. Досиживать до победы — самый дорогой способ потерять вариант."},
+ {n:"проверка", t:"Подставить, а не перечитать",
+  d:"Перечитывание своего решения почти ничего не ловит: глаз видит то, что хотел написать. Подставь корень в исходное уравнение — это ловит ошибку за десять секунд."},
+ {n:"сомнение", t:"Увидел другое — меняй",
+  d:"Держаться за первый ответ — самое устойчивое заблуждение на экзаменах: три четверти сдающих уверены, что менять вредно, а на деле замен с неверного на верное вдвое больше, чем наоборот. Меняй, если при проверке видишь другое; не меняй просто от волнения."}
+];
+
+/* ---------- 6. Отрисовка ---------- */
+
+function teachTop(){
+  const left = daysLeft(), n = exDoneN();
+  const dt = new Date();
+  const MON = ["января","февраля","марта","апреля","мая","июня",
+               "июля","августа","сентября","октября","ноября","декабря"];
+  let h = '<div class="tch">'
+    + '<div class="tch-h"><b>Сегодня ' + dt.getDate() + " " + MON[dt.getMonth()] + '</b>'
+    + '<span>' + (left > 0
+        ? "до экзамена " + left + " " + plural(left,"день","дня","дней")
+        : "экзамен сегодня") + '</span></div>';
+
+  h += '<div class="budrow"><span class="bud-l">Сколько времени есть сегодня:</span>'
+    + BUDS.map(b => '<button class="bud' + (b.k === budNow() ? " on" : "") + '" '
+        + 'data-act="bud" data-k="' + b.k + '"><b>' + b.t + '</b><span>' + b.d + '</span></button>').join("")
+    + '</div>';
+
+  /* Отставание от календаря называем вслух. Молча подтягивать человека
+     к сегодняшней дате нельзя: повторять он будет то, чего не разбирал. */
+  const pd = planDay(), cd = planCalDay();
+  if(pd < cd){
+    h += '<div class="tch-lag">По календарю это был бы день ' + PLAN[cd].d
+      + ', а разобрано по день ' + PLAN[pd].d + '. Догонять будем не количеством, '
+      + 'а порядком: сверху то, что провалено на замере, остальное честно вычёркивается.</div>';
+  }
+
+  /* Без замера план — угадайка, и это надо сказать прямо, а не мелким шрифтом. */
+  if(n < EXAM_N){
+    h += '<div class="tch-warn"><b>' + (n ? "Замер не дорешан: " + n + " из " + EXAM_N
+                                          : "Замер ещё не сделан") + '</b>'
+      + '<p>Пока его нет, порядок тем ниже составлен по тому, что ты когда-то сказал о себе сам. '
+      + 'Это самое ненадёжное из всех оснований: ошибаются сильнее всего там, где уверены. '
+      + 'Двадцать две задачи, минут сорок — и оставшиеся дни будут потрачены по делу, а не наугад.</p>'
+      + '<button class="btn btn-p" data-act="exam">Открыть замер</button></div>';
+  }
+  return h + '</div>';
+}
+
+function teachRow(p, fits){
+  /* «Пройдено» и «умею» — разные вещи, и путать их дороже всего.
+     Поэтому пройденное без замера так и подписано. */
+  const lab = p.done
+    ? (p.v === "ok" ? "пройдена и доказана на замере"
+      : (p.v === "weak" ? "пройдена, но на замере провалена"
+        : "пройдена, но на замере не проверялась"))
+    : VLAB[p.v];
+  const act = p.les ? 'data-act="lesson" data-t="' + p.id + '"'
+                    : 'data-act="topic"  data-t="' + p.id + '"';
+  return '<button class="tcard v-' + p.v + (fits ? "" : " skip") + '" ' + act + '>'
+    + '<span class="tc-min">' + p.min + '<i>мин</i></span>'
+    + '<span class="tc-t"><b>' + p.t.title + '</b><span>' + lab + '</span></span>'
+    + '<span class="tc-g">' + (p.v === "ok" ? "проверить" : (p.les ? "урок" : "разобрать")) + '</span></button>';
+}
+
+function teachMain(day){
+  const pool = planPool(day), f = planFit(day, pool);
+  let h = '<div class="plsec"><div class="plsec-h"><b>Главное сегодня</b>'
+    + '<span>сверху то, что провалено на замере: это доказанная дырка, и чинится она дешевле всего</span></div>'
+    + (f.inn.length ? f.inn.map(p => teachRow(p, true)).join("")
+                    : '<p class="mnote">На сегодня всё разобрано. Иди в перемешанные задачи и в прогон.</p>')
+    + '</div>';
+
+  if(f.out.length){
+    const cut = f.out.filter(p => !(p.done && p.v === "ok"));
+    const ready = f.out.filter(p => p.done && p.v === "ok");
+    if(cut.length){
+      h += '<div class="plsec cutsec"><div class="plsec-h"><b>Сегодня не влезает</b>'
+        + '<span>вычеркнуто сознательно: лучше два куска до конца, чем пять наполовину</span></div>'
+        + cut.map(p => teachRow(p, false)).join("") + '</div>';
+    }
+    if(ready.length){
+      h += '<div class="plsec"><div class="plsec-h"><b>Это уже держится</b>'
+        + '<span>трогать не надо — вернёмся к ним только в перемешанных задачах</span></div>'
+        + ready.map(p => teachRow(p, false)).join("") + '</div>';
+    }
+  }
+  return h;
+}
+
+function teachPlace(){
+  return '<div class="plsec"><div class="plsec-h"><b>Это экзамен на перевод, а не на оценку</b>'
+    + '<span>у него другие правила игры, и от них зависит, как его писать</span></div>'
+    + '<div class="rights">' + PLACE.map(r =>
+        '<div class="rgt"><div class="rgt-h"><b>' + r.t + '</b></div>'
+        + '<p>' + r.d + '</p></div>').join("") + '</div>'
+    + '<p class="mnote">Незнакомого в варианте будет много — это заложено в саму затею. '
+    + 'Считается не то, сколько ты не знал, а сколько показал на том, чего ещё не проходил.</p></div>';
+}
+
+function teachExamDay(){
+  const left = daysLeft();
+  return '<div class="plsec exday' + (left <= 2 ? " hot" : "") + '">'
+    + '<div class="plsec-h"><b>Девятого утром</b>'
+    + '<span>распорядок самого экзамена — прочитать заранее, а не в аудитории</span></div>'
+    + EXAMDAY.map(x => '<div class="exd"><span class="exd-n">' + x.n + '</span>'
+        + '<div class="exd-b"><b>' + x.t + '</b><p>' + x.d + '</p></div></div>').join("")
+    + '</div>';
+}
+
+/* =====================================================================
    ПЛАН НА ПЯТЬ ДНЕЙ
 
    Собран не на глаз, а по трём вещам, которые в исследованиях
@@ -7254,10 +7602,27 @@ const MIX_RUN_LEN = 3;        /* столько задач подряд из о�
 
 const MIX_GOAL = 12;          /* сколько перемешанных задач за день */
 
+/* Где человек стоит по плану, решает не календарь, а сделанное.
+   Календарный день выдавал «вернись ко вчерашнему» тому, кто вчера
+   ничего не разбирал: повторять было нечего, а припоминание требовало
+   вспомнить неизученное. Поэтому день — первый, чьё «новое» ещё не
+   пройдено. Единственное исключение — канун экзамена: прогон делают
+   независимо от того, что осталось незакрытым, потому что завтра
+   всё равно спросят всё сразу. */
+function planTopicDone(id){
+  const t = TOPICS.find(x=>x.id===id);
+  if(!t) return true;
+  return LESSONS[id] ? lesDone(id) : topicDone(t);
+}
 function planDay(){
-  const left = daysLeft();
-  const i = Math.min(PLAN.length - 1, Math.max(0, PLAN.length - Math.max(left, 1)));
-  return i;
+  if(daysLeft() <= 1) return PLAN.length - 1;
+  const i = PLAN.findIndex(p => (p.new||[]).some(id => !planTopicDone(id)));
+  return i < 0 ? PLAN.length - 1 : i;
+}
+/* Где он был бы, если б шёл по календарю. Нужен только для того,
+   чтобы честно назвать отставание, а не чтобы им управлять. */
+function planCalDay(){
+  return Math.min(PLAN.length - 1, Math.max(0, PLAN.length - Math.max(daysLeft(), 1)));
 }
 function planSt(){ if(!ST.plan) ST.plan = {}; return ST.plan; }
 const mixKey = ()=> "mix:" + today();
@@ -7384,14 +7749,15 @@ function drawPlan(){
   h += '<div class="plhead"><h3>День '+day.d+' из 5 · '+day.t+'</h3>'
     + '<p>'+day.why+'</p></div>';
 
+  /* дата, бюджет времени и честное «замера нет — план наугад» */
+  h += teachTop();
+
   /* сначала вспомнить вчерашнее — на пустом месте, без подсказок */
   if(day.back.length) h += recHTML(day.back);
 
-  if(day.new.length){
-    h += '<div class="plsec"><div class="plsec-h"><b>Разобрать</b>'
-      + '<span>объяснение, пример, потом сам</span></div>'
-      + day.new.map(id=>planRow(id,"new")).join("") + '</div>';
-  }
+  /* Порядок тем считается по замеру, а не по списку «это я знаю»,
+     и обрезается по времени, которое сегодня реально есть. */
+  h += teachMain(day);
   if(day.back.length){
     h += '<div class="plsec"><div class="plsec-h"><b>Вернуться ко вчерашнему</b>'
       + '<span>через сутки — самый выгодный момент повторить</span></div>'
@@ -7405,9 +7771,8 @@ function drawPlan(){
   } else {
     MIX_IDS = [];
   }
-  h += '<div class="plsec"><div class="plsec-h"><b>Если останется время</b>'
-    + '<span>ты сказал, что это уже знаешь — тут не разбор, а быстрая проверка</span></div>'
-    + PLAN_KNOWN.map(id=>planRow(id,"back")).join("") + '</div>';
+  h += teachPlace();
+  h += teachExamDay();
 
   h += '<div class="plsec"><div class="plsec-h"><b>Пробный экзамен</b>'
     + '<span>как девятого: на иврите, со временем, решение на бумаге</span></div>'
@@ -12785,6 +13150,7 @@ document.addEventListener("click", e=>{
     if(act==="topics"){ showTopics(); return; }
     if(act==="exam"){ showExam(); return; }
     if(act==="plan"){ showPlan(); return; }
+    if(act==="bud"){ budSet(el.dataset.k); return; }
     if(act==="recopen"){ recOpen(tid); return; }
     if(act==="recmark"){ recMark(tid, +el.dataset.v); return; }
     if(act==="tips"){ showTips(); return; }
