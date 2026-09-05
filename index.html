@@ -9350,9 +9350,9 @@ function finHTML(t){
   let h = '<div class="finbox'+(st.ok?" done":"")+'" id="fin-'+t.id+'">'
     + '<div class="fin-h"><span class="fin-tag">задача с листка</span>'
     + (st.ok ? '<span class="fin-ok">решена ✓</span>' : "") + '</div>'
-    + '<p class="fin-note">Она одна на всю тему и не меняется — «Следующая задача» относится '
-    + 'к тренажёру выше, а не к ней. Здесь по шагам никто не ведёт: реши целиком на бумаге, '
-    + 'как на контрольной, и впиши сюда только готовый ответ.</p>'
+    + '<p class="fin-note">Одна на всю тему, и она последняя: здесь по шагам никто не ведёт '
+    + 'и подсказок нет. Реши целиком на бумаге, как на контрольной, и впиши сюда только '
+    + 'готовый ответ.</p>'
     + '<div class="fin-q">'+md(F.q)+'</div>';
 
   h += '<div class="fin-fields">' + F.fields.map((f,i)=>{
@@ -11734,6 +11734,10 @@ function practiceHTML(t){
       +   '<div class="ex-ans">'+md(p.a)+'</div></div>'
       + '</div>';
   }).join("");
+  /* Задача с листка живёт здесь, среди задач из тетради, и стоит
+     последней: она и есть итог темы — решается целиком, без шагов.
+     В тренажёре ей не место: там один экран — одна сменяемая задача. */
+  h += '<div id="finwrap-'+t.id+'"></div>';
   h += '<div class="stepnav">'
     + '<button class="btn btn-g" data-act="prev" data-t="'+t.id+'" data-s="p">← К последнему шагу</button>'
     + '<span class="gate"></span>'
@@ -11747,14 +11751,9 @@ const GS = {};   /* состояние тренажёра по темам, жи�
 
 function genHTML(t){
   const list = GEN[t.id] || [];
-  const fin = !!FINAL[t.id];
-  if(!list.length && !fin) return "";
-  if(!list.length) return '<div class="panel" id="pnl-'+t.id+'-g">'
-    + '<h3 class="step-title">Тренажёр</h3>'
-    + '<div id="finwrap-'+t.id+'"></div>'
-    + '<div class="stepnav">'
-    +   '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="p">← К тренировке</button>'
-    + '</div></div>';
+  /* Нет генератора — нет и панели. Раньше она всё равно строилась ради
+     задачи с листка, но та переехала к задачам из тетради. */
+  if(!list.length) return "";
   return '<div class="panel" id="pnl-'+t.id+'-g">'
     + '<h3 class="step-title">Тренажёр</h3>'
     + '<p class="step-goal">Задачи собираются заново с новыми числами. Приём тот же, ответ каждый раз другой — так закрепляется навык, а не запоминается ответ.</p>'
@@ -11774,9 +11773,7 @@ function genHTML(t){
     +   '<button class="btn btn-g" data-act="go" data-t="'+t.id+'" data-s="p">← К тренировке</button>'
     +   '<span class="gate"></span>'
     +   '<button class="btn btn-p" data-act="gnext" data-t="'+t.id+'">Следующая задача →</button>'
-    + '</div>'
-    + '<div id="finwrap-'+t.id+'"></div>'
-    + '</div>';
+    + '</div></div>';
 }
 
 function genState(t){
@@ -11798,6 +11795,9 @@ function newTask(t){
   const task = list[idx].f();
   task.__name = list[idx].n;
   s.task = task; s.answered = false;
+  /* Метка поколения: по ней отложенная автосмена узнаёт, что задачу
+     уже сменили руками, и не перескакивает свежую. */
+  s.seq = (s.seq || 0) + 1;
   drawGen(t);
 }
 
@@ -11826,7 +11826,7 @@ function drawGen(t){
   const s = genState(t), box = document.getElementById("gbox-"+t.id);
   if(!box) return;
   const k = s.task;
-  if(!k){ box.innerHTML = ""; drawGenTypes(t); drawGenStat(t); drawGenLang(t); drawFinal(t); return; }
+  if(!k){ box.innerHTML = ""; drawGenTypes(t); drawGenStat(t); drawGenLang(t); return; }
   let body;
   if(k.o){
     const useHe = ST.lang==="he" && k.oh;
@@ -11854,7 +11854,7 @@ function drawGen(t){
     +   (k.sol||[]).map((x,j)=>'<div class="wline"><span class="n">'+(j+1)+'</span><span>'+md(x)+'</span></div>').join("")
     +   '<div class="ex-ans">Ответ: '+md(k.a)+'</div></div>'
     + '</div>';
-  drawGenTypes(t); drawGenStat(t); drawGenLang(t); drawFinal(t);
+  drawGenTypes(t); drawGenStat(t); drawGenLang(t);
 }
 
 function genScore(t, ok){
@@ -11876,9 +11876,25 @@ function genScore(t, ok){
 function genAnswer(t, ok, extra){
   const fb = document.getElementById("gfb-"+t.id);
   fb.className = "fb on " + (ok?"good":"bad");
-  fb.innerHTML = ok ? "<b>Верно!</b> Жми «Следующая задача» — числа будут другие."
-                    : "<b>Не сходится.</b> " + (extra||"Загляни в решение, потом возьми следующую.");
+  fb.innerHTML = ok ? "<b>Верно.</b> Сейчас будет следующая — числа другие."
+                    : "<b>Не сходится.</b> " + (extra||"Разбор открыт ниже — прочитай его и бери следующую.");
   genScore(t, ok);
+
+  /* Один экран — одна задача: решённая уходит сама, чтобы разобранное
+     не копилось на странице. Неверную не трогаем ни в коем случае:
+     там надо успеть прочитать разбор, ради него всё и затевалось. */
+  if(ok){
+    const s = genState(t), my = s.seq;
+    setTimeout(()=>{
+      const s2 = genState(t);
+      if(s2.seq === my && s2.answered) newTask(t);
+    }, 1200);
+  } else {
+    /* Раз неверная остаётся на экране — она остаётся ради разбора,
+       значит его и открываем сразу, а не прячем за ещё одну кнопку. */
+    const rv = document.getElementById("gsol-"+t.id);
+    if(rv) rv.classList.add("on");
+  }
 }
 
 function buildTopic(t){
@@ -11914,13 +11930,14 @@ function drawRail(t){
     const parts = [["s","Шаги"], ["p","Тренировка"]];
     if(consList(t.id).length) parts.push(["c","По строчкам"]);
     if((BIG[t.id]||[]).length) parts.push(["b","Задачи"]);
-    if((GEN[t.id]||[]).length || FINAL[t.id]) parts.push(["g","Тренажёр"]);
+    if((GEN[t.id]||[]).length) parts.push(["g","Тренажёр"]);
     const now = (cur === "p" || cur === "c" || cur === "b" || cur === "g") ? cur : "s";
     seg.innerHTML = parts.map(p=>
       '<button class="'+(now===p[0]?"on":"")+'" data-act="go" data-t="'+t.id+'" data-s="'
       + (p[0]==="s" ? String(open) : p[0]) + '">'+p[1]
-      /* точка на «Тренажёре», пока не решена задача с листка */
-      + (p[0]==="g" && FINAL[t.id] && !(ST.fin && ST.fin[t.id] && ST.fin[t.id].ok)
+      /* точка на «Тренировке», пока не решена задача с листка: она
+         теперь стоит там, последней, а не в тренажёре */
+      + (p[0]==="p" && FINAL[t.id] && !(ST.fin && ST.fin[t.id] && ST.fin[t.id].ok)
          ? '<i class="segdot" title="есть задача с листка"></i>' : "")
       + '</button>').join("");
   }
@@ -11967,6 +11984,7 @@ function showStep(id, si){
   const cp = document.getElementById("pnl-"+id+"-c");
   if(cp) cp.classList.toggle("active", si==="c");
   drawRail(t);
+  if(si==="p") drawFinal(t);
   if(si==="g"){ const s2 = genState(t); if(!s2.task) newTask(t); else drawGen(t); }
   if(si==="c") consEnter(t);
   if(si!=="p" && si!=="g" && si!=="b" && si!=="c") drawGate(t, si);
