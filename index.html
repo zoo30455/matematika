@@ -1221,6 +1221,8 @@ table.cmp td.who.zero{color:var(--tx-3);}
   text-transform:uppercase; color:var(--tx-3);}
 .tcard.v-weak{border-left-color:var(--bad);}
 .tcard.v-weak .tc-t span{color:var(--bad);}
+.tcard.v-skip{border-left-color:var(--warn);}
+.tcard.v-skip .tc-t span{color:var(--warn);}
 .tcard.v-part{border-left-color:var(--warn);}
 .tcard.v-unknown{border-left-color:var(--tx-3);}
 .tcard.v-ok{border-left-color:var(--ok);}
@@ -7287,29 +7289,35 @@ function exTally(){
   EXAM.forEach(b=>{
     const id = EX2TOPIC[b.id];
     if(!id) return;
-    if(!r[id]) r[id] = {ok:0, bad:0, none:0};
+    if(!r[id]) r[id] = {ok:0, bad:0, skip:0, none:0};
     b.tasks.forEach((t,ti)=>{
       const v = E["ex:" + b.id + ":" + ti];
-      if(v === "ok") r[id].ok++;
-      else if(v)     r[id].bad++;
-      else           r[id].none++;
+      if(v === "ok")        r[id].ok++;
+      else if(v === "skip") r[id].skip++;
+      else if(v)            r[id].bad++;
+      else                  r[id].none++;
     });
   });
   return r;
 }
 
-/* weak — провалено, part — начато и не дорешано, ok — доказано,
-   unknown — не проверялось вовсе. Четвёртое не то же самое, что первое:
-   про непроверенное мы не знаем ничего, и это надо говорить прямо. */
+/* weak — решал и не сошлось, skip — честно нажал «не знаю»,
+   part — начато и не дорешано, ok — доказано, unknown — не проверялось.
+
+   Пропуск и ошибка идут рядом по срочности, но это разные сигналы, и
+   подписывать их одинаково нельзя: «не знаю» — это отсутствие приёма,
+   а неверный ответ — приём есть, но ломается. Лечится разным. */
 function verdictOf(id, T){
   const v = (T || exTally())[id];
-  if(!v || (v.ok + v.bad) === 0) return "unknown";
-  if(v.bad) return "weak";
+  if(!v || (v.ok + v.bad + v.skip) === 0) return "unknown";
+  if(v.bad)  return "weak";
+  if(v.skip) return "skip";
   if(v.none) return "part";
   return "ok";
 }
-const VLAB = {weak:"провалено на замере", part:"замер не дорешан",
-              ok:"доказано на замере", unknown:"не проверялось"};
+const VLAB = {weak:"на замере не сошлось", skip:"на замере — «не знаю»",
+              part:"замер не дорешан", ok:"доказано на замере",
+              unknown:"не проверялось"};
 
 function exDoneN(){
   const E = (ST.exam || {});
@@ -7334,7 +7342,7 @@ function budSet(k){ planSt()[budKey()] = k; save(); drawPlan(); sfx("tap"); }
    и чинится дешевле всего — материал уже написан, надо только пройти.
    Непроверенное идёт раньше доказанного, а доказанное не выбрасывается,
    а ужимается до короткой проверки. */
-const VRANK = {weak:0, part:1, unknown:2, ok:3};
+const VRANK = {weak:0, skip:1, part:2, unknown:3, ok:4};
 
 function planPool(day){
   const T = exTally(), pool = [];
@@ -7344,10 +7352,13 @@ function planPool(day){
     const v = verdictOf(id, T);
     const les = !!LESSONS[id];
     const done = planTopicDone(id);
-    /* Пройденное и доказанное второй раз подряд не разбирают: ему хватает
-       короткой проверки. Полный урок стоит только там, где его не было. */
+    /* Короткая проверка полагается доказанному и просто пройденному.
+       Но если урок пройден, а на замере тема не сошлась или получила
+       «не знаю», — значит не удержалось, и восьми минут тут мало:
+       ставим полное время, как будто темы и не было. */
+    const cheap = v === "ok" || (done && v !== "weak" && v !== "skip");
     pool.push({id:id, t:t, v:v, src:src, les:les, done:done,
-               min: (done || v === "ok") ? 8 : (les ? 45 : 30)});
+               min: cheap ? 8 : (les ? 45 : 30)});
   };
   TOPICS.forEach(t=>{ if(verdictOf(t.id, T) === "weak") push(t.id, "замер"); });
   (day.new || []).forEach(id => push(id, "план"));
@@ -7465,9 +7476,10 @@ function teachRow(p, fits){
   /* «Пройдено» и «умею» — разные вещи, и путать их дороже всего.
      Поэтому пройденное без замера так и подписано. */
   const lab = p.done
-    ? (p.v === "ok" ? "пройдена и доказана на замере"
-      : (p.v === "weak" ? "пройдена, но на замере провалена"
-        : "пройдена, но на замере не проверялась"))
+    ? (p.v === "ok"   ? "пройдена и доказана на замере"
+      : p.v === "weak" ? "пройдена, но на замере не сошлась"
+      : p.v === "skip" ? "пройдена, а на замере — «не знаю»"
+      : "пройдена, но на замере не проверялась")
     : VLAB[p.v];
   const act = p.les ? 'data-act="lesson" data-t="' + p.id + '"'
                     : 'data-act="topic"  data-t="' + p.id + '"';
